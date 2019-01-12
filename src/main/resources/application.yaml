@@ -5,5 +5,5 @@ spring:
       port: 27017
       database: voornameninliedjes
       username: mongoadmin
-      password: secret2
+      password: secret
       authentication-database: admin
