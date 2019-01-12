@@ -10,12 +10,12 @@ import org.springframework.context.annotation.Bean
 import reactor.core.publisher.Flux
 
 @SpringBootApplication
-open class SongApplication {
+class SongApplication {
 
 	private val log = LoggerFactory.getLogger(SongApplication::class.java)
 
 	@Bean
-	open fun init(repository: SongRepository) = CommandLineRunner {
+	fun init(repository: SongRepository) = CommandLineRunner {
 //			val mongo = MongoClient()//("localhost", 27017);
 //			val template = MongoTemplate(mongo, "local")
 //			val songCollectionName = template.getCollectionName(Song::class.java)
