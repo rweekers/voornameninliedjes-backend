@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Profile
 import reactor.core.publisher.Flux
 
 @SpringBootApplication
@@ -15,6 +16,7 @@ class SongApplication {
 	private val log = LoggerFactory.getLogger(SongApplication::class.java)
 
 	@Bean
+	@Profile("!pro")
 	fun init(repository: SongRepository) = CommandLineRunner {
 //			val mongo = MongoClient()//("localhost", 27017);
 //			val template = MongoTemplate(mongo, "local")
