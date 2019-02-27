@@ -1,6 +1,8 @@
 package nl.orangeflamingo.voornameninliedjesbackend.dto
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonView
+import nl.orangeflamingo.voornameninliedjesbackend.controller.Views
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.index.CompoundIndex
 import org.springframework.data.mongodb.core.mapping.Document
@@ -14,21 +16,28 @@ import javax.annotation.Generated
 data class SongDto(
         @Id
         @Generated
+        @JsonView(Views.Summary::class, Views.Detail::class)
         val id: String?,
 
+        @JsonView(Views.Summary::class, Views.Detail::class)
         @Field("artist")
         val artist: String,
 
+        @JsonView(Views.Summary::class, Views.Detail::class)
         @Field("title")
         val title: String,
 
+        @JsonView(Views.Summary::class, Views.Detail::class)
         @Field("name")
         val name: String,
 
+        @JsonView(Views.Detail::class)
         val background: String?,
 
+        @JsonView(Views.Detail::class)
         val youtube: String?,
 
+        @JsonView(Views.Detail::class)
         val status: String,
 
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "Europe/Amsterdam")
