@@ -27,6 +27,8 @@ data class Song(
 
         val youtube: String?,
 
+        val spotify: String?,
+
         val status: SongStatus,
 
         val audit: Audit

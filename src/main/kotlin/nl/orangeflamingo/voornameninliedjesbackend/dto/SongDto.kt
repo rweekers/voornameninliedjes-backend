@@ -38,6 +38,9 @@ data class SongDto(
         val youtube: String?,
 
         @JsonView(Views.Detail::class)
+        val spotify: String?,
+
+        @JsonView(Views.Detail::class)
         val status: String,
 
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "Europe/Amsterdam")
@@ -51,7 +54,7 @@ data class SongDto(
 
 ) {
     override fun toString(): String {
-        return "Song(name=$artist, code=$title"
+        return "Song(name=$artist, code=$title)"
     }
 
     override fun equals(other: Any?): Boolean {

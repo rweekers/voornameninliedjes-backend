@@ -32,6 +32,6 @@ class SongController {
     }
 
     private fun convertToDto(song: Song): SongDto {
-        return SongDto(song.id, song.artist, song.title, song.name, song.background, song.youtube, song.status.name, song.audit.dateInserted, song.audit.dateModified, song.audit.userInserted, song.audit.userModified)
+        return SongDto(song.id, song.artist, song.title, song.name, song.background, song.youtube, song.spotify, song.status.name, song.audit.dateInserted, song.audit.dateModified, song.audit.userInserted, song.audit.userModified)
     }
 }
