@@ -29,9 +29,9 @@ data class Song(
 
         val spotify: String?,
 
-        val status: SongStatus,
+        val flickrPhotos: Set<String> = setOf(),
 
-        val audit: Audit
+        val status: SongStatus
 ) {
     override fun toString(): String {
         return "Song(name=$artist, code=$title"

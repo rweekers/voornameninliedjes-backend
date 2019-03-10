@@ -1,13 +1,11 @@
 package nl.orangeflamingo.voornameninliedjesbackend.dto
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonView
 import nl.orangeflamingo.voornameninliedjesbackend.controller.Views
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.index.CompoundIndex
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
-import java.time.Instant
 import java.util.*
 import javax.annotation.Generated
 
@@ -41,16 +39,10 @@ data class SongDto(
         val spotify: String?,
 
         @JsonView(Views.Detail::class)
-        val status: String,
+        val flickrPhotos: Set<String>,
 
-        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "Europe/Amsterdam")
-        val dateInserted: Instant = Instant.now(),
-
-        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "Europe/Amsterdam")
-        val dateModified: Instant = dateInserted,
-
-        val userInserted: String,
-        val userModified: String = userInserted
+        @JsonView(Views.Detail::class)
+        val status: String
 
 ) {
     override fun toString(): String {
