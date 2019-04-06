@@ -28,7 +28,7 @@ class SecurityConfiguration {
 
         // Add custom security.
         http.authenticationManager(this.authenticationManager)
-        http.securityContextRepository(this.securityContextRepository!!)
+        http.securityContextRepository(this.securityContextRepository)
 
         // Disable authentication for `/auth/**` routes.
         http.authorizeExchange().pathMatchers("/api/**").permitAll()
