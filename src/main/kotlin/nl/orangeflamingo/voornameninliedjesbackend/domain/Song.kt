@@ -29,6 +29,8 @@ data class Song(
 
         val spotify: String?,
 
+        val wikimediaPhotos: Set<WikimediaPhoto> = setOf(),
+
         val flickrPhotos: Set<String> = setOf(),
 
         val status: SongStatus
@@ -47,3 +49,8 @@ data class Song(
         return Objects.hash(artist, title, name)
     }
 }
+
+data class WikimediaPhoto(
+        val url: String,
+        val attribution: String
+)

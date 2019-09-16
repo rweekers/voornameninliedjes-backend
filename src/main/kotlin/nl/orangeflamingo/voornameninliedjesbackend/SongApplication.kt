@@ -31,11 +31,11 @@ class SongApplication {
 //			template.createCollection(songCollectionName, CollectionOptions.empty().capped().size(9999999L))//.maxDocuments(100L));
 
 			val songFlowable = Flux.just(
-                    Song("1", "Michael Jackson", "Ben", "Ben", null, null, null, setOf(), SongStatus.SHOW),
-                    Song("2", "Neil Diamond", "Sweet Caroline", "Caroline", null, null, null, setOf(), SongStatus.SHOW),
-                    Song("3", "The Police", "Roxanne", "Roxanne", null, null, null, setOf(), SongStatus.SHOW),
-                    Song("4", "Dolly Parton", "Jolene", "Jolene", null, null, null, setOf(), SongStatus.IN_PROGRESS),
-                    Song("5", "The Kinks", "Lola", "Lola", null, null, null, setOf(), SongStatus.IN_PROGRESS)
+                    Song("1", "Michael Jackson", "Ben", "Ben", null, null, null, setOf(), setOf(), SongStatus.SHOW),
+                    Song("2", "Neil Diamond", "Sweet Caroline", "Caroline", null, null, null, setOf(), setOf(), SongStatus.SHOW),
+                    Song("3", "The Police", "Roxanne", "Roxanne", null, null, null, setOf(), setOf(), SongStatus.SHOW),
+                    Song("4", "Dolly Parton", "Jolene", "Jolene", null, null, null, setOf(), setOf(), SongStatus.IN_PROGRESS),
+                    Song("5", "The Kinks", "Lola", "Lola", null, null, null, setOf(), setOf(), SongStatus.IN_PROGRESS)
 			)
 
 			repository.saveAll(songFlowable).thenMany<Song>{ repository.findAll() }.subscribe{ song -> log.info(song.toString()) }
