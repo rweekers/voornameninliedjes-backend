@@ -39,6 +39,9 @@ data class SongDto(
         val spotify: String?,
 
         @JsonView(Views.Detail::class)
+        val wikimediaPhotos: Set<WikimediaPhotoDto>,
+
+        @JsonView(Views.Detail::class)
         val flickrPhotos: Set<String>,
 
         @JsonView(Views.Detail::class)
@@ -59,3 +62,9 @@ data class SongDto(
         return Objects.hash(artist, title, name)
     }
 }
+data class WikimediaPhotoDto(
+        @JsonView(Views.Detail::class)
+        val url: String,
+        @JsonView(Views.Detail::class)
+        val attribution: String
+)

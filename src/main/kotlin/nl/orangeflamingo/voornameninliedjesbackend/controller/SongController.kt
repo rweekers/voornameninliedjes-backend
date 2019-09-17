@@ -3,7 +3,9 @@ package nl.orangeflamingo.voornameninliedjesbackend.controller
 import com.fasterxml.jackson.annotation.JsonView
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
+import nl.orangeflamingo.voornameninliedjesbackend.domain.WikimediaPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.SongDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.WikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.SongRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -32,6 +34,10 @@ class SongController {
     }
 
     private fun convertToDto(song: Song): SongDto {
-        return SongDto(song.id, song.artist, song.title, song.name, song.background, song.youtube, song.spotify, song.flickrPhotos, song.status.name)
+        return SongDto(song.id, song.artist, song.title, song.name, song.background, song.youtube, song.spotify, song.wikimediaPhotos.map { wikimediaPhoto -> convertWikimediaPhotoToDto(wikimediaPhoto) }.toSet(), song.flickrPhotos, song.status.name)
+    }
+
+    private fun convertWikimediaPhotoToDto(wikimediaPhoto: WikimediaPhoto): WikimediaPhotoDto {
+        return WikimediaPhotoDto(wikimediaPhoto.url, wikimediaPhoto.attribution)
     }
 }
