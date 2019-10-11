@@ -27,28 +27,39 @@ class SongController {
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
     @JsonView(Views.Summary::class)
     fun getSongs(): Flux<SongDto> {
-        return songRepository.findAllByStatus(SongStatus.SHOW).map { convertToDto(it) }
+        return songRepository.findAllByStatus(SongStatus.SHOW).map { convertToDto(it) }.flatMap { enrichSong(it) }
     }
 
     @GetMapping("/songs/{id}")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     @JsonView(Views.Detail::class)
     fun getSongById(@PathVariable("id") id: String): Mono<SongDto> {
-        return songRepository.findById(id).map { convertToDto(it) }
+        return songRepository.findById(id).map { convertToDto(it) }.flatMap { enrichSong(it) }
     }
 
     private fun convertToDto(song: Song): SongDto {
-        return SongDto(song.id, song.artist, song.title, song.name, getArtistImage(song), song.background, song.youtube, song.spotify, song.wikimediaPhotos.map { wikimediaPhoto -> convertWikimediaPhotoToDto(wikimediaPhoto) }.toSet(), song.flickrPhotos, song.status.name)
+        return SongDto(
+                id = song.id,
+                artist = song.artist,
+                title = song.title,
+                name = song.name,
+                artistImage = "https://ak9.picdn.net/shutterstock/videos/24149239/thumb/1.jpg",
+                background = song.background,
+                youtube = song.youtube,
+                spotify = song.spotify,
+                wikimediaPhotos = song.wikimediaPhotos.map { wikimediaPhoto -> convertWikimediaPhotoToDto(wikimediaPhoto) }.toSet(),
+                flickrPhotos = song.flickrPhotos,
+                status = song.status.name)
     }
 
     private fun convertWikimediaPhotoToDto(wikimediaPhoto: WikimediaPhoto): WikimediaPhotoDto {
         return WikimediaPhotoDto(wikimediaPhoto.url, wikimediaPhoto.attribution)
     }
 
-    private fun getArtistImage(song: Song): String {
+    private fun enrichSong(song: SongDto): Mono<SongDto> {
         val wikimediaPhoto = song.wikimediaPhotos.firstOrNull()
         if (wikimediaPhoto != null) {
-            return wikimediaPhoto.url
+            return Mono.just(song.copy(artistImage = wikimediaPhoto.url))
         }
         val flickrPhotoId = song.flickrPhotos.firstOrNull()
         if (flickrPhotoId != null) {
@@ -64,9 +75,9 @@ class SongController {
                     ?.photo
 
             if (photo != null) {
-                return "https://farm${photo.farm}.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}_c.jpg"
+                return Mono.just(song.copy(artistImage = "https://farm${photo.farm}.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}_c.jpg"))
             }
         }
-        return "https://ak9.picdn.net/shutterstock/videos/24149239/thumb/1.jpg"
+        return Mono.just(song)
     }
 }
