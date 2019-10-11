@@ -3,14 +3,10 @@ package nl.orangeflamingo.voornameninliedjesbackend.dto
 import com.fasterxml.jackson.annotation.JsonView
 import nl.orangeflamingo.voornameninliedjesbackend.controller.Views
 import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.index.CompoundIndex
-import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
 import java.util.*
 import javax.annotation.Generated
 
-@CompoundIndex(name = "song_uq_idx", def = "{'artist': 1, 'title': 1, 'name': 1}", unique = true)
-@Document(collection = "Songs")
 data class SongDto(
         @Id
         @Generated
@@ -28,6 +24,10 @@ data class SongDto(
         @JsonView(Views.Summary::class, Views.Detail::class)
         @Field("name")
         val name: String,
+
+        @JsonView(Views.Summary::class, Views.Detail::class)
+        @Field("artistImage")
+        val artistImage: String,
 
         @JsonView(Views.Detail::class)
         val background: String?,
@@ -67,4 +67,15 @@ data class WikimediaPhotoDto(
         val url: String,
         @JsonView(Views.Detail::class)
         val attribution: String
+)
+
+data class PhotoDto(
+        val farm: String,
+        val server: String,
+        val id: String,
+        val secret: String
+)
+
+data class FlickrPhotoDto(
+        val photo: PhotoDto
 )
