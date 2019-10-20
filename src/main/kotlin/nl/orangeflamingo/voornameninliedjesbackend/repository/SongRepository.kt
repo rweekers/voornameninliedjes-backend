@@ -7,6 +7,6 @@ import reactor.core.publisher.Flux
 
 interface SongRepository : ReactiveCrudRepository<Song, String> {
 
-    fun findAllByStatus(status: SongStatus): Flux<Song>
+    fun findAllByStatusOrderByName(status: SongStatus): Flux<Song>
 
 }

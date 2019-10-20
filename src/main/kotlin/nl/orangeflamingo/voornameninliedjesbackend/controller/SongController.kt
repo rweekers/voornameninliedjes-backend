@@ -27,7 +27,7 @@ class SongController {
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
     @JsonView(Views.Summary::class)
     fun getSongs(): Flux<SongDto> {
-        return songRepository.findAllByStatus(SongStatus.SHOW).map { convertToDto(it) }.flatMap { enrichSong(it) }
+        return songRepository.findAllByStatusOrderByName(SongStatus.SHOW).map { convertToDto(it) }.flatMap { enrichSong(it) }
     }
 
     @GetMapping("/songs/{id}")
