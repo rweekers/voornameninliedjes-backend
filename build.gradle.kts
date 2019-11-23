@@ -27,8 +27,15 @@ plugins {
     id("org.springframework.boot") version "2.2.1.RELEASE"
     id("io.spring.dependency-management") version "1.0.8.RELEASE"
     id("com.bmuschko.docker-remote-api") version "6.0.0"
+    id("org.sonarqube") version "2.8"
     kotlin("jvm") version "1.3.50"
     kotlin("plugin.spring") version "1.3.50"
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "nl.orangeflamingo:voornameninliedjes-backend")
+    }
 }
 
 group = "nl.orangeflamingo"
@@ -47,6 +54,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    implementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
