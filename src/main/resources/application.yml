@@ -4,6 +4,4 @@ spring:
       host: localhost
       port: 27017
       database: voornameninliedjes
-      username: mongoadmin
-      password: secret
       authentication-database: admin
