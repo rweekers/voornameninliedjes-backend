@@ -1,5 +1,3 @@
-
-
 import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
@@ -35,6 +33,11 @@ plugins {
     kotlin("plugin.spring") version "1.3.50"
 }
 
+tasks.test {
+    dependsOn(startMyAppContainer)
+    finalizedBy(stopMyAppContainer)
+}
+
 sonarqube {
     properties {
         property("sonar.projectKey", "nl.orangeflamingo:voornameninliedjes-backend")
@@ -57,14 +60,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-    implementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-}
-
-tasks.create("functionalTestMyApp", Test::class) {
-    dependsOn(startMyAppContainer)
-    finalizedBy(stopMyAppContainer)
 }
 
 tasks.withType<KotlinCompile> {
