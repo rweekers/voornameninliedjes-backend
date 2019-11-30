@@ -1,26 +1,22 @@
 package nl.orangeflamingo.voornameninliedjesbackend
 
-import org.junit.Test
-import org.junit.runner.RunWith
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.get
+import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.reactive.server.expectBodyList
 
-
-@RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
-class SongControllerTest {
-
-	@Autowired
-	private lateinit var mockMvc: MockMvc
+@AutoConfigureWebTestClient
+class SongControllerTest(@Autowired val client: WebTestClient) {
 
 	@Test
-	fun testGetAllSongs() {
-		this.mockMvc.get("/api/songs").andExpect { status { `is`(200) } }
+	fun songControllerTest() {
+		client.get().uri("/api/songs").exchange()
+				.expectStatus().isOk
+				.expectBodyList<Song>().hasSize(0)
 	}
 
 }
