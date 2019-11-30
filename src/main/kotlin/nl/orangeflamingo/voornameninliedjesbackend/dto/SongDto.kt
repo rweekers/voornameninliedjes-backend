@@ -45,7 +45,7 @@ data class SongDto(
         val flickrPhotos: Set<String>,
 
         @JsonView(Views.Detail::class)
-        val status: String
+        val status: String?
 
 ) {
     override fun toString(): String {

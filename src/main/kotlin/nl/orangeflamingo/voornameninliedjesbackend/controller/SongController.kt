@@ -49,7 +49,7 @@ class SongController {
                 spotify = song.spotify,
                 wikimediaPhotos = song.wikimediaPhotos.map { wikimediaPhoto -> convertWikimediaPhotoToDto(wikimediaPhoto) }.toSet(),
                 flickrPhotos = song.flickrPhotos,
-                status = song.status.name)
+                status = song.status?.name)
     }
 
     private fun convertWikimediaPhotoToDto(wikimediaPhoto: WikimediaPhoto): WikimediaPhotoDto {

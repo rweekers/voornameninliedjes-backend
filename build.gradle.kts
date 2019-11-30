@@ -34,6 +34,8 @@ plugins {
 }
 
 tasks.test {
+    useJUnitPlatform()
+
     dependsOn(startMyAppContainer)
     finalizedBy(stopMyAppContainer)
 }
@@ -62,6 +64,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("com.ninja-squad:springmockk:1.1.3")
 }
 
 tasks.withType<KotlinCompile> {

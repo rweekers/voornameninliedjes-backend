@@ -33,10 +33,10 @@ data class Song(
 
         val flickrPhotos: Set<String> = setOf(),
 
-        val status: SongStatus
+        val status: SongStatus?
 ) {
     override fun toString(): String {
-        return "Song(name=$artist, code=$title"
+        return "Song(name=$artist, title=$title)"
     }
 
     override fun equals(other: Any?): Boolean {
