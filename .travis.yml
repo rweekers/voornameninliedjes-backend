@@ -4,7 +4,7 @@ install: true
 os: linux
 dist: trusty
 script:
-- "./gradlew test --scan -s"
+- "./gradlew build --scan -s"
 - "./gradlew sonarqube"
 
 addons:

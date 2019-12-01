@@ -31,6 +31,26 @@ plugins {
     id("org.sonarqube") version "2.8"
     kotlin("jvm") version "1.3.50"
     kotlin("plugin.spring") version "1.3.50"
+    jacoco
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.isEnabled = true
+        csv.isEnabled = false
+        html.isEnabled = false
+        html.destination = file("$buildDir/reports/coverage")
+    }
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.3".toBigDecimal()
+            }
+        }
+    }
 }
 
 tasks.test {
