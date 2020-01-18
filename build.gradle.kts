@@ -11,13 +11,13 @@ val buildMyAppImage by tasks.creating(DockerBuildImage::class) {
 
 val createMyAppContainer by tasks.creating(DockerCreateContainer::class) {
     dependsOn(buildMyAppImage)
-    targetImageId(buildMyAppImage.getImageId())
+    targetImageId(buildMyAppImage.imageId)
     hostConfig.portBindings.set(listOf("27017:27017"))
 }
 
 val startMyAppContainer by tasks.creating(DockerStartContainer::class) {
     dependsOn(createMyAppContainer)
-    targetContainerId(createMyAppContainer.getContainerId())
+    targetContainerId(createMyAppContainer.containerId)
 }
 
 val stopMyAppContainer by tasks.creating(DockerStopContainer::class) {
@@ -25,9 +25,9 @@ val stopMyAppContainer by tasks.creating(DockerStopContainer::class) {
 }
 
 plugins {
-    id("org.springframework.boot") version "2.2.1.RELEASE"
+    id("org.springframework.boot") version "2.2.3.RELEASE"
     id("io.spring.dependency-management") version "1.0.8.RELEASE"
-    id("com.bmuschko.docker-remote-api") version "6.0.0"
+    id("com.bmuschko.docker-remote-api") version "6.1.2"
     id("org.sonarqube") version "2.8"
     kotlin("jvm") version "1.3.50"
     kotlin("plugin.spring") version "1.3.50"
