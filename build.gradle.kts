@@ -29,8 +29,8 @@ plugins {
     id("io.spring.dependency-management") version "1.0.8.RELEASE"
     id("com.bmuschko.docker-remote-api") version "6.1.2"
     id("org.sonarqube") version "2.8"
-    kotlin("jvm") version "1.3.50"
-    kotlin("plugin.spring") version "1.3.50"
+    kotlin("jvm") version "1.3.61"
+    kotlin("plugin.spring") version "1.3.61"
     jacoco
 }
 
@@ -68,7 +68,7 @@ sonarqube {
 
 group = "nl.orangeflamingo"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.sourceCompatibility = JavaVersion.VERSION_12
 
 repositories {
     mavenCentral()
@@ -90,6 +90,6 @@ dependencies {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "1.8"
+        jvmTarget = "12"
     }
 }
