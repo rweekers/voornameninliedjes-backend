@@ -71,6 +71,7 @@ class SongController {
             val photo = webClient.get().uri("/services/rest/?method=flickr.photos.getInfo&api_key=9676a28e9cb321d2721e813055abb6dc&format=json&nojsoncallback=true&photo_id={flickr_photo_id}", flickrPhotoId)
                     .retrieve()
                     .bodyToMono(FlickrPhotoDto::class.java)
+                    .onErrorResume { Mono.empty() }
                     .block()
                     ?.photo
 
