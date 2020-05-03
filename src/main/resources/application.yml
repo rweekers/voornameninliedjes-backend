@@ -24,6 +24,12 @@ spring:
     # Explicit configuration to easily add development data in different profile
     locations: classpath:db/migration/{vendor}/prod
 
+jobs:
+  enrichSong:
+    rate: 60000
+  updateSong:
+    cron: 10 * * * * MON-FRI
+
 # These will be transferred to System properties, see https://docs.spring.io/spring-boot/docs/2.1.4.RELEASE/reference/html/boot-features-logging.html#boot-features-custom-log-configuration
 # These systems properties are uses in log4j2 configuration
 logging:

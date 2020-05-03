@@ -39,17 +39,20 @@ data class SongDto(
         val spotify: String?,
 
         @JsonView(Views.Detail::class)
-        val wikimediaPhotos: Set<WikimediaPhotoDto>,
+        val wikimediaPhotos: Set<WikimediaPhotoDto>?,
 
         @JsonView(Views.Detail::class)
-        val flickrPhotos: Set<String>,
+        val flickrPhotos: Set<PhotoDto>?,
+
+        @JsonView(Views.Detail::class)
+        val sources: Set<SourceDto>?,
 
         @JsonView(Views.Detail::class)
         val status: String?
 
 ) {
     override fun toString(): String {
-        return "Song(name=$artist, code=$title)"
+        return "Song(name=$artist, code=$title, name=$name)"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -62,6 +65,7 @@ data class SongDto(
         return Objects.hash(artist, title, name)
     }
 }
+
 data class WikimediaPhotoDto(
         @JsonView(Views.Detail::class)
         val url: String,
@@ -69,13 +73,44 @@ data class WikimediaPhotoDto(
         val attribution: String
 )
 
-data class PhotoDto(
-        val farm: String,
-        val server: String,
+data class FlickrOwnerDto(
+        @JsonView(Views.Detail::class)
         val id: String,
-        val secret: String
+        @JsonView(Views.Detail::class)
+        val username: String,
+        @JsonView(Views.Detail::class)
+        val photoUrl: String
 )
 
-data class FlickrPhotoDto(
-        val photo: PhotoDto
+data class FlickrLicenseDto(
+        @JsonView(Views.Detail::class)
+        val name: String,
+        @JsonView(Views.Detail::class)
+        val url: String
+)
+
+data class PhotoDto(
+        @JsonView(Views.Detail::class)
+        val url: String,
+        @JsonView(Views.Detail::class)
+        val farm: String,
+        @JsonView(Views.Detail::class)
+        val server: String,
+        @JsonView(Views.Detail::class)
+        val id: String,
+        @JsonView(Views.Detail::class)
+        val secret: String,
+        @JsonView(Views.Detail::class)
+        val title: String,
+        @JsonView(Views.Detail::class)
+        val owner: FlickrOwnerDto,
+        @JsonView(Views.Detail::class)
+        val license: FlickrLicenseDto
+)
+
+data class SourceDto(
+        @JsonView(Views.Detail::class)
+        val url: String,
+        @JsonView(Views.Detail::class)
+        val name: String
 )

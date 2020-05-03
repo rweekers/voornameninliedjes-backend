@@ -1,12 +1,14 @@
 package nl.orangeflamingo.voornameninliedjesbackend.repository
 
-import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
+import nl.orangeflamingo.voornameninliedjesbackend.domain.DbSong
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import reactor.core.publisher.Flux
 
-interface SongRepository : ReactiveCrudRepository<Song, String> {
+interface SongRepository : ReactiveCrudRepository<DbSong, String> {
 
-    fun findAllByStatusOrderByName(status: SongStatus): Flux<Song>
+    fun findAllByStatusOrderByName(status: SongStatus): Flux<DbSong>
+
+    fun findAllByStatusAndArtistImageIsNull(status: SongStatus): Flux<DbSong>
 
 }

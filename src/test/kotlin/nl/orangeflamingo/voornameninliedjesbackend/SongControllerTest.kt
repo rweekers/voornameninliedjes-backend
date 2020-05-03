@@ -1,6 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend
 
-import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
+import nl.orangeflamingo.voornameninliedjesbackend.domain.DbSong
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,13 +13,13 @@ import org.springframework.test.web.reactive.server.expectBodyList
 @AutoConfigureWebTestClient
 class SongControllerTest(@Autowired val client: WebTestClient) {
 
-	@Test
-	@Disabled
-	fun songControllerTest() {
-		client.get().uri("/api/songs").exchange()
-			.expectStatus().isOk
-			.expectBodyList<Song>().hasSize(0)
-	}
+    @Test
+    @Disabled
+    fun songControllerTest() {
+        client.get().uri("/api/songs").exchange()
+            .expectStatus().isOk
+            .expectBodyList<DbSong>().hasSize(0)
+    }
 
 }
 
