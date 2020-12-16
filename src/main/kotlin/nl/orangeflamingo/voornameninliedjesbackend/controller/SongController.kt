@@ -8,6 +8,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.SongDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.WikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.SongRepository
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -20,6 +21,8 @@ import reactor.core.publisher.Mono
 @RequestMapping("/api")
 class SongController {
 
+    private val log = LoggerFactory.getLogger(SongController::class.java)
+
     @Autowired
     private lateinit var songRepository: SongRepository
 
@@ -27,6 +30,7 @@ class SongController {
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
     @JsonView(Views.Summary::class)
     fun getSongs(): Flux<SongDto> {
+        log.info("Requesting all songs...")
         return songRepository.findAllByStatusOrderByName(SongStatus.SHOW).map { convertToDto(it) }.flatMap { enrichSong(it) }
     }
 
