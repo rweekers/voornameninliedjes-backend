@@ -4,6 +4,7 @@ spring:
       enabled: always
   data:
     mongodb:
+      auto-index-creation: false
       host: localhost
       port: 27017
       database: voornameninliedjes
