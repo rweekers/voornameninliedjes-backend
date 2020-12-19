@@ -31,7 +31,7 @@
         </Root>
 
         <!-- LOG "nl.voornameninliedjes*" at TRACE level -->
-        <Logger name="nl.voornameninliedjes" level="trace"></Logger>
+        <!-- Logger name="nl.orangeflamingo.voornameninliedjesbackend" level="trace"></Logger -->
     </Loggers>
 
 </Configuration>
