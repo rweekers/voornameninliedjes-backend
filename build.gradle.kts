@@ -25,12 +25,12 @@ val stopMyAppContainer by tasks.creating(DockerStopContainer::class) {
 }
 
 plugins {
-    id("org.springframework.boot") version "2.2.6.RELEASE"
-    id("io.spring.dependency-management") version "1.0.8.RELEASE"
-    id("com.bmuschko.docker-remote-api") version "6.1.2"
-    id("org.sonarqube") version "2.8"
-    kotlin("jvm") version "1.3.72"
-    kotlin("plugin.spring") version "1.3.72"
+    id("org.springframework.boot") version "2.4.1"
+    id("io.spring.dependency-management") version "1.0.10.RELEASE"
+    id("com.bmuschko.docker-remote-api") version "6.6.1"
+    id("org.sonarqube") version "3.0"
+    kotlin("jvm") version "1.4.21"
+    kotlin("plugin.spring") version "1.4.21"
     jacoco
 }
 
@@ -75,6 +75,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -85,7 +86,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("com.ninja-squad:springmockk:1.1.3")
+    testImplementation("com.ninja-squad:springmockk:3.0.0")
 }
 
 configurations {
