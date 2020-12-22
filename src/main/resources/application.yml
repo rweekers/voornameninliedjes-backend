@@ -2,6 +2,11 @@ spring:
   output:
     ansi:
       enabled: always
+  datasource:
+    username: test
+    password: secret
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/voornameninliedjes?createDatabaseIfNotExist=true
   data:
     mongodb:
       auto-index-creation: false
@@ -11,6 +16,13 @@ spring:
       username: mongoadmin
       password: secret
       authentication-database: admin
+  flyway:
+    enabled: true
+    url: 'jdbc:postgresql://localhost:5432/voornameninliedjes'
+    user: test
+    password: secret
+    # Explicit configuration to easily add development data in different profile
+    locations: classpath:db/migration/{vendor}/prod
 
 # These will be transferred to System properties, see https://docs.spring.io/spring-boot/docs/2.1.4.RELEASE/reference/html/boot-features-logging.html#boot-features-custom-log-configuration
 # These systems properties are uses in log4j2 configuration
