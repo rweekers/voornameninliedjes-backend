@@ -19,23 +19,23 @@ class SongControllerWebFluxTest(@Autowired val client: WebTestClient) {
     private lateinit var repository: SongRepository
 
     private val testSong = Song(
-            id = "1",
-            artist = "Paul Simon",
-            title = "You Can Call Me Al",
-            name = "Al",
-            background = "Some background text",
-            spotify = "",
-            youtube = "",
-            status = SongStatus.SHOW,
-            flickrPhotos = emptySet(),
-            wikimediaPhotos = emptySet()
+        id = "1",
+        artist = "Paul Simon",
+        title = "You Can Call Me Al",
+        name = "Al",
+        background = "Some background text",
+        spotify = "",
+        youtube = "",
+        status = SongStatus.SHOW,
+        flickrPhotos = emptySet(),
+        wikimediaPhotos = emptySet()
     )
 
     @Test
     fun allSongsTest() {
         every { repository.findAllByStatusOrderByName(SongStatus.SHOW) } returns Flux.just(testSong)
         client.get().uri("/api/songs").exchange()
-                .expectStatus().isOk
-                .expectBodyList<Song>().hasSize(1).contains(testSong)
+            .expectStatus().isOk
+            .expectBodyList<Song>().hasSize(1).contains(testSong)
     }
 }

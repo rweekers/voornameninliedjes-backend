@@ -4,24 +4,48 @@ import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val buildMyAppImage by tasks.creating(DockerBuildImage::class) {
+val buildMyMongoAppImage by tasks.creating(DockerBuildImage::class) {
     inputDir.set(file("."))
+    dockerFile.set(file("DockerfileMongo"))
     images.add("mongo:latest")
 }
 
-val createMyAppContainer by tasks.creating(DockerCreateContainer::class) {
-    dependsOn(buildMyAppImage)
-    targetImageId(buildMyAppImage.imageId)
+val buildMyPostgresAppImage by tasks.creating(DockerBuildImage::class) {
+    inputDir.set(file("."))
+    dockerFile.set(file("DockerfilePostgres"))
+    images.add("postgres:latest")
+}
+
+val createMyMongoAppContainer by tasks.creating(DockerCreateContainer::class) {
+    dependsOn(buildMyMongoAppImage)
+    targetImageId(buildMyMongoAppImage.imageId)
+    containerName.set("some-mongo")
     hostConfig.portBindings.set(listOf("27017:27017"))
 }
 
-val startMyAppContainer by tasks.creating(DockerStartContainer::class) {
-    dependsOn(createMyAppContainer)
-    targetContainerId(createMyAppContainer.containerId)
+val createMyPostgresAppContainer by tasks.creating(DockerCreateContainer::class) {
+    dependsOn(buildMyPostgresAppImage)
+    targetImageId(buildMyPostgresAppImage.imageId)
+    containerName.set("some-postgres")
+    hostConfig.portBindings.set(listOf("5432:5432"))
 }
 
-val stopMyAppContainer by tasks.creating(DockerStopContainer::class) {
-    targetContainerId(createMyAppContainer.containerId)
+val startMyMongoAppContainer by tasks.creating(DockerStartContainer::class) {
+    dependsOn(createMyMongoAppContainer)
+    targetContainerId(createMyMongoAppContainer.containerId)
+}
+
+val stopMyMongoAppContainer by tasks.creating(DockerStopContainer::class) {
+    targetContainerId(createMyMongoAppContainer.containerId)
+}
+
+val startMyPostgresAppContainer by tasks.creating(DockerStartContainer::class) {
+    dependsOn(createMyPostgresAppContainer)
+    targetContainerId(createMyPostgresAppContainer.containerId)
+}
+
+val stopMyPostgresAppContainer by tasks.creating(DockerStopContainer::class) {
+    targetContainerId(createMyPostgresAppContainer.containerId)
 }
 
 plugins {
@@ -56,8 +80,10 @@ tasks.jacocoTestCoverageVerification {
 tasks.test {
     useJUnitPlatform()
 
-    dependsOn(startMyAppContainer)
-    finalizedBy(stopMyAppContainer)
+    dependsOn(startMyMongoAppContainer)
+    dependsOn(startMyPostgresAppContainer)
+    finalizedBy(stopMyMongoAppContainer)
+    finalizedBy(stopMyPostgresAppContainer)
 }
 
 sonarqube {
@@ -75,6 +101,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
@@ -84,9 +111,13 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    implementation("org.postgresql:postgresql:42.2.18")
+    implementation("org.flywaydb:flyway-core:7.3.2")
+
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.ninja-squad:springmockk:3.0.0")
+
 }
 
 configurations {
