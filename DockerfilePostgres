@@ -1,4 +1,6 @@
-FROM postgres:latest
-ENV POSTGRES_USER=test
-ENV POSTGRES_PASSWORD=secret
+FROM postgres:13.1
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=postgres
 ENV POSTGRES_DB=voornameninliedjes
+
+COPY init.sql /docker-entrypoint-initdb.d/

@@ -8,13 +8,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val buildMyMongoAppImage by tasks.creating(DockerBuildImage::class) {
     inputDir.set(file("."))
     dockerFile.set(file("DockerfileMongo"))
-    images.add("mongo:latest")
+    images.add("mongo:3.6.20")
 }
 
 val buildMyPostgresAppImage by tasks.creating(DockerBuildImage::class) {
     inputDir.set(file("."))
     dockerFile.set(file("DockerfilePostgres"))
-    images.add("postgres:latest")
+    images.add("postgres:13.1")
 }
 
 val createMyMongoAppContainer by tasks.creating(DockerCreateContainer::class) {
@@ -114,7 +114,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-webflux")

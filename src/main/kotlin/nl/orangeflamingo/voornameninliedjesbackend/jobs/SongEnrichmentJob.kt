@@ -3,7 +3,7 @@ package nl.orangeflamingo.voornameninliedjesbackend.jobs
 import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.DbSong
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
-import nl.orangeflamingo.voornameninliedjesbackend.repository.SongRepository
+import nl.orangeflamingo.voornameninliedjesbackend.repository.mongo.SongRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
