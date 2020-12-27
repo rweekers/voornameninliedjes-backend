@@ -1,6 +1,7 @@
 import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -28,6 +29,18 @@ val createMyPostgresAppContainer by tasks.creating(DockerCreateContainer::class)
     targetImageId(buildMyPostgresAppImage.imageId)
     containerName.set("some-postgres")
     hostConfig.portBindings.set(listOf("5432:5432"))
+}
+
+val removeMyMongoAppContainer by tasks.creating(DockerRemoveContainer::class) {
+    force.set(true)
+    removeVolumes.set(true)
+    targetContainerId(createMyMongoAppContainer.containerId)
+}
+
+val removeMyPostgresAppContainer by tasks.creating(DockerRemoveContainer::class) {
+    force.set(true)
+    removeVolumes.set(true)
+    targetContainerId(createMyPostgresAppContainer.containerId)
 }
 
 val startMyMongoAppContainer by tasks.creating(DockerStartContainer::class) {
@@ -82,8 +95,8 @@ tasks.test {
 
     dependsOn(startMyMongoAppContainer)
     dependsOn(startMyPostgresAppContainer)
-    finalizedBy(stopMyMongoAppContainer)
-    finalizedBy(stopMyPostgresAppContainer)
+    finalizedBy(removeMyMongoAppContainer)
+    finalizedBy(removeMyPostgresAppContainer)
 }
 
 sonarqube {
