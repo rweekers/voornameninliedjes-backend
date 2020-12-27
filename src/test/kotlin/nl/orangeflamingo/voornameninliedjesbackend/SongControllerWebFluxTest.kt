@@ -5,6 +5,7 @@ import io.mockk.every
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.dto.SongDto
+import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,6 +19,9 @@ class SongControllerWebFluxTest(@Autowired val client: WebTestClient) {
 
     @MockkBean
     private lateinit var service: SongService
+
+    @MockkBean
+    private lateinit var artistRepository: ArtistRepository
 
     private val testSong = Song(
         id = "1",

@@ -1,4 +1,4 @@
-package nl.orangeflamingo.voornameninliedjesbackend.repository
+package nl.orangeflamingo.voornameninliedjesbackend.repository.mongo
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.DbSong
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus

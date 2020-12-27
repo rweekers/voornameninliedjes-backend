@@ -3,12 +3,32 @@ spring:
     ansi:
       enabled: always
   datasource:
-    username: test
-    password: secret
-    driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/voornameninliedjes?createDatabaseIfNotExist=true
+    application:
+      url: jdbc:postgresql://localhost:5432/voornameninliedjes?createDatabaseIfNotExist=true
+      schema: vil
+      username: vil_app
+      password: secret
+      type: com.zaxxer.hikari.HikariDataSource
+      driverClassName: org.postgresql.Driver
+      hikari:
+        pool-name: voornameninliedjes-app-hikari-pool
+        name: dataSource
+        data-source-properties:
+          prepareThreshold: 0
+    migration:
+      url: jdbc:postgresql://localhost:5432/voornameninliedjes?createDatabaseIfNotExist=true
+      schema: vil
+      username: postgres
+      password: postgres
+      type: com.zaxxer.hikari.HikariDataSource
+      driverClassName: org.postgresql.Driver
+      hikari:
+        pool-name: voornameninliedjes-migration-hikari-pool
+        name: migrationDataSource
   data:
     mongodb:
+      repositories:
+        type: none
       auto-index-creation: false
       host: localhost
       port: 27017
@@ -17,10 +37,6 @@ spring:
       password: secret
       authentication-database: admin
   flyway:
-    enabled: true
-    url: 'jdbc:postgresql://localhost:5432/voornameninliedjes'
-    user: test
-    password: secret
     # Explicit configuration to easily add development data in different profile
     locations: classpath:db/migration/{vendor}/prod
 

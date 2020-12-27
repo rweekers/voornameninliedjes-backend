@@ -4,7 +4,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.DbSong
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Source
 import nl.orangeflamingo.voornameninliedjesbackend.domain.WikimediaPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.repository.SongRepository
+import nl.orangeflamingo.voornameninliedjesbackend.repository.mongo.SongRepository
 import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication

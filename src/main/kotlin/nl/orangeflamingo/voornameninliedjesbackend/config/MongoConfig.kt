@@ -8,12 +8,15 @@ import org.springframework.context.event.EventListener
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.convert.MongoConverter
 import org.springframework.data.mongodb.core.index.MongoPersistentEntityIndexResolver
+import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories
 
 @Configuration
+@EnableReactiveMongoRepositories(basePackages = ["nl.orangeflamingo.voornameninliedjesbackend.repository.mongo"])
 class MongoConfig {
 
     @Autowired
     private lateinit var mongoTemplate: MongoTemplate
+
     @Autowired
     private lateinit var mongoConverter: MongoConverter
 
