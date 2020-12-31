@@ -28,7 +28,7 @@ val createMyPostgresAppContainer by tasks.creating(DockerCreateContainer::class)
     dependsOn(buildMyPostgresAppImage)
     targetImageId(buildMyPostgresAppImage.imageId)
     containerName.set("some-postgres")
-    hostConfig.portBindings.set(listOf("5432:5432"))
+    hostConfig.portBindings.set(listOf("5433:5432"))
 }
 
 val removeMyMongoAppContainer by tasks.creating(DockerRemoveContainer::class) {
@@ -116,20 +116,18 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-log4j2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("org.postgresql:postgresql:42.2.18")
     implementation("org.flywaydb:flyway-core:7.3.2")
 
-    testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("com.ninja-squad:springmockk:3.0.0")
+    testImplementation("org.mockito:mockito-core:2.+")
 
 }
 

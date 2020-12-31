@@ -4,7 +4,7 @@ spring:
       enabled: always
   datasource:
     application:
-      url: jdbc:postgresql://localhost:5432/voornameninliedjes?createDatabaseIfNotExist=true
+      url: jdbc:postgresql://localhost:5433/voornameninliedjes?createDatabaseIfNotExist=true
       schema: vil
       username: vil_app
       password: secret
@@ -16,7 +16,7 @@ spring:
         data-source-properties:
           prepareThreshold: 0
     migration:
-      url: jdbc:postgresql://localhost:5432/voornameninliedjes?createDatabaseIfNotExist=true
+      url: jdbc:postgresql://localhost:5433/voornameninliedjes?createDatabaseIfNotExist=true
       schema: vil
       username: postgres
       password: postgres

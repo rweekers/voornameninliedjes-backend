@@ -1,84 +1,52 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
-import com.fasterxml.jackson.annotation.JsonView
-import nl.orangeflamingo.voornameninliedjesbackend.SongApplication
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
-import nl.orangeflamingo.voornameninliedjesbackend.domain.WikimediaPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.dto.*
-import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
+import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
+import java.util.*
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/beta")
 class SongController {
 
     private val log = LoggerFactory.getLogger(SongController::class.java)
 
     @Autowired
-    private lateinit var songService: SongService
+    private lateinit var songRepository: SongRepository
 
-    @GetMapping("/songs")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
-    @JsonView(Views.Summary::class)
-    fun getSongs(): Flux<SongDto> {
-        log.info("Requesting all songs...")
-        return songService.findAllByStatusOrderByName(SongStatus.SHOW).map { convertToDto(it) }
-    }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/songs/{id}")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
-    @JsonView(Views.Detail::class)
-    fun getSongById(@PathVariable("id") id: String): Mono<SongDto> {
-        log.info("Requesting song with id {}", id)
-        return songService.findById(id).map { convertToDto(it) }
+    fun getSongById(@PathVariable id: Long): Optional<Song> {
+        log.info("Requesting song with id $id...")
+        return songRepository.findById(id)
     }
 
-    private fun convertToDto(song: Song): SongDto {
-        return SongDto(
-                id = song.id,
-                artist = song.artist,
-                title = song.title,
-                name = song.name,
-                artistImage = song.artistImage,
-                background = song.background,
-                youtube = song.youtube,
-                spotify = song.spotify,
-                wikimediaPhotos = song.wikimediaPhotos.map { convertWikimediaPhotoToDto(it) }.toSet(),
-                flickrPhotos = song.flickrPhotos.map {
-                    PhotoDto(
-                            id = it.id,
-                            url = it.url,
-                            farm = it.farm,
-                            secret = it.secret,
-                            server = it.server,
-                            title = it.title,
-                            owner = FlickrOwnerDto(
-                                    id = it.ownerDetail?.id ?: "",
-                                    username = it.ownerDetail?.username ?: "",
-                                    photoUrl = it.ownerDetail?.photosUrl ?: ""
-                            ),
-                            license = FlickrLicenseDto(
-                                    name = it.licenseDetail?.name ?: "",
-                                    url = it.licenseDetail?.url ?: ""
-                            )
-                    )
-                }.toSet(),
-                sources = song.sources.map {
-                    SourceDto(
-                            url = it.url,
-                            name = it.name
-                    )
-                }.toSet(),
-                status = song.status?.name
-        )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/songs")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
+    fun getSongs(): List<Song> {
+        log.info("Requesting all songs...")
+        return songRepository.findAllOrderedByName()
     }
 
-    private fun convertWikimediaPhotoToDto(wikimediaPhoto: WikimediaPhoto): WikimediaPhotoDto {
-        return WikimediaPhotoDto(wikimediaPhoto.url, wikimediaPhoto.attribution)
+    @PreAuthorize("hasRole('ROLE_OWNER')")
+    @DeleteMapping("/songs")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
+    fun deleteSongs() {
+        val count = songRepository.count()
+        songRepository.deleteAll()
+        log.info("$count songs deleted")
+    }
+
+    @PreAuthorize("hasRole('ROLE_OWNER')")
+    @DeleteMapping("/songs/{id}")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
+    fun deleteSongById(@PathVariable id: Long) {
+        songRepository.deleteById(id)
+        log.info("song $id deleted")
     }
 }

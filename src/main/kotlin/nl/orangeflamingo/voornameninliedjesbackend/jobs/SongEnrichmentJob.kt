@@ -3,7 +3,7 @@ package nl.orangeflamingo.voornameninliedjesbackend.jobs
 import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.DbSong
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
-import nl.orangeflamingo.voornameninliedjesbackend.repository.mongo.SongRepository
+import nl.orangeflamingo.voornameninliedjesbackend.repository.mongo.MongoSongRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
@@ -15,7 +15,7 @@ class SongEnrichmentJob {
     private val log = LoggerFactory.getLogger(SongEnrichmentJob::class.java)
 
     @Autowired
-    private lateinit var songRepository: SongRepository
+    private lateinit var mongoSongRepository: MongoSongRepository
 
     @Autowired
     private lateinit var flickrApiClient: FlickrApiClient
@@ -23,19 +23,15 @@ class SongEnrichmentJob {
     @Scheduled(cron = "\${jobs.updateSong.cron}")
     fun updateSong() {
         log.info("Starting update job")
-        songRepository.findAllByStatusOrderByName(SongStatus.SHOW)
-                .switchIfEmpty { log.warn("This should not happen, no songs found with status SHOW") }
-                .doOnComplete { log.info("Finished update job") }
-                .subscribe { updateArtistImageForSong(it) }
+        mongoSongRepository.findAllByStatusOrderByName(SongStatus.SHOW)
+            .forEach { updateArtistImageForSong(it) }
     }
 
     @Scheduled(fixedRateString = "\${jobs.enrichSong.rate}")
     fun enrichSong() {
         log.info("Starting enrichment job")
-        songRepository.findAllByStatusAndArtistImageIsNull(SongStatus.SHOW)
-                .switchIfEmpty { log.info("No songs with flickr photos without artist image, finished enrichment job") }
-                .doOnComplete { log.info("Finished enrichment job") }
-                .subscribe { updateArtistImageForSong(it) }
+        mongoSongRepository.findAllByStatusAndArtistImageIsNull(SongStatus.SHOW)
+            .forEach { updateArtistImageForSong(it) }
     }
 
     private fun updateArtistImageForSong(song: DbSong) {
@@ -53,8 +49,7 @@ class SongEnrichmentJob {
     private fun updateArtistImage(url: String, song: DbSong) {
         if (url != song.artistImage) {
             val updatedSong = song.copy(artistImage = url)
-            songRepository.save(updatedSong)
-                    .subscribe { s -> log.info("Updated song $s with url ${s.artistImage}") }
+            mongoSongRepository.save(updatedSong)
         }
     }
 
