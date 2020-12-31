@@ -1,16 +1,13 @@
 package nl.orangeflamingo.voornameninliedjesbackend.domain
 
 import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.index.CompoundIndex
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
-import java.time.Instant
 import java.util.*
 import javax.annotation.Generated
 
-@CompoundIndex(name = "song_uq_idx", def = "{'artist': 1, 'title': 1, 'name': 1}", unique = true)
-@Document(collection = "Songs")
-data class DbSong(
+@Document(collation = "Songs")
+data class MongoSong(
     @Id
         @Generated
         val id: String?,
@@ -34,16 +31,14 @@ data class DbSong(
 
     val wikimediaPhotos: Set<WikimediaPhoto> = setOf(),
 
-    val flickrPhotos: Set<String> = setOf(),
+    val flickrPhotos: Set<PhotoDetail> = setOf(),
 
-    val sources: Set<Source> = setOf(),
-
-    val logs: List<LogEntry> = listOf(),
+    val sources: Set<SourceDetail> = setOf(),
 
     val status: SongStatus?
 ) {
     override fun toString(): String {
-        return "Song(name=$artist, title=$title)"
+        return "Song(name=$artist, title=$title, name=$name)"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -57,17 +52,30 @@ data class DbSong(
     }
 }
 
-data class WikimediaPhoto(
+data class PhotoDetail(
         val url: String,
-        val attribution: String
+        val farm: String,
+        val server: String,
+        val id: String,
+        val title: String,
+        val secret: String,
+        val licenseDetail: License?,
+        val ownerDetail: Owner?
 )
 
-data class Source(
+data class License(
+        val id: String,
+        val name: String,
+        val url: String
+)
+
+data class Owner(
+        val id: String,
+        val username: String,
+        val photosUrl: String
+)
+
+data class SourceDetail(
         val url: String,
         val name: String
-)
-
-data class LogEntry(
-        val date: Instant,
-        val user: String
 )
