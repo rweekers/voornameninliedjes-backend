@@ -1,22 +1,21 @@
 package nl.orangeflamingo.voornameninliedjesbackend.domain
 
 import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.mapping.Document
-import org.springframework.data.mongodb.core.mapping.Field
-import javax.annotation.Generated
+import org.springframework.data.relational.core.mapping.MappedCollection
+import org.springframework.data.relational.core.mapping.Table
 
-@Document(collection = "Users")
-data class User(
-        @Id
-        @Generated
-        val id: String? = null,
+@Table("users")
+class User(
 
-        @Field("username")
-        var username: String,
+    @Id
+    var id: Long? = null,
+    val username: String,
+    val password: String,
+    @MappedCollection(idColumn = "user_id")
+    val roles: MutableSet<UserRole>
+)
 
-        @Field("password")
-        var password: String,
-
-        @Field("roles")
-        val roles: MutableSet<String>
+@Table("user_roles")
+data class UserRole(
+    val name: String
 )

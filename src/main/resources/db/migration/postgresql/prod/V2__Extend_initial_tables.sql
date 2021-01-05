@@ -38,15 +38,10 @@ create table USERS
 (
     ID       bigserial not null primary key,
     USERNAME text      not null unique,
-    PASSWORD text,
-    HUMAN    boolean   not null default true,
-    MONGO_ID text -- for migration purposes,
-        check ((human AND PASSWORD is not null) OR (
-            not human AND PASSWORD is null
-            ))
+    PASSWORD text
 );
 
-create table ROLES
+create table USER_ROLES
 (
     ID      bigserial not null primary key,
     NAME    text      not null,

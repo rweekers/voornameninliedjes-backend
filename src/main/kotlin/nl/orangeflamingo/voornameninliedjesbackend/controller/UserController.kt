@@ -1,8 +1,9 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import nl.orangeflamingo.voornameninliedjesbackend.controller.Utils.Companion.INVALID_CREDENTIALS
-import nl.orangeflamingo.voornameninliedjesbackend.domain.MongoUser
-import nl.orangeflamingo.voornameninliedjesbackend.repository.mongo.MongoUserRepository
+import nl.orangeflamingo.voornameninliedjesbackend.domain.User
+import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
+import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -13,12 +14,12 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("/gamma")
-class MongoUserController {
-    private val log = LoggerFactory.getLogger(MongoUserController::class.java)
+@RequestMapping("/delta")
+class UserController {
+    private val log = LoggerFactory.getLogger(UserController::class.java)
 
     @Autowired
-    private lateinit var userRepository: MongoUserRepository
+    private lateinit var userRepository: UserRepository
 
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
@@ -74,7 +75,7 @@ class MongoUserController {
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @PostMapping("/users")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
-    fun newUser(@RequestBody newUser: UserDto): MongoUser {
+    fun newUser(@RequestBody newUser: UserDto): User {
         log.info("Requesting creation of new user ${newUser.username}")
         val user = convert(newUser)
         return userRepository.save(user)
@@ -88,34 +89,16 @@ class MongoUserController {
         userRepository.deleteById(userId)
     }
 
-    private fun convert(userDto: UserDto): MongoUser {
-        return MongoUser(userDto.id, userDto.username, passwordEncoder.encode(userDto.password), userDto.roles)
+    private fun convert(userDto: UserDto): User {
+        return User(
+            userDto.id?.toLong(),
+            userDto.username,
+            passwordEncoder.encode(userDto.password),
+            userDto.roles.map { UserRole(it) }.toMutableSet()
+        )
     }
 
-    private fun convertToDto(user: MongoUser): UserDto {
-        return UserDto(user.id, user.username, user.password, user.roles)
-    }
-}
-
-data class UserDto(
-
-    val id: String? = null,
-
-    val username: String,
-
-    val password: String,
-
-    val roles: MutableSet<String> = mutableSetOf()
-)
-
-class InvalidCredentialsException(message: String) : Exception(message)
-
-class UserNotFoundException(message: String) : Exception(message)
-
-class Utils {
-    companion object {
-        const val INVALID_CREDENTIALS = "Gebruikersnaam en/of wachtwoord onjuist"
+    private fun convertToDto(user: User): UserDto {
+        return UserDto(user.id.toString(), user.username, user.password, user.roles.map { it.name }.toMutableSet())
     }
 }
-
-data class ResponseError(val message: String)
