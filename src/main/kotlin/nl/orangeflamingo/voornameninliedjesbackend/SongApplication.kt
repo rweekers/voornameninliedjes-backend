@@ -150,7 +150,7 @@ class SongApplication {
                 setOf(sourceYouCanCallMeAl),
                 listOf(
                     LogEntry(Instant.now().minus(1, ChronoUnit.DAYS), "Parser"),
-                    LogEntry(Instant.now(), "Remco"),
+                    LogEntry(Instant.now(), "Remco")
                 ),
                 SongStatus.SHOW
             )
