@@ -3,6 +3,7 @@ package nl.orangeflamingo.voornameninliedjesbackend
 import nl.orangeflamingo.voornameninliedjesbackend.domain.*
 import nl.orangeflamingo.voornameninliedjesbackend.repository.mongo.MongoSongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.mongo.MongoUserRepository
+import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -22,7 +23,7 @@ class SongApplication {
 
     @Bean
     @Profile("dev")
-    fun init(repository: MongoSongRepository, userRepository: MongoUserRepository, passwordEncoder: PasswordEncoder) = CommandLineRunner {
+    fun init(repository: MongoSongRepository, mongoUserRepository: MongoUserRepository, userRepository: UserRepository, passwordEncoder: PasswordEncoder) = CommandLineRunner {
         val wikimediaPhotoPaulSimon = WikimediaPhoto(
             "https://upload.wikimedia.org/wikipedia/commons/2/2d/Paul_Simon_in_1982.jpg",
             "https://upload.wikimedia.org/wikipedia/commons/2/2d/Paul_Simon_in_1982.jpg"
@@ -159,10 +160,14 @@ class SongApplication {
 
         repository.saveAll(songList)
 
-        val userRemco = User(username = "remco", password = passwordEncoder.encode("secret"), roles = mutableSetOf("ADMIN", "OWNER"))
-        val userNadja = User(username = "nadja", password = passwordEncoder.encode("secret"), roles = mutableSetOf("ADMIN"))
+        val mongoUserRemco = MongoUser(username = "remco", password = passwordEncoder.encode("secret"), roles = mutableSetOf("ADMIN", "OWNER"))
+        val mongoUserNadja = MongoUser(username = "nadja", password = passwordEncoder.encode("secret"), roles = mutableSetOf("ADMIN"))
+        mongoUserRepository.saveAll(listOf(mongoUserRemco, mongoUserNadja))
+        log.info("Mongo: Saved users $mongoUserRemco and $mongoUserNadja")
+        val userRemco = User(username = "remco", password = passwordEncoder.encode("secret"), roles = mutableSetOf(UserRole("ADMIN"), UserRole("OWNER")))
+        val userNadja = User(username = "nadja", password = passwordEncoder.encode("secret"), roles = mutableSetOf(UserRole("ADMIN")))
         userRepository.saveAll(listOf(userRemco, userNadja))
-        log.info("Saving users $userRemco and $userNadja")
+        log.info("Postgres: Saved users $userRemco and $userNadja")
     }
 }
 

@@ -1,7 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.DbSong
-import nl.orangeflamingo.voornameninliedjesbackend.domain.User
+import nl.orangeflamingo.voornameninliedjesbackend.domain.MongoUser
 import nl.orangeflamingo.voornameninliedjesbackend.repository.mongo.MongoUserRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -29,7 +29,7 @@ class SongControllerTest(
     @BeforeEach
     fun createUser() {
         userRepository.save(
-            User(
+            MongoUser(
                 username = user,
                 password = encoder.encode(password),
                 roles = mutableSetOf(role)

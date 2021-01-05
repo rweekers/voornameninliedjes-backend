@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/beta")
+@RequestMapping("/gamma")
 class MigrationController {
 
     private val log = LoggerFactory.getLogger(MigrationController::class.java)
