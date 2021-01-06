@@ -7,8 +7,9 @@ import org.springframework.security.core.userdetails.UserDetails
 
 
 class MyUserPrincipal(
-        private val user: User
+    private val user: User
 ) : UserDetails {
+
     override fun isEnabled(): Boolean {
         return true
     }
@@ -34,6 +35,6 @@ class MyUserPrincipal(
     }
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return user.roles.map { SimpleGrantedAuthority("ROLE_$it") }.toMutableList()
+        return user.roles.map { SimpleGrantedAuthority("ROLE_${it.name}") }.toMutableList()
     }
 }

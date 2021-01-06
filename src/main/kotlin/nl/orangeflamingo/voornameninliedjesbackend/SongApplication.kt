@@ -164,10 +164,6 @@ class SongApplication {
         val mongoUserNadja = MongoUser(username = "nadja", password = passwordEncoder.encode("secret"), roles = mutableSetOf("ADMIN"))
         mongoUserRepository.saveAll(listOf(mongoUserRemco, mongoUserNadja))
         log.info("Mongo: Saved users $mongoUserRemco and $mongoUserNadja")
-        val userRemco = User(username = "remco", password = passwordEncoder.encode("secret"), roles = mutableSetOf(UserRole("ADMIN"), UserRole("OWNER")))
-        val userNadja = User(username = "nadja", password = passwordEncoder.encode("secret"), roles = mutableSetOf(UserRole("ADMIN")))
-        userRepository.saveAll(listOf(userRemco, userNadja))
-        log.info("Postgres: Saved users $userRemco and $userNadja")
     }
 }
 
