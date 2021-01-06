@@ -62,33 +62,20 @@ val stopMyPostgresAppContainer by tasks.creating(DockerStopContainer::class) {
 }
 
 plugins {
+    id("jacoco")
     id("org.springframework.boot") version "2.4.1"
     id("io.spring.dependency-management") version "1.0.10.RELEASE"
     id("com.bmuschko.docker-remote-api") version "6.6.1"
     id("org.sonarqube") version "3.0"
-    id("jacoco")
     kotlin("jvm") version "1.4.21"
     kotlin("plugin.spring") version "1.4.21"
 }
 
-//tasks.jacocoTestReport {
-//    reports {
-//        xml.isEnabled = true
-//        csv.isEnabled = false
-//        html.isEnabled = false
-//        html.destination = file("$buildDir/reports/coverage")
-//    }
-//}
-//
-//tasks.jacocoTestCoverageVerification {
-//    violationRules {
-//        rule {
-//            limit {
-//                minimum = "0.3".toBigDecimal()
-//            }
-//        }
-//    }
-//}
+tasks.jacocoTestReport {
+    reports {
+        xml.isEnabled = true
+    }
+}
 
 tasks.test {
     useJUnitPlatform()
