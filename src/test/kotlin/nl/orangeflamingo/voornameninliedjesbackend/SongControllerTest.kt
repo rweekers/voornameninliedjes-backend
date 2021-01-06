@@ -1,8 +1,9 @@
 package nl.orangeflamingo.voornameninliedjesbackend
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.DbSong
-import nl.orangeflamingo.voornameninliedjesbackend.domain.MongoUser
-import nl.orangeflamingo.voornameninliedjesbackend.repository.mongo.MongoUserRepository
+import nl.orangeflamingo.voornameninliedjesbackend.domain.User
+import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
+import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +19,7 @@ import kotlin.text.Charsets.UTF_8
 @AutoConfigureWebTestClient
 class SongControllerTest(
     @Autowired val client: WebTestClient,
-    @Autowired val userRepository: MongoUserRepository,
+    @Autowired val userRepository: UserRepository,
     @Autowired val encoder: PasswordEncoder
 ) {
 
@@ -29,10 +30,10 @@ class SongControllerTest(
     @BeforeEach
     fun createUser() {
         userRepository.save(
-            MongoUser(
+            User(
                 username = user,
                 password = encoder.encode(password),
-                roles = mutableSetOf(role)
+                roles = mutableSetOf(UserRole(role))
             )
         )
     }

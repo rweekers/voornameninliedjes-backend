@@ -45,10 +45,10 @@ class UserController {
         return ResponseEntity.of(
             Optional.of(
                 UserDto(
-                    id = dbUser.id,
+                    id = dbUser.id.toString(),
                     username = dbUser.username,
                     password = user.password,
-                    roles = dbUser.roles
+                    roles = dbUser.roles.map { it.name }.toMutableSet()
                 )
             )
         )
