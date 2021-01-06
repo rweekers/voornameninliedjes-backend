@@ -3,12 +3,15 @@ install: skip
 
 os: linux
 dist: xenial
-jdk:  openjdk11
+jdk: openjdk11
+
+git:
+  depth: false
 
 script:
-- "./gradlew build --scan -s"
-- "./gradlew jacocoTestReport"
-- "./gradlew sonarqube"
+  - "./gradlew build --scan -s"
+  - "./gradlew jacocoTestReport"
+  - "./gradlew sonarqube"
 addons:
   sonarcloud:
     organization: nl-orangeflamingo
