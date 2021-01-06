@@ -46,7 +46,20 @@ class MongoSongService {
 
     fun findById(id: String): MongoSong {
         log.info("Getting song with id $id")
-        val song = mongoSongRepository.findById(id).orElseThrow()
+        val song: DbSong = mongoSongRepository.findById(id).orElseThrow()
+
+        val photos = song.flickrPhotos.map { flickrApiPhoto ->
+            flickrApiClient.getPhoto(flickrApiPhoto).blockOptional().orElseThrow()
+        }
+        val licenses = flickrApiClient.getLicenses().block()!!
+        val owners = photos.map { flickrApiClient.getOwnerInformation(it.ownerId).blockOptional().orElseThrow() }
+            .sortedBy { it.username }
+
+        val photoDetail = photos.map { photo ->
+            val license = licenses.license.first { it.id == photo.licenseId }
+            val owner = owners.first { it.id == photo.ownerId }
+            convertToPhotoDetail(photo, license, owner)
+        }
 
         return MongoSong(
             id = song.id,
@@ -59,63 +72,14 @@ class MongoSongService {
             artistImage = song.artistImage,
             status = song.status,
             wikimediaPhotos = song.wikimediaPhotos,
-            flickrPhotos = emptySet()
+            flickrPhotos = photoDetail.toSet(),
+            sources = song.sources.map {
+                SourceDetail(
+                    url = it.url,
+                    name = it.name
+                )
+            }.toSet()
         )
-
-//        val photos = song.flatMap { s ->
-//            Flux.fromIterable(s.flickrPhotos)
-//                .parallel()
-//                .flatMap { flickrApiPhoto ->
-//                    flickrApiClient.getPhoto(flickrApiPhoto)
-//                }
-//                .collectSortedList { o1, o2 -> o1.id.compareTo(o2.id) }
-//        }
-//
-//        val licenses = flickrApiClient.getLicenses()
-//
-//        val owners = photos.flatMap { p ->
-//            Flux.fromIterable(p)
-//                .parallel()
-//                .flatMap { photoDetail ->
-//                    flickrApiClient.getOwnerInformation(photoDetail.ownerId)
-//                }
-//                .collectSortedList { o1, o2 -> o1.username.compareTo(o2.username) }
-//        }
-//
-//        val photosDetail = Mono.zip(photos, licenses, owners).map {
-//            val p = it.t1
-//            val l = it.t2
-//            val o = it.t3
-//
-//            p.map { photo ->
-//                val license = l.license.first { license -> license.id == photo.licenseId }
-//                val owner = o.first { owner -> owner.id == photo.ownerId }
-//
-//                convertToPhotoDetail(photo, license, owner)
-//            }
-//        }
-//
-//        return Mono.zip(song, photosDetail) { s, flickrPhotos ->
-//            MongoSong(
-//                id = s.id,
-//                name = s.name,
-//                title = s.title,
-//                artist = s.artist,
-//                background = s.background,
-//                youtube = s.youtube,
-//                spotify = s.spotify,
-//                artistImage = s.artistImage,
-//                status = s.status,
-//                wikimediaPhotos = s.wikimediaPhotos,
-//                flickrPhotos = flickrPhotos.map { it }.toSet(),
-//                sources = s.sources.map {
-//                    SourceDetail(
-//                        url = it.url,
-//                        name = it.name
-//                    )
-//                }.toSet()
-//            )
-//        }
     }
 
     private fun convertToPhotoDetail(
