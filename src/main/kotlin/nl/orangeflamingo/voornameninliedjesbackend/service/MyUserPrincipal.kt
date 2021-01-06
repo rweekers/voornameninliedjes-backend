@@ -1,13 +1,13 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
-import nl.orangeflamingo.voornameninliedjesbackend.domain.MongoUser
+import nl.orangeflamingo.voornameninliedjesbackend.domain.User
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 
 class MyUserPrincipal(
-        private val user: MongoUser
+        private val user: User
 ) : UserDetails {
     override fun isEnabled(): Boolean {
         return true
