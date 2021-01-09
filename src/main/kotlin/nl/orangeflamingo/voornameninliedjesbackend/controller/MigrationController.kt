@@ -47,6 +47,6 @@ class MigrationController {
             return
         }
         songService.migrateSongs()
-        log.info("$count songs migrated")
+        log.info("Songs migrated")
     }
 }

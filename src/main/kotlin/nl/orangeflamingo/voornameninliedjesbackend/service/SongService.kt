@@ -7,6 +7,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepos
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.time.Instant
 
 @Service
 class SongService @Autowired constructor(
@@ -26,37 +27,52 @@ class SongService @Autowired constructor(
         log.info("Gotten ${songs.size} songs")
     }
 
-    private fun migrateSong(song: DbSong) {
-        val artist = artistRepository.findFirstByName(song.artist)!!
+    private fun migrateSong(mongoSong: DbSong) {
+        val artist = artistRepository.findFirstByName(mongoSong.artist) ?: artistRepository.save(
+            Artist(
+                name = mongoSong.artist,
+                background = null,
+                wikimediaPhotos = mutableSetOf(),
+                flickrPhotos = mutableSetOf(),
+                logEntries = mutableListOf(
+                    ArtistLogEntry(
+                        date = Instant.now(),
+                        username = "Mongo2PostgresMigration"
+                    )
+                )
+            )
+        )
 
-        val pgSong = Song(
-            title = song.title,
-            name = song.name,
-            artistId = artist.id!!,
-            artistImage = song.artistImage,
-            background = song.background,
-            youtube = song.youtube,
-            spotify = song.spotify,
-            status = song.status ?: SongStatus.IN_PROGRESS,
-            mongoId = song.id,
-            sources = song.sources.map {
+        val song = Song(
+            title = mongoSong.title,
+            name = mongoSong.name,
+            artistImage = mongoSong.artistImage,
+            background = mongoSong.background,
+            youtube = mongoSong.youtube,
+            spotify = mongoSong.spotify,
+            status = mongoSong.status ?: SongStatus.IN_PROGRESS,
+            mongoId = mongoSong.id,
+            sources = mongoSong.sources.map {
                 SongSource(
                     url = it.url,
                     name = it.name
                 )
             }.toMutableList(),
-            logEntries = song.logs.map {
+            logEntries = mongoSong.logs.map {
                 SongLogEntry(
                     date = it.date,
                     username = it.user
                 )
             }.toMutableList()
         )
-        val songD = songRepository.save(pgSong)
 
-        val artistD = updateArtist(song, artist)
+        song.addArtist(artist)
 
-        log.info("Migrated $song, resulted in $songD and $artistD")
+        val songD = songRepository.save(song)
+
+        val artistD = updateArtist(mongoSong, artist)
+
+        log.info("Migrated $mongoSong, resulted in $songD and $artistD")
     }
 
     private fun updateArtist(song: DbSong, artist: Artist): Artist {
@@ -75,10 +91,6 @@ class SongService @Autowired constructor(
                 )
             )
         }
-
-
-        // Mongo2PostMigration
-
         return artistRepository.save(artist)
     }
 }
