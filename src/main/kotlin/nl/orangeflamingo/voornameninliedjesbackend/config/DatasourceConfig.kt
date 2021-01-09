@@ -3,8 +3,8 @@ package nl.orangeflamingo.voornameninliedjesbackend.config
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.postgresql.Driver
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.flyway.FlywayDataSource
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -19,19 +19,15 @@ class DatasourceConfig {
     @Bean
     @Primary
     fun dataSource(
-        @Value("\${spring.datasource.application.url}") url: String?,
-        @Value("\${spring.datasource.application.username}") username: String?,
-        @Value("\${spring.datasource.application.password}") password: String?,
-        @Value("\${spring.datasource.application.schema}") schema: String?,
-        @Value("\${spring.datasource.application.hikari.pool-name}") poolName: String?
+        applicationDatasourceProperties: ApplicationDatasourceProperties
     ): DataSource {
         val config = HikariConfig()
-        config.username = username
-        config.password = password
-        config.jdbcUrl = url
-        config.schema = schema
+        config.username = applicationDatasourceProperties.username
+        config.password = applicationDatasourceProperties.password
+        config.jdbcUrl = applicationDatasourceProperties.url
+        config.schema = applicationDatasourceProperties.schema
         config.maximumPoolSize = 10
-        config.poolName = poolName
+        config.poolName = applicationDatasourceProperties.poolName
         config.driverClassName = Driver::class.java.name
         config.dataSourceProperties["prepareThreshold"] = 0
         return HikariDataSource(config)
@@ -40,21 +36,37 @@ class DatasourceConfig {
     @Bean
     @FlywayDataSource
     fun migrationDataSource(
-        @Value("\${spring.datasource.migration.url}") url: String?,
-        @Value("\${spring.datasource.migration.username}") username: String?,
-        @Value("\${spring.datasource.migration.password}") password: String?,
-        @Value("\${spring.datasource.application.schema}") schema: String?,
-        @Value("\${spring.datasource.migration.hikari.pool-name}") poolName: String?
+        migrationDatasourceProperties: MigrationDatasourceProperties
     ): DataSource {
         val config = HikariConfig()
-        config.username = username
-        config.password = password
-        config.jdbcUrl = url
-        config.schema = schema
+        config.username = migrationDatasourceProperties.username
+        config.password = migrationDatasourceProperties.password
+        config.jdbcUrl = migrationDatasourceProperties.url
+        config.schema = migrationDatasourceProperties.schema
         config.maximumPoolSize = 10
-        config.poolName = poolName
+        config.poolName = migrationDatasourceProperties.poolName
         config.driverClassName = Driver::class.java.name
         config.dataSourceProperties["prepareThreshold"] = 0
         return HikariDataSource(config)
     }
+}
+
+@Configuration
+@ConfigurationProperties(prefix = "voornameninliedjes.datasource.application")
+class ApplicationDatasourceProperties {
+    lateinit var username: String
+    lateinit var password: String
+    lateinit var url: String
+    lateinit var schema: String
+    lateinit var poolName: String
+}
+
+@Configuration
+@ConfigurationProperties(prefix = "voornameninliedjes.datasource.migration")
+class MigrationDatasourceProperties {
+    lateinit var username: String
+    lateinit var password: String
+    lateinit var url: String
+    lateinit var schema: String
+    lateinit var poolName: String
 }

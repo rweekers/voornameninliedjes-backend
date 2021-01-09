@@ -28,9 +28,6 @@ class SongController {
     @Autowired
     private lateinit var songService: SongService
 
-    @Autowired
-    private lateinit var flickrApiClient: FlickrApiClient
-
     @GetMapping("/songs/{id}")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     fun getSongById(@PathVariable id: Long): SongDto {
