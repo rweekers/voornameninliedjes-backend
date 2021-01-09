@@ -1,8 +1,8 @@
 CREATE TABLE SONGS_ARTISTS
 (
-    SONG            bigint,
-    ARTIST          bigint,
-    ORIGINAL_ARTIST boolean default true,
+    SONG            bigint  not null references SONGS (id),
+    ARTIST          bigint  not null references ARTISTS (id),
+    ORIGINAL_ARTIST boolean not null,
     primary key (SONG, ARTIST)
 );
 

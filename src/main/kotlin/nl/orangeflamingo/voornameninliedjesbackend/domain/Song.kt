@@ -24,15 +24,18 @@ class Song(
     val sources: MutableList<SongSource> = mutableListOf(),
     @MappedCollection(idColumn = "song_id", keyColumn = "song_key")
     val logEntries: MutableList<SongLogEntry> = mutableListOf(),
-    val artists: MutableSet<ArtistRef> = mutableSetOf()
+    val artists: MutableSet<ArtistRef> = mutableSetOf(),
 ) {
-    fun addArtist(artist: Artist) {
-        artists.add(createArtistRef(artist))
+    fun addArtist(artist: Artist, originalArtist: Boolean = true) {
+        artists.add(createArtistRef(artist, originalArtist))
     }
 
-    private fun createArtistRef(artist: Artist): ArtistRef {
+    private fun createArtistRef(artist: Artist, originalArtist: Boolean): ArtistRef {
         notNull(artist.id, "Artist id, must not be null")
-        return ArtistRef(artist.id)
+        return ArtistRef(
+            artist = artist.id ?: throw RuntimeException(),
+            originalArtist = originalArtist
+        )
     }
 }
 

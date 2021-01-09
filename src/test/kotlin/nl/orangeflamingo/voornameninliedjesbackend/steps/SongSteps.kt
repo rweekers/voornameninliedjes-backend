@@ -2,8 +2,10 @@ package nl.orangeflamingo.voornameninliedjesbackend.steps
 
 import io.cucumber.java8.En
 import nl.orangeflamingo.voornameninliedjesbackend.controller.SongController
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
+import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.junit.jupiter.api.Assertions
 import org.slf4j.LoggerFactory
@@ -17,11 +19,16 @@ class SongSteps : En {
     private lateinit var songController: SongController
 
     @Autowired
+    private lateinit var artistRepository: ArtistRepository
+
+    @Autowired
     private lateinit var songRepository: SongRepository
 
     init {
-        Given("the next song:") { song: Song ->
+        Given("the next song for artist {string}:") { artistName: String, song: Song ->
             log.info("Song: $song")
+            val artist = artistRepository.findFirstByName(artistName)?: Artist(name = artistName)
+            song.addArtist(artist)
             songRepository.save(song)
         }
 
