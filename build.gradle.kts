@@ -115,6 +115,11 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mockito:mockito-core:2.+")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:latest.release")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
+    testImplementation("io.cucumber:cucumber-java8:6.8.1")
+    testImplementation("io.cucumber:cucumber-spring:6.8.1")
+    testImplementation("io.cucumber:cucumber-junit-platform-engine:6.8.1")
 
 }
 

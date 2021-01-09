@@ -11,13 +11,13 @@ class Artist(
     @Id
     var id: Long? = null,
     val name: String,
-    val background: String?,
+    val background: String? = null,
     @MappedCollection(idColumn = "artist_id")
-    val wikimediaPhotos: MutableSet<ArtistWikimediaPhoto>,
+    val wikimediaPhotos: MutableSet<ArtistWikimediaPhoto> = mutableSetOf(),
     @MappedCollection(idColumn = "artist_id")
-    val flickrPhotos: MutableSet<ArtistFlickrPhoto>,
+    val flickrPhotos: MutableSet<ArtistFlickrPhoto> = mutableSetOf(),
     @MappedCollection(idColumn = "artist_id", keyColumn = "artist_key")
-    val logEntries: MutableList<ArtistLogEntry>
+    val logEntries: MutableList<ArtistLogEntry> = mutableListOf()
 ) {
     fun addWikimediaPhoto(wikimediaPhoto: ArtistWikimediaPhoto) {
         this.wikimediaPhotos.add(wikimediaPhoto)

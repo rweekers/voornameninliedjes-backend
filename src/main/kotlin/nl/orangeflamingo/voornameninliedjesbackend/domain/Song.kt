@@ -3,6 +3,7 @@ package nl.orangeflamingo.voornameninliedjesbackend.domain
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.MappedCollection
 import org.springframework.data.relational.core.mapping.Table
+import org.springframework.util.Assert.notNull
 import java.time.Instant
 
 
@@ -11,20 +12,29 @@ class Song(
 
     @Id
     var id: Long? = null,
-    val artistId: Long,
     val title: String,
     val name: String,
-    val artistImage: String?,
-    val background: String?,
-    val youtube: String?,
-    val spotify: String?,
+    val artistImage: String? = null,
+    val background: String? = null,
+    val youtube: String? = null,
+    val spotify: String? = null,
     val status: SongStatus,
-    val mongoId: String?,
+    val mongoId: String? = null,
     @MappedCollection(idColumn = "song_id", keyColumn = "song_key")
-    val sources: MutableList<SongSource>,
+    val sources: MutableList<SongSource> = mutableListOf(),
     @MappedCollection(idColumn = "song_id", keyColumn = "song_key")
-    val logEntries: MutableList<SongLogEntry>
-)
+    val logEntries: MutableList<SongLogEntry> = mutableListOf(),
+    val artists: MutableSet<ArtistRef> = mutableSetOf()
+) {
+    fun addArtist(artist: Artist) {
+        artists.add(createArtistRef(artist))
+    }
+
+    private fun createArtistRef(artist: Artist): ArtistRef {
+        notNull(artist.id, "Artist id, must not be null")
+        return ArtistRef(artist.id)
+    }
+}
 
 @Table("song_sources")
 class SongSource(
