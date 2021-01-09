@@ -2,29 +2,6 @@ spring:
   output:
     ansi:
       enabled: always
-  datasource:
-    application:
-      url: jdbc:postgresql://localhost:5433/voornameninliedjes?createDatabaseIfNotExist=true
-      schema: vil
-      username: vil_app
-      password: secret
-      type: com.zaxxer.hikari.HikariDataSource
-      driverClassName: org.postgresql.Driver
-      hikari:
-        pool-name: voornameninliedjes-app-hikari-pool
-        name: dataSource
-        data-source-properties:
-          prepareThreshold: 0
-    migration:
-      url: jdbc:postgresql://localhost:5433/voornameninliedjes?createDatabaseIfNotExist=true
-      schema: vil
-      username: postgres
-      password: postgres
-      type: com.zaxxer.hikari.HikariDataSource
-      driverClassName: org.postgresql.Driver
-      hikari:
-        pool-name: voornameninliedjes-migration-hikari-pool
-        name: migrationDataSource
   data:
     mongodb:
       repositories:
@@ -39,6 +16,21 @@ spring:
   flyway:
     # Explicit configuration to easily add development data in different profile
     locations: classpath:db/migration/{vendor}/prod
+
+voornameninliedjes:
+  datasource:
+    application:
+      url: jdbc:postgresql://localhost:5433/voornameninliedjes?createDatabaseIfNotExist=true
+      schema: vil
+      username: vil_app
+      password: secret
+      pool-name: voornameninliedjes-app-hikari-pool
+    migration:
+      url: jdbc:postgresql://localhost:5433/voornameninliedjes?createDatabaseIfNotExist=true
+      schema: vil
+      username: postgres
+      password: postgres
+      pool-name: voornameninliedjes-migration-hikari-pool
 
 jobs:
   enrichSong:

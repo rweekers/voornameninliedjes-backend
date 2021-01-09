@@ -1,10 +1,8 @@
 package nl.orangeflamingo.voornameninliedjesbackend.steps
 
 import io.cucumber.java8.En
-import nl.orangeflamingo.voornameninliedjesbackend.controller.SongController
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
-import org.junit.jupiter.api.Assertions
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -20,6 +18,7 @@ class ArtistSteps: En {
             val artist = Artist(
                 name = artistName
             )
+            log.info("Persisting $artist")
             artistRepository.save(artist)
         }
     }

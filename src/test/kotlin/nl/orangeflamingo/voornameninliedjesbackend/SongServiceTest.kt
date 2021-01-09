@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 
-class SongServiceTest() {
+class SongServiceTest {
 
     private val mongoSongRepository = Mockito.mock(MongoSongRepository::class.java)
 
