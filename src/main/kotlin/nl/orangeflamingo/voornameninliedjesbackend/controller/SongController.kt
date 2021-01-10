@@ -1,10 +1,10 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import com.fasterxml.jackson.annotation.JsonView
-import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.PhotoDetail
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.dto.*
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
@@ -40,7 +40,7 @@ class SongController {
     @JsonView(Views.Summary::class)
     fun getSongs(): List<SongDto> {
         log.info("Requesting all songs...")
-        return songRepository.findAllOrderedByName().map { convertToDto(Pair(it, emptySet())) }
+        return songRepository.findAllByStatusOrderedByName(SongStatus.SHOW).map { convertToDto(Pair(it, emptySet())) }
     }
 
     private fun convertToDto(entry: Pair<Song, Set<PhotoDetail>>): SongDto {
