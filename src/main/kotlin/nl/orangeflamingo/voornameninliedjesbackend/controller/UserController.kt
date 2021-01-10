@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("/delta")
+@RequestMapping("/gamma")
 class UserController {
     private val log = LoggerFactory.getLogger(UserController::class.java)
 
@@ -102,3 +102,26 @@ class UserController {
         return UserDto(user.id.toString(), user.username, user.password, user.roles.map { it.name }.toMutableSet())
     }
 }
+
+data class UserDto(
+
+    val id: String? = null,
+
+    val username: String,
+
+    val password: String,
+
+    val roles: MutableSet<String> = mutableSetOf()
+)
+
+class InvalidCredentialsException(message: String) : Exception(message)
+
+class UserNotFoundException(message: String) : Exception(message)
+
+class Utils {
+    companion object {
+        const val INVALID_CREDENTIALS = "Gebruikersnaam en/of wachtwoord onjuist"
+    }
+}
+
+data class ResponseError(val message: String)

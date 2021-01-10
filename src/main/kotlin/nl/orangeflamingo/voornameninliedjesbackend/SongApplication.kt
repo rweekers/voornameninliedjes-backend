@@ -2,7 +2,6 @@ package nl.orangeflamingo.voornameninliedjesbackend
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.*
 import nl.orangeflamingo.voornameninliedjesbackend.repository.mongo.MongoSongRepository
-import nl.orangeflamingo.voornameninliedjesbackend.repository.mongo.MongoUserRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
@@ -23,7 +22,7 @@ class SongApplication {
 
     @Bean
     @Profile("dev")
-    fun init(repository: MongoSongRepository, mongoUserRepository: MongoUserRepository, userRepository: UserRepository, passwordEncoder: PasswordEncoder) = CommandLineRunner {
+    fun init(repository: MongoSongRepository, userRepository: UserRepository, passwordEncoder: PasswordEncoder) = CommandLineRunner {
         val wikimediaPhotoPaulSimon = WikimediaPhoto(
             "https://upload.wikimedia.org/wikipedia/commons/2/2d/Paul_Simon_in_1982.jpg",
             "https://upload.wikimedia.org/wikipedia/commons/2/2d/Paul_Simon_in_1982.jpg"
@@ -156,14 +155,7 @@ class SongApplication {
                 SongStatus.SHOW
             )
         )
-
-
         repository.saveAll(songList)
-
-        val mongoUserRemco = MongoUser(username = "remco", password = passwordEncoder.encode("secret"), roles = mutableSetOf("ADMIN", "OWNER"))
-        val mongoUserNadja = MongoUser(username = "nadja", password = passwordEncoder.encode("secret"), roles = mutableSetOf("ADMIN"))
-        mongoUserRepository.saveAll(listOf(mongoUserRemco, mongoUserNadja))
-        log.info("Mongo: Saved users $mongoUserRemco and $mongoUserNadja")
     }
 }
 
