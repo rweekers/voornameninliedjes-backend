@@ -18,12 +18,6 @@ class MongoSongService {
     @Autowired
     private lateinit var flickrApiClient: FlickrApiClient
 
-    fun findAllArtistNames(): List<String> {
-        return mongoSongRepository.findAll()
-            .map { it.artist }
-            .distinct()
-    }
-
     fun findAllByStatusOrderByName(songStatus: SongStatus): List<MongoSong> {
         log.info("Getting all songs with status ${songStatus.name}")
         return mongoSongRepository.findAllByStatusOrderByName(SongStatus.SHOW).map { song ->

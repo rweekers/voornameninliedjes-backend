@@ -46,7 +46,7 @@ class DatasourceConfig {
 
 @Configuration
 @ConfigurationProperties(prefix = "voornameninliedjes.datasource.application")
-class ApplicationDatasourceProperties() : DatasourceProperties()
+class ApplicationDatasourceProperties : DatasourceProperties()
 
 @Configuration
 @ConfigurationProperties(prefix = "voornameninliedjes.datasource.migration")
