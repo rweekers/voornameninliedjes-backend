@@ -20,31 +20,24 @@ class DatasourceConfig {
     @Primary
     fun dataSource(
         applicationDatasourceProperties: ApplicationDatasourceProperties
-    ): DataSource {
-        val config = HikariConfig()
-        config.username = applicationDatasourceProperties.username
-        config.password = applicationDatasourceProperties.password
-        config.jdbcUrl = applicationDatasourceProperties.url
-        config.schema = applicationDatasourceProperties.schema
-        config.maximumPoolSize = 10
-        config.poolName = applicationDatasourceProperties.poolName
-        config.driverClassName = Driver::class.java.name
-        config.dataSourceProperties["prepareThreshold"] = 0
-        return HikariDataSource(config)
-    }
+    ): DataSource =
+        createDatasource(applicationDatasourceProperties)
 
     @Bean
     @FlywayDataSource
     fun migrationDataSource(
         migrationDatasourceProperties: MigrationDatasourceProperties
-    ): DataSource {
+    ): DataSource =
+        createDatasource(migrationDatasourceProperties)
+
+    private fun createDatasource(properties: DatasourceProperties): DataSource {
         val config = HikariConfig()
-        config.username = migrationDatasourceProperties.username
-        config.password = migrationDatasourceProperties.password
-        config.jdbcUrl = migrationDatasourceProperties.url
-        config.schema = migrationDatasourceProperties.schema
+        config.username = properties.username
+        config.password = properties.password
+        config.jdbcUrl = properties.url
+        config.schema = properties.schema
         config.maximumPoolSize = 10
-        config.poolName = migrationDatasourceProperties.poolName
+        config.poolName = properties.poolName
         config.driverClassName = Driver::class.java.name
         config.dataSourceProperties["prepareThreshold"] = 0
         return HikariDataSource(config)
@@ -53,18 +46,14 @@ class DatasourceConfig {
 
 @Configuration
 @ConfigurationProperties(prefix = "voornameninliedjes.datasource.application")
-class ApplicationDatasourceProperties {
-    lateinit var username: String
-    lateinit var password: String
-    lateinit var url: String
-    lateinit var schema: String
-    lateinit var poolName: String
-}
+class ApplicationDatasourceProperties() : DatasourceProperties()
 
 @Configuration
 @ConfigurationProperties(prefix = "voornameninliedjes.datasource.migration")
-class MigrationDatasourceProperties {
-    lateinit var username: String
+class MigrationDatasourceProperties : DatasourceProperties()
+
+open class DatasourceProperties {
+    open lateinit var username: String
     lateinit var password: String
     lateinit var url: String
     lateinit var schema: String

@@ -1,14 +1,22 @@
+@file:Suppress("SpringJavaAutowiredMembersInspection")
+
 package nl.orangeflamingo.voornameninliedjesbackend.steps
 
 import io.cucumber.java8.En
+import nl.orangeflamingo.voornameninliedjesbackend.controller.ArtistController
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
+import org.junit.jupiter.api.Assertions
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 
+@Suppress("SpringJavaAutowiredMembersInspection")
 class ArtistSteps: En {
 
     private val log = LoggerFactory.getLogger(ArtistSteps::class.java)
+
+    @Autowired
+    private lateinit var artistController: ArtistController
 
     @Autowired
     private lateinit var artistRepository: ArtistRepository
@@ -20,6 +28,12 @@ class ArtistSteps: En {
             )
             log.info("Persisting $artist")
             artistRepository.save(artist)
+        }
+
+
+        Then("there are {int} artists returned") { numberOfSongs: Int ->
+            val artistsCount = artistController.getArtists().size
+            Assertions.assertEquals(numberOfSongs, artistsCount)
         }
     }
 }

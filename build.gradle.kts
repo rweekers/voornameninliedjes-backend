@@ -121,6 +121,8 @@ dependencies {
     testImplementation("io.cucumber:cucumber-spring:6.8.1")
     testImplementation("io.cucumber:cucumber-junit-platform-engine:6.8.1")
 
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
 }
 
 configurations {

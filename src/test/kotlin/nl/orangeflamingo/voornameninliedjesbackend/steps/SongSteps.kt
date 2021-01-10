@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Assertions
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 
+@Suppress("SpringJavaAutowiredMembersInspection")
 class SongSteps : En {
 
     private val log = LoggerFactory.getLogger(SongSteps::class.java)
@@ -33,8 +34,8 @@ class SongSteps : En {
         }
 
         Then("there are {int} songs returned") { numberOfSongs: Int ->
-            val songs = songController.getSongs().size
-            Assertions.assertEquals(numberOfSongs, songs)
+            val songsCount = songController.getSongs().size
+            Assertions.assertEquals(numberOfSongs, songsCount)
         }
 
         DataTableType { entry: Map<String, String> ->

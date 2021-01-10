@@ -1,0 +1,63 @@
+{
+  "properties": [
+    {
+      "name": "voornameninliedjes.datasource.application.url",
+      "type": "java.lang.String",
+      "description": "Database URL used for the application."
+    },
+    {
+      "name": "voornameninliedjes.datasource.application.username",
+      "type": "java.lang.String",
+      "description": "Database user used for the application."
+    },
+    {
+      "name": "voornameninliedjes.datasource.application.schema",
+      "type": "java.lang.String",
+      "description": "Database schema used for the application."
+    },
+    {
+      "name": "voornameninliedjes.datasource.application.pool-name",
+      "type": "java.lang.String",
+      "description": "Pool name for the application."
+    },
+    {
+      "name": "voornameninliedjes.datasource.application.password",
+      "type": "java.lang.String",
+      "description": "Database user password used for the application."
+    },
+    {
+      "name": "voornameninliedjes.datasource.migration.url",
+      "type": "java.lang.String",
+      "description": "Database URL used for the migration."
+    },
+    {
+      "name": "voornameninliedjes.datasource.migration.schema",
+      "type": "java.lang.String",
+      "description": "Database schema used for the migration."
+    },
+    {
+      "name": "voornameninliedjes.datasource.migration.username",
+      "type": "java.lang.String",
+      "description": "Database user used for the migration."
+    },
+    {
+      "name": "voornameninliedjes.datasource.migration.password",
+      "type": "java.lang.String",
+      "description": "Database user password used for the application."
+    },
+    {
+      "name": "voornameninliedjes.datasource.migration.pool-name",
+      "type": "java.lang.String",
+      "description": "Pool name for the migration."
+    },
+    {
+      "name": "jobs.enrichSong.rate",
+      "type": "java.lang.String",
+      "description": "Job rate for enriching songs."
+    },
+    {
+      "name": "jobs.updateSong.cron",
+      "type": "java.lang.String",
+      "description": "Cron expression for updating songs."
+    }
+  ] }
