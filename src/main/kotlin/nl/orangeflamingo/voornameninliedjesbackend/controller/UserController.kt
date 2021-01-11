@@ -69,7 +69,7 @@ class UserController {
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
     fun getUserById(@PathVariable("id") id: String): UserDto {
         log.info("Requesting user with id $id")
-        return userRepository.findById(id).map { convertToDto(it) }.orElseThrow()
+        return userRepository.findById(id).map { convertToDto(it) }.orElseThrow { UserNotFoundException("User with id $id not found") }
     }
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
