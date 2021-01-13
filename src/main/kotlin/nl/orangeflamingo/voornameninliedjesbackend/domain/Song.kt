@@ -8,7 +8,7 @@ import java.time.Instant
 
 
 @Table("songs")
-class Song(
+data class Song(
 
     @Id
     var id: Long? = null,
@@ -24,7 +24,7 @@ class Song(
     val sources: MutableList<SongSource> = mutableListOf(),
     @MappedCollection(idColumn = "song_id", keyColumn = "song_key")
     val logEntries: MutableList<SongLogEntry> = mutableListOf(),
-    val artists: MutableSet<ArtistRef> = mutableSetOf(),
+    val artists: MutableSet<ArtistRef> = mutableSetOf()
 ) {
     fun addArtist(artist: Artist, originalArtist: Boolean = true) {
         artists.add(createArtistRef(artist, originalArtist))
@@ -40,13 +40,13 @@ class Song(
 }
 
 @Table("song_sources")
-class SongSource(
+data class SongSource(
     val url: String,
     val name: String
 )
 
 @Table("song_log_entries")
-class SongLogEntry(
+data class SongLogEntry(
     val date: Instant,
     val username: String
 )

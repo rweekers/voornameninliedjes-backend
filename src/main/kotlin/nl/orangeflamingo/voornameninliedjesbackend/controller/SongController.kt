@@ -1,9 +1,8 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import com.fasterxml.jackson.annotation.JsonView
+import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.PhotoDetail
-import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.dto.*
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
@@ -32,7 +31,7 @@ class SongController {
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     fun getSongById(@PathVariable id: Long): SongDto {
         log.info("Requesting song with id $id...")
-        return convertToDto(songService.findById(id))
+        return convertToDto(songService.findByIdDetails(id))
     }
 
     @GetMapping("/songs")
@@ -40,24 +39,21 @@ class SongController {
     @JsonView(Views.Summary::class)
     fun getSongs(): List<SongDto> {
         log.info("Requesting all songs...")
-        return songRepository.findAllByStatusOrderedByName(SongStatus.SHOW).map { convertToDto(Pair(it, emptySet())) }
+        return songService.findAllByStatusOrderedByName(SongStatus.SHOW).map { convertToDto(it) }
     }
 
-    private fun convertToDto(entry: Pair<Song, Set<PhotoDetail>>): SongDto {
-        val song = entry.first
-        val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
-
+    private fun convertToDto(song: AggregateSong): SongDto {
         return SongDto(
             id = song.id.toString(),
-            artist = artist.name,
+            artist = song.artistName,
             title = song.title,
             name = song.name,
             artistImage = song.artistImage,
             background = song.background,
             youtube = song.youtube,
             spotify = song.spotify,
-            wikimediaPhotos = artist.wikimediaPhotos.map { convertWikimediaPhotoToDto(it) }.toSet(),
-            flickrPhotos = entry.second.map {
+            wikimediaPhotos = song.wikimediaPhotos.map { convertWikimediaPhotoToDto(it) }.toSet(),
+            flickrPhotos = song.flickrPhotoDetail.map {
                 PhotoDto(
                     id = it.id,
                     url = it.url,

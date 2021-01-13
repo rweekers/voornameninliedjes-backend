@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
 @Table("artists")
-class Artist(
+data class Artist(
 
     @Id
     var id: Long? = null,

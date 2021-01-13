@@ -8,6 +8,8 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepos
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import java.time.Instant
 
 @Service
@@ -23,70 +25,106 @@ class SongService @Autowired constructor(
         return songRepository.count()
     }
 
-    fun findById(id: Long): Pair<Song, Set<PhotoDetail>> {
+    fun findAll(): List<AggregateSong> {
+        return songRepository.findAll()
+            .map { song ->
+                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
+                createAggregateSong(song, artist)
+            }
+    }
+
+
+    fun findAllByStatusOrderedByName(status: SongStatus): List<AggregateSong> {
+        return songRepository.findAllByStatusOrderedByName(status)
+            .map { song ->
+                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
+                createAggregateSong(song, artist)
+            }
+    }
+
+    fun findById(id: Long): AggregateSong {
         log.info("Getting song with id $id")
         val song = songRepository.findById(id).orElseThrow()
         val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
 
-        val photos = artist.flickrPhotos.map { flickrApiPhoto ->
-            flickrApiClient.getPhoto(flickrApiPhoto.flickrId).blockOptional().orElseThrow()
-        }
-        val licenses = flickrApiClient.getLicenses().block()!!
-        val owners = photos.map { flickrApiClient.getOwnerInformation(it.ownerId).blockOptional().orElseThrow() }
-            .sortedBy { it.username }
-
-        val photoDetails = photos.map { photo ->
-            val license = licenses.license.first { it.id == photo.licenseId }
-            val owner = owners.first { it.id == photo.ownerId }
-            convertToPhotoDetail(photo, license, owner)
-        }.toSet()
-
-        return Pair(
-            first = Song(
-                id = song.id,
-                name = song.name,
-                title = song.title,
-                background = song.background,
-                youtube = song.youtube,
-                spotify = song.spotify,
-                artistImage = song.artistImage,
-                status = song.status,
-                sources = song.sources.map {
-                    SongSource(
-                        url = it.url,
-                        name = it.name
-                    )
-                }.toMutableList(),
-                artists = song.artists
-            ),
-            second = photoDetails
-        )
+        return createAggregateSong(song, artist)
     }
 
-    private fun convertToPhotoDetail(
-        photo: FlickrPhotoDetail,
-        license: FlickrApiLicense?,
-        owner: FlickrApiOwner?
-    ): PhotoDetail =
-        PhotoDetail(
-            id = photo.id,
-            url = photo.url,
-            farm = photo.farm,
-            server = photo.server,
-            secret = photo.secret,
-            title = photo.title,
-            licenseDetail = if (license == null) null else License(
-                id = license.id,
-                name = license.name,
-                url = license.url
-            ),
-            ownerDetail = if (owner == null) null else Owner(
-                id = owner.id,
-                username = owner.username,
-                photosUrl = owner.photosUrl
-            )
+    private fun createAggregateSong(
+        song: Song,
+        artist: Artist
+    ) = AggregateSong(
+        id = song.id ?: throw RuntimeException(),
+        title = song.title,
+        name = song.name,
+        artistName = artist.name,
+        background = song.background,
+        youtube = song.youtube,
+        spotify = song.spotify,
+        status = song.status,
+        artistImage = song.artistImage,
+        wikimediaPhotos = artist.wikimediaPhotos,
+        flickrPhotos = artist.flickrPhotos,
+        sources = song.sources,
+        logEntries = song.logEntries
+    )
 
+    fun findByIdDetails(id: Long): AggregateSong {
+        log.info("Getting song with id $id")
+        val song = songRepository.findById(id).orElseThrow()
+        val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
+
+        val photos = Flux.mergeSequential(artist.flickrPhotos.map { flickrApiPhoto ->
+            flickrApiClient.getPhoto(flickrApiPhoto.flickrId)
+        })
+        val owners = Flux.mergeSequential(photos.map { flickrApiClient.getOwnerInformation(it.ownerId) })
+            .sort { o1, o2 -> o1.username.compareTo(o2.username) }
+        val licences2 = Flux.mergeSequential(flickrApiClient.getLicenses().map { Flux.fromIterable(it.license) })
+
+        val photoDetails = Flux.mergeSequential(photos.map { photo ->
+            val licenseMono = licences2.filter { it.id == photo.licenseId }.last()
+            val ownerMono = owners.filter { it.id == photo.ownerId }.last()
+
+            Mono.zip(licenseMono, ownerMono) { license, owner ->
+                PhotoDetail(
+                    id = photo.id,
+                    url = photo.url,
+                    farm = photo.farm,
+                    server = photo.server,
+                    secret = photo.secret,
+                    title = photo.title,
+                    licenseDetail = if (license == null) null else License(
+                        id = license.id,
+                        name = license.name,
+                        url = license.url
+                    ),
+                    ownerDetail = if (owner == null) null else Owner(
+                        id = owner.id,
+                        username = owner.username,
+                        photosUrl = owner.photosUrl
+                    )
+
+                )
+            }
+        }).collectSortedList().block()?.toSet() ?: emptySet()
+
+        return AggregateSong(
+            id = song.id ?: throw RuntimeException(),
+            name = song.name,
+            title = song.title,
+            artistName = artist.name,
+            artistImage = song.artistImage,
+            background = song.background,
+            youtube = song.youtube,
+            spotify = song.spotify,
+            status = song.status,
+            sources = song.sources,
+            wikimediaPhotos = artist.wikimediaPhotos,
+            flickrPhotos = artist.flickrPhotos,
+            flickrPhotoDetail = photoDetails,
+            logEntries = song.logEntries
         )
+    }
 
     fun migrateSongs() {
         val songs = mongoSongRepository.findAll()
@@ -134,11 +172,8 @@ class SongService @Autowired constructor(
         )
 
         song.addArtist(artist)
-
         val songD = songRepository.save(song)
-
         val artistD = updateArtist(mongoSong, artist)
-
         log.info("Migrated $mongoSong, resulted in $songD and $artistD")
     }
 

@@ -5,7 +5,7 @@ import org.springframework.data.relational.core.mapping.MappedCollection
 import org.springframework.data.relational.core.mapping.Table
 
 @Table("users")
-class User(
+data class User(
 
     @Id
     var id: Long? = null,
