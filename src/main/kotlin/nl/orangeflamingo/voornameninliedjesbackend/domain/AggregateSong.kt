@@ -1,5 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.domain
 
+import reactor.core.publisher.Flux
+
 
 data class AggregateSong(
     val id: Long,
@@ -14,7 +16,7 @@ data class AggregateSong(
     val mongoId: String? = null,
     val wikimediaPhotos: Set<ArtistWikimediaPhoto> = mutableSetOf(),
     val flickrPhotos: Set<ArtistFlickrPhoto> = mutableSetOf(),
-    val flickrPhotoDetail: Set<PhotoDetail> = mutableSetOf(),
+    val flickrPhotoDetail: Flux<PhotoDetail> = Flux.empty(),
     val sources: MutableList<SongSource> = mutableListOf(),
     val logEntries: MutableList<SongLogEntry> = mutableListOf()
 )
