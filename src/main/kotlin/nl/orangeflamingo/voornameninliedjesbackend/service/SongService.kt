@@ -106,7 +106,7 @@ class SongService @Autowired constructor(
 
                 )
             }
-        }).collectSortedList().block()?.toSet() ?: emptySet()
+        })
 
         return AggregateSong(
             id = song.id ?: throw RuntimeException(),

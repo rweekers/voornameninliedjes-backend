@@ -42,7 +42,7 @@ data class SongDto(
         val wikimediaPhotos: Set<WikimediaPhotoDto>?,
 
         @JsonView(Views.Detail::class)
-        val flickrPhotos: Set<PhotoDto>?,
+        val flickrPhotos: Set<PhotoDto>,
 
         @JsonView(Views.Detail::class)
         val sources: Set<SourceDto>?,

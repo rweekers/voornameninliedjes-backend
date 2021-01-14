@@ -3,14 +3,14 @@ package nl.orangeflamingo.voornameninliedjesbackend.controller
 import com.fasterxml.jackson.annotation.JsonView
 import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.PhotoDetail
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.dto.*
-import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
-import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/beta")
@@ -19,19 +19,18 @@ class SongController {
     private val log = LoggerFactory.getLogger(SongController::class.java)
 
     @Autowired
-    private lateinit var artistRepository: ArtistRepository
-
-    @Autowired
-    private lateinit var songRepository: SongRepository
-
-    @Autowired
     private lateinit var songService: SongService
 
     @GetMapping("/songs/{id}")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
-    fun getSongById(@PathVariable id: Long): SongDto {
+    fun getSongById(@PathVariable id: Long): Mono<SongDto> {
         log.info("Requesting song with id $id...")
-        return convertToDto(songService.findByIdDetails(id))
+
+        val song = songService.findByIdDetails(id)
+
+        return song.flickrPhotoDetail.collectList().map { photos ->
+            convertToDto(song, photos)
+        }
     }
 
     @GetMapping("/songs")
@@ -39,10 +38,10 @@ class SongController {
     @JsonView(Views.Summary::class)
     fun getSongs(): List<SongDto> {
         log.info("Requesting all songs...")
-        return songService.findAllByStatusOrderedByName(SongStatus.SHOW).map { convertToDto(it) }
+        return songService.findAllByStatusOrderedByName(SongStatus.SHOW).map { convertToDto(it, emptyList()) }
     }
 
-    private fun convertToDto(song: AggregateSong): SongDto {
+    private fun convertToDto(song: AggregateSong, photos: List<PhotoDetail>): SongDto {
         return SongDto(
             id = song.id.toString(),
             artist = song.artistName,
@@ -53,7 +52,7 @@ class SongController {
             youtube = song.youtube,
             spotify = song.spotify,
             wikimediaPhotos = song.wikimediaPhotos.map { convertWikimediaPhotoToDto(it) }.toSet(),
-            flickrPhotos = song.flickrPhotoDetail.map {
+            flickrPhotos = photos.map {
                 PhotoDto(
                     id = it.id,
                     url = it.url,

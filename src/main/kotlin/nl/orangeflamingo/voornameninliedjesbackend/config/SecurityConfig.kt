@@ -33,10 +33,9 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
         http
-            // TODO enable CSRF, see https://docs.spring.io/spring-security/site/docs/4.0.x/reference/htmlsingle/#csrf-configure
             .csrf().disable()
             .authorizeRequests()
-            .antMatchers("/api/**").permitAll()
+            .antMatchers("/api/**", "/beta/**").permitAll()
             .and()
             .httpBasic()
             .authenticationEntryPoint(authenticationEntryPoint)
