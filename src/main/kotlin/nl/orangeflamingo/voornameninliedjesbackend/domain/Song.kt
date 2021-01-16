@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.MappedCollection
 import org.springframework.data.relational.core.mapping.Table
 import org.springframework.util.Assert.notNull
+import java.lang.IllegalStateException
 import java.time.Instant
 
 
@@ -12,16 +13,16 @@ data class Song(
 
     @Id
     var id: Long? = null,
-    val title: String,
-    val name: String,
+    var title: String,
+    var name: String,
     val artistImage: String? = null,
-    val background: String? = null,
-    val youtube: String? = null,
-    val spotify: String? = null,
-    val status: SongStatus,
+    var background: String? = null,
+    var youtube: String? = null,
+    var spotify: String? = null,
+    var status: SongStatus,
     val mongoId: String? = null,
     @MappedCollection(idColumn = "song_id", keyColumn = "song_key")
-    val sources: MutableList<SongSource> = mutableListOf(),
+    var sources: List<SongSource> = listOf(),
     @MappedCollection(idColumn = "song_id", keyColumn = "song_key")
     val logEntries: MutableList<SongLogEntry> = mutableListOf(),
     val artists: MutableSet<ArtistRef> = mutableSetOf()
@@ -33,7 +34,7 @@ data class Song(
     private fun createArtistRef(artist: Artist, originalArtist: Boolean): ArtistRef {
         notNull(artist.id, "Artist id, must not be null")
         return ArtistRef(
-            artist = artist.id ?: throw RuntimeException(),
+            artist = artist.id ?: throw IllegalStateException("The artist should have an id"),
             originalArtist = originalArtist
         )
     }

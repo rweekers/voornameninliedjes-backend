@@ -10,12 +10,12 @@ data class Artist(
 
     @Id
     var id: Long? = null,
-    val name: String,
+    var name: String,
     val background: String? = null,
     @MappedCollection(idColumn = "artist_id")
-    val wikimediaPhotos: MutableSet<ArtistWikimediaPhoto> = mutableSetOf(),
+    var wikimediaPhotos: MutableSet<ArtistWikimediaPhoto> = mutableSetOf(),
     @MappedCollection(idColumn = "artist_id")
-    val flickrPhotos: MutableSet<ArtistFlickrPhoto> = mutableSetOf(),
+    var flickrPhotos: MutableSet<ArtistFlickrPhoto> = mutableSetOf(),
     @MappedCollection(idColumn = "artist_id", keyColumn = "artist_key")
     val logEntries: MutableList<ArtistLogEntry> = mutableListOf()
 ) {

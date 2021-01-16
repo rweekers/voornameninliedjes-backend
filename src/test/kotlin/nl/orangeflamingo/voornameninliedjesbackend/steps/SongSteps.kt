@@ -28,7 +28,7 @@ class SongSteps : En {
     init {
         Given("the next song for artist {string}:") { artistName: String, song: Song ->
             log.info("Song: $song")
-            val artist = artistRepository.findFirstByName(artistName)?: Artist(name = artistName)
+            val artist = artistRepository.findFirstByName(artistName) ?: Artist(name = artistName)
             song.addArtist(artist)
             songRepository.save(song)
         }
@@ -40,9 +40,11 @@ class SongSteps : En {
 
         DataTableType { entry: Map<String, String> ->
             Song(
-                title = entry["title"] ?: throw RuntimeException(),
-                name = entry["name"] ?: throw RuntimeException(),
-                status = SongStatus.valueOf(entry["status"] ?: throw RuntimeException()),
+                title = entry["title"] ?: throw IllegalArgumentException("There should be a title"),
+                name = entry["name"] ?: throw IllegalArgumentException("There should be a name"),
+                status = SongStatus.valueOf(
+                    entry["status"] ?: throw IllegalArgumentException("There should be a title")
+                ),
                 artists = mutableSetOf()
             )
         }
