@@ -33,6 +33,21 @@ class SongService @Autowired constructor(
             }
     }
 
+    fun findByName(name: String): List<AggregateSong> {
+        return songRepository.findAllByNameIgnoreCaseOrderByNameAsc(name)
+            .map { song ->
+                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
+                createAggregateSong(song, artist)
+            }
+    }
+
+    fun findByNameStartsWith(firstCharacter: String): List<AggregateSong> {
+        return songRepository.findAllByNameStartingWithIgnoreCaseOrderByNameAsc(firstCharacter)
+            .map { song ->
+                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
+                createAggregateSong(song, artist)
+            }
+    }
 
     fun findAllByStatusOrderedByName(status: SongStatus): List<AggregateSong> {
         return songRepository.findAllByStatusOrderedByName(status)
@@ -52,9 +67,10 @@ class SongService @Autowired constructor(
 
     private fun createAggregateSong(
         song: Song,
-        artist: Artist
+        artist: Artist,
+        photoDetails: Flux<PhotoDetail> = Flux.empty()
     ) = AggregateSong(
-        id = song.id ?: throw RuntimeException(),
+        id = song.id ?: throw IllegalStateException("The song should have an id"),
         title = song.title,
         name = song.name,
         artistName = artist.name,
@@ -65,6 +81,7 @@ class SongService @Autowired constructor(
         artistImage = song.artistImage,
         wikimediaPhotos = artist.wikimediaPhotos,
         flickrPhotos = artist.flickrPhotos,
+        flickrPhotoDetail = photoDetails,
         sources = song.sources,
         logEntries = song.logEntries
     )
@@ -108,28 +125,99 @@ class SongService @Autowired constructor(
             }
         })
 
-        return AggregateSong(
-            id = song.id ?: throw RuntimeException(),
-            name = song.name,
-            title = song.title,
-            artistName = artist.name,
-            artistImage = song.artistImage,
-            background = song.background,
-            youtube = song.youtube,
-            spotify = song.spotify,
-            status = song.status,
-            sources = song.sources,
-            wikimediaPhotos = artist.wikimediaPhotos,
-            flickrPhotos = artist.flickrPhotos,
-            flickrPhotoDetail = photoDetails,
-            logEntries = song.logEntries
-        )
+        return createAggregateSong(song, artist, photoDetails)
     }
 
     fun migrateSongs() {
         val songs = mongoSongRepository.findAll()
         songs.forEach { migrateSong(it) }
         log.info("Gotten ${songs.size} songs")
+    }
+
+    fun updateSong(song: Song, newSong: AdminSongDto, user: String): AggregateSong {
+        val artist = findLeadArtistForSong(song) ?: throw IllegalStateException("There should be a lead artist for all songs")
+        song.title = newSong.title
+        song.name = newSong.name
+        song.status = SongStatus.valueOf(newSong.status)
+        song.background = newSong.background
+        song.youtube = newSong.youtube
+        song.spotify = newSong.spotify
+        song.sources = newSong.sources.map { s -> SongSource(url = s.url, name = s.name) }
+        song.logEntries.add(SongLogEntry(Instant.now(), user))
+        val savedSong = songRepository.save(song)
+
+        // update artist
+        if (artistUpdate(newSong, artist)) {
+            artist.wikimediaPhotos =
+                newSong.wikimediaPhotos.map { ArtistWikimediaPhoto(it.url, it.attribution) }.toMutableSet()
+            artist.flickrPhotos = newSong.flickrPhotos.map { ArtistFlickrPhoto(it) }.toMutableSet()
+            artist.name = newSong.artist
+            val artistLogEntry = ArtistLogEntry(Instant.now(), user)
+            artist.logEntries.add(artistLogEntry)
+            artistRepository.save(artist)
+        }
+
+        return createAggregateSong(savedSong, artist)
+    }
+
+    fun findLeadArtistForSong(song: Song): Artist? {
+        val artist = song.artists
+            .filter { artistRef -> artistRef.originalArtist }
+            .map { artistRepository.findById(it.artist) }
+            .first().orElseThrow()
+        return artist
+    }
+
+    private fun artistUpdate(song: AdminSongDto, artist: Artist): Boolean {
+        if (song.artist != artist.name) return true
+
+        if (song.flickrPhotos != artist.flickrPhotos.map { it.flickrId }) return true
+
+        if (song.wikimediaPhotos != artist.wikimediaPhotos) return true
+
+        return false
+    }
+
+    fun newSong(aggregateSong: AggregateSong, user: String): AggregateSong {
+        val artist = artistRepository.findFirstByName(aggregateSong.artistName) ?: artistRepository.save(
+            Artist(
+                name = aggregateSong.artistName,
+                background = aggregateSong.artistBackground,
+                wikimediaPhotos = aggregateSong.wikimediaPhotos.toMutableSet(),
+                flickrPhotos = aggregateSong.flickrPhotos.toMutableSet(),
+                logEntries = mutableListOf(
+                    ArtistLogEntry(
+                        date = Instant.now(),
+                        username = user
+                    )
+                )
+            )
+        )
+
+        val song = Song(
+            title = aggregateSong.title,
+            name = aggregateSong.name,
+            artistImage = aggregateSong.artistImage,
+            background = aggregateSong.background,
+            youtube = aggregateSong.youtube,
+            spotify = aggregateSong.spotify,
+            status = aggregateSong.status,
+            sources = aggregateSong.sources.map {
+                SongSource(
+                    url = it.url,
+                    name = it.name
+                )
+            }.toMutableList(),
+            logEntries = aggregateSong.logEntries.map {
+                SongLogEntry(
+                    date = it.date,
+                    username = it.username
+                )
+            }.toMutableList()
+        )
+        song.addArtist(artist)
+        val songDb = songRepository.save(song)
+        return createAggregateSong(songDb, artist)
     }
 
     private fun migrateSong(mongoSong: DbSong) {

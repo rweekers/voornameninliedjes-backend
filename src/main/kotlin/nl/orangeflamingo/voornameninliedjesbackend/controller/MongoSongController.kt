@@ -71,7 +71,7 @@ class MongoSongController {
                             name = it.name
                     )
                 }.toSet(),
-                status = song.status?.name
+                status = song.status?.name ?: SongStatus.IN_PROGRESS.name
         )
     }
 

@@ -13,4 +13,11 @@ interface SongRepository : CrudRepository<Song, Long> {
     @Query("select * from songs where status = CAST(:status AS SONG_STATUS) order by name ASC")
     fun findAllByStatusOrderedByName(@Param("status") status: SongStatus): List<Song>
 
+    fun findAllByNameStartingWithIgnoreCaseOrderByNameAsc(firstCharacter: String): List<Song>
+
+    fun findAllByNameIgnoreCaseOrderByNameAsc(name: String): List<Song>
+
+    @Query("update songs set status = CAST(:status AS SONG_STATUS)")
+    fun updateAllSongStatus(@Param("status") status: SongStatus)
+
 }

@@ -1,6 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.*
+import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.slf4j.LoggerFactory
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.CachePut
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import java.lang.IllegalStateException
+import java.time.Instant
 
 @RestController
 @RequestMapping("/gamma")
@@ -17,6 +20,9 @@ class SongAdminController {
 
     @Autowired
     private lateinit var songRepository: SongRepository
+
+    @Autowired
+    private lateinit var artistRepository: ArtistRepository
 
     @Autowired
     private lateinit var songService: SongService
@@ -30,6 +36,24 @@ class SongAdminController {
             .map { convertToDto(it) }
     }
 
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/songs", params = ["name"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    fun getSongsByName(@RequestParam(name = "name") name: String): List<AdminSongDto> {
+        return songService.findByName(name)
+            .map { convertToDto(it) }
+    }
+
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/songs", params = ["first-character"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    fun getSongsWithNameStartingWith(@RequestParam(name = "first-character") firstCharacter: String): List<AdminSongDto> {
+        return songService.findByNameStartsWith(firstCharacter)
+            .map { convertToDto(it) }
+    }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/songs/{id}")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
@@ -37,13 +61,76 @@ class SongAdminController {
         return convertToDto(songService.findById(id))
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/songs/{user}")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    fun newSong(@RequestBody newSong: AdminSongDto, @PathVariable user: String): AdminSongDto {
+        val savedSong = songService.newSong(convertToDomain(newSong), user)
+        return convertToDto(savedSong)
+    }
+
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/songs/{user}/{id}")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    fun replaceSong(@RequestBody song: AdminSongDto, @PathVariable user: String, @PathVariable id: Long): AdminSongDto {
+        assert(song.id?.toLong() == id)
+        val songFromDb = songRepository.findById(id)
+
+        if (songFromDb.isPresent) {
+            return convertToDto(songService.updateSong(songFromDb.get(), song, user))
+        }
+        return convertToDto(songService.newSong(convertToDomain(song), user))
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/songs/{user}/{id}/{flickrId}")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    fun addFlickrPhotoForSong(@PathVariable user: String, @PathVariable id: Long, @PathVariable flickrId: String) {
+        val songOptional = songRepository.findById(id)
+        if (songOptional.isPresent) {
+            val song = songOptional.get()
+            val artist = findLeadArtistForSong(song)
+                ?: throw IllegalStateException("There should be a lead artist for all songs")
+            addFlickrIdToArtist(user, artist, flickrId)
+        } else {
+            log.warn("Song with id $id not found")
+        }
+    }
+
+    private fun findLeadArtistForSong(song: Song): Artist? {
+        return song.artists
+            .filter { artistRef -> artistRef.originalArtist }
+            .map { artistRepository.findById(it.artist) }
+            .first().orElseThrow()
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/artists/{user}/{id}/{flickrId}")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    fun addFlickrPhoto(@PathVariable user: String, @PathVariable id: Long, @PathVariable flickrId: String) {
+        val artist = artistRepository.findById(id).orElseThrow()
+        addFlickrIdToArtist(user, artist, flickrId)
+    }
+
+    private fun addFlickrIdToArtist(
+        user: String,
+        artist: Artist,
+        flickrId: String
+    ) {
+        val logEntry = ArtistLogEntry(Instant.now(), user)
+        artist.logEntries.add(logEntry)
+        artist.flickrPhotos.add(ArtistFlickrPhoto(flickrId))
+        artistRepository.save(artist)
+    }
+
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @DeleteMapping("/songs")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     fun deleteSongs() {
         val count = songRepository.count()
-        songRepository.deleteAll()
-        log.info("$count songs deleted")
+        songRepository.updateAllSongStatus(SongStatus.TO_BE_DELETED)
+        log.info("$count songs marked as to be deleted")
     }
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
@@ -54,13 +141,37 @@ class SongAdminController {
         log.info("song $id deleted")
     }
 
+    private fun convertToDomain(song: AdminSongDto): AggregateSong {
+        return AggregateSong(
+            id = song.id?.toLong(),
+            title = song.title,
+            name = song.name,
+            artistName = song.artist,
+            artistImage = song.artistImage,
+            background = song.background,
+            youtube = song.youtube,
+            spotify = song.spotify,
+            status = SongStatus.valueOf(song.status),
+            wikimediaPhotos = song.wikimediaPhotos.map {
+                ArtistWikimediaPhoto(
+                    url = it.url,
+                    attribution = it.attribution
+                )
+            }.toSet(),
+            flickrPhotos = song.flickrPhotos.map { ArtistFlickrPhoto(it) }.toSet(),
+            sources = song.sources.map { SongSource(it.url, it.name) },
+            logEntries = song.logs.map { SongLogEntry(it.date, it.user) }.toMutableList()
+        )
+
+    }
+
     private fun convertToDto(song: AggregateSong): AdminSongDto {
         return AdminSongDto(
             id = song.id.toString(),
             artist = song.artistName,
             title = song.title,
             name = song.name,
-            artistImage = song.artistImage,
+            artistImage = song.artistImage ?: "https://ak9.picdn.net/shutterstock/videos/24149239/thumb/1.jpg",
             background = song.background,
             youtube = song.youtube,
             spotify = song.spotify,
@@ -90,6 +201,24 @@ class SongAdminController {
         return AdminSourceDto(
             url = songSource.url,
             name = songSource.name
+        )
+    }
+
+    private fun convertToDto(song: Song, artist: Artist): AdminSongDto {
+        return AdminSongDto(
+            id = song.id.toString(),
+            artist = artist.name,
+            title = song.title,
+            name = song.name,
+            artistImage = "https://ak9.picdn.net/shutterstock/videos/24149239/thumb/1.jpg",
+            background = song.background,
+            youtube = song.youtube,
+            spotify = song.spotify,
+            status = song.status.name,
+            wikimediaPhotos = artist.wikimediaPhotos.map { w -> convertToDto(w) }.toSet(),
+            flickrPhotos = artist.flickrPhotos.map { it.flickrId }.toSet(),
+            sources = song.sources.map { s -> convertToDto(s) }.toSet(),
+            logs = song.logEntries.map { convertToDto(it) }
         )
     }
 }
