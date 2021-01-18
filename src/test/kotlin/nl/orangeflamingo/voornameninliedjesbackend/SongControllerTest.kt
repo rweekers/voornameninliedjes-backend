@@ -48,7 +48,7 @@ class SongControllerTest(
     @Test
     fun songControllerTest() {
         client.get()
-            .uri("/api/songs")
+            .uri("/beta/songs")
             .exchange()
             .expectStatus().isOk
             .expectBodyList<DbSong>().hasSize(0)
@@ -57,7 +57,7 @@ class SongControllerTest(
     @Test
     fun songControllerBetaTest() {
         client.get()
-            .uri("/beta/songs")
+            .uri("/api/songs")
             .exchange()
             .expectStatus().isOk
             .expectBodyList<DbSong>().hasSize(0)
@@ -66,7 +66,7 @@ class SongControllerTest(
     @Test
     fun songAdminControllerBetaTest() {
         client.get()
-            .uri("/gamma/songs")
+            .uri("/admin/songs")
             .header(
                 "Authorization", "Basic ${Base64Utils.encodeToString("$user:$password".toByteArray(UTF_8))}"
             )
@@ -78,7 +78,7 @@ class SongControllerTest(
     @Test
     fun songAdminControllerBetaUnauthorizedTest() {
         client.get()
-            .uri("/gamma/songs")
+            .uri("/admin/songs")
             .exchange()
             .expectStatus().isUnauthorized
     }

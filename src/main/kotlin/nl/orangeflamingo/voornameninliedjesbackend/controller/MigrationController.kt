@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/gamma")
+@RequestMapping("/admin")
 class MigrationController {
 
     private val log = LoggerFactory.getLogger(MigrationController::class.java)

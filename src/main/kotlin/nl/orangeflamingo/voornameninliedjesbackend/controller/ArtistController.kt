@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("/beta")
+@RequestMapping("/api")
 class ArtistController {
 
     private val log = LoggerFactory.getLogger(ArtistController::class.java)

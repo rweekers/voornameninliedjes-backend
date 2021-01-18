@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping("/beta")
+@RequestMapping("/api")
 class SongController {
 
     private val log = LoggerFactory.getLogger(SongController::class.java)

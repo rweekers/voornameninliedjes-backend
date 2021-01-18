@@ -13,7 +13,7 @@ import java.lang.IllegalStateException
 import java.time.Instant
 
 @RestController
-@RequestMapping("/gamma")
+@RequestMapping("/admin")
 class SongAdminController {
 
     private val log = LoggerFactory.getLogger(SongAdminController::class.java)
@@ -78,7 +78,7 @@ class SongAdminController {
         val songFromDb = songRepository.findById(id)
 
         if (songFromDb.isPresent) {
-            return convertToDto(songService.updateSong(songFromDb.get(), song, user))
+            return convertToDto(songService.updateSong(convertToDomain(song), songFromDb.get(), user))
         }
         return convertToDto(songService.newSong(convertToDomain(song), user))
     }

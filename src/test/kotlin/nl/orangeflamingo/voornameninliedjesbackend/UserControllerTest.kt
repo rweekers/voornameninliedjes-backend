@@ -51,7 +51,7 @@ class UserControllerTest(
     @Test
     fun userControllerUnauthorizedTest() {
         client.get()
-            .uri("/gamma/users")
+            .uri("/admin/users")
             .exchange()
             .expectStatus().isUnauthorized
     }
@@ -59,7 +59,7 @@ class UserControllerTest(
     @Test
     fun userControllerIncorrectRoleTest() {
         client.get()
-            .uri("/gamma/users")
+            .uri("/admin/users")
             .header(
                 "Authorization",
                 "Basic ${Base64Utils.encodeToString("$adminUser:$adminPassword".toByteArray(Charsets.UTF_8))}"
@@ -71,7 +71,7 @@ class UserControllerTest(
     @Test
     fun userControllerTest() {
         client.get()
-            .uri("/gamma/users")
+            .uri("/admin/users")
             .header(
                 "Authorization",
                 "Basic ${Base64Utils.encodeToString("$ownerUser:$ownerPassword".toByteArray(Charsets.UTF_8))}"

@@ -134,24 +134,25 @@ class SongService @Autowired constructor(
         log.info("Gotten ${songs.size} songs")
     }
 
-    fun updateSong(song: Song, newSong: AdminSongDto, user: String): AggregateSong {
-        val artist = findLeadArtistForSong(song) ?: throw IllegalStateException("There should be a lead artist for all songs")
-        song.title = newSong.title
-        song.name = newSong.name
-        song.status = SongStatus.valueOf(newSong.status)
-        song.background = newSong.background
-        song.youtube = newSong.youtube
-        song.spotify = newSong.spotify
-        song.sources = newSong.sources.map { s -> SongSource(url = s.url, name = s.name) }
+    fun updateSong(aggregateSong: AggregateSong, song: Song, user: String): AggregateSong {
+        val artist =
+            findLeadArtistForSong(song) ?: throw IllegalStateException("There should be a lead artist for all songs")
+        song.title = aggregateSong.title
+        song.name = aggregateSong.name
+        song.status = aggregateSong.status
+        song.background = aggregateSong.background
+        song.youtube = aggregateSong.youtube
+        song.spotify = aggregateSong.spotify
+        song.sources = aggregateSong.sources.map { s -> SongSource(url = s.url, name = s.name) }
         song.logEntries.add(SongLogEntry(Instant.now(), user))
         val savedSong = songRepository.save(song)
 
         // update artist
-        if (artistUpdate(newSong, artist)) {
+        if (artistUpdate(aggregateSong, artist)) {
             artist.wikimediaPhotos =
-                newSong.wikimediaPhotos.map { ArtistWikimediaPhoto(it.url, it.attribution) }.toMutableSet()
-            artist.flickrPhotos = newSong.flickrPhotos.map { ArtistFlickrPhoto(it) }.toMutableSet()
-            artist.name = newSong.artist
+                aggregateSong.wikimediaPhotos.map { ArtistWikimediaPhoto(it.url, it.attribution) }.toMutableSet()
+            artist.flickrPhotos = aggregateSong.flickrPhotos.map { ArtistFlickrPhoto(it.flickrId) }.toMutableSet()
+            artist.name = aggregateSong.artistName
             val artistLogEntry = ArtistLogEntry(Instant.now(), user)
             artist.logEntries.add(artistLogEntry)
             artistRepository.save(artist)
@@ -168,8 +169,8 @@ class SongService @Autowired constructor(
         return artist
     }
 
-    private fun artistUpdate(song: AdminSongDto, artist: Artist): Boolean {
-        if (song.artist != artist.name) return true
+    private fun artistUpdate(song: AggregateSong, artist: Artist): Boolean {
+        if (song.artistName != artist.name) return true
 
         if (song.flickrPhotos != artist.flickrPhotos.map { it.flickrId }) return true
 

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("/gamma")
+@RequestMapping("/admin")
 class UserController {
     private val log = LoggerFactory.getLogger(UserController::class.java)
 
