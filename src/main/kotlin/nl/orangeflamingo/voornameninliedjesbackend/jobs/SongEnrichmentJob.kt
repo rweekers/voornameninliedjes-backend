@@ -1,9 +1,10 @@
 package nl.orangeflamingo.voornameninliedjesbackend.jobs
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
-import nl.orangeflamingo.voornameninliedjesbackend.domain.DbSong
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
-import nl.orangeflamingo.voornameninliedjesbackend.repository.mongo.MongoSongRepository
+import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
+import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
@@ -15,7 +16,10 @@ class SongEnrichmentJob {
     private val log = LoggerFactory.getLogger(SongEnrichmentJob::class.java)
 
     @Autowired
-    private lateinit var mongoSongRepository: MongoSongRepository
+    private lateinit var songRepository: SongRepository
+
+    @Autowired
+    private lateinit var artistRepository: ArtistRepository
 
     @Autowired
     private lateinit var flickrApiClient: FlickrApiClient
@@ -23,33 +27,34 @@ class SongEnrichmentJob {
     @Scheduled(cron = "\${jobs.updateSong.cron}")
     fun updateSong() {
         log.info("Starting update job")
-        mongoSongRepository.findAllByStatusOrderByName(SongStatus.SHOW)
+        songRepository.findAllByStatusOrderedByName(SongStatus.SHOW)
             .forEach { updateArtistImageForSong(it) }
     }
 
     @Scheduled(fixedRateString = "\${jobs.enrichSong.rate}")
     fun enrichSong() {
         log.info("Starting enrichment job")
-        mongoSongRepository.findAllByStatusAndArtistImageIsNull(SongStatus.SHOW)
+        songRepository.findAllByStatusAndArtistImageIsNull(SongStatus.SHOW)
             .forEach { updateArtistImageForSong(it) }
     }
 
-    private fun updateArtistImageForSong(song: DbSong) {
-        val url = song.wikimediaPhotos.map { wikimediaPhoto -> wikimediaPhoto.url }.firstOrNull()
+    private fun updateArtistImageForSong(song: Song) {
+        val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
+        val url = artist.wikimediaPhotos.map { wikimediaPhoto -> wikimediaPhoto.url }.firstOrNull()
         if (url != null) {
             updateArtistImage(url, song)
         } else {
-            val photo = flickrApiClient.getPhoto(song.flickrPhotos.first())
+            val photo = flickrApiClient.getPhoto(artist.flickrPhotos.first().flickrId)
             photo.subscribe { p ->
                 updateArtistImage(p.url, song)
             }
         }
     }
 
-    private fun updateArtistImage(url: String, song: DbSong) {
+    private fun updateArtistImage(url: String, song: Song) {
         if (url != song.artistImage) {
             val updatedSong = song.copy(artistImage = url)
-            mongoSongRepository.save(updatedSong)
+            songRepository.save(updatedSong)
         }
     }
 

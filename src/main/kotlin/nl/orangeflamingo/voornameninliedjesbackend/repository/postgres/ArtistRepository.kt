@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ArtistRepository : PagingAndSortingRepository<Artist, Long> {
 
-    @Query("select * from artists where name=:name")
-    fun findByName(@Param("name") name: String): List<Artist>
+    @Query("select * from artists where upper(name)=upper(:name)")
+    fun findByNameIgnoreCase(@Param("name") name: String): List<Artist>
 
     @Query("select * from artists order by name ASC")
     fun findAllOrderedByName(): List<Artist>

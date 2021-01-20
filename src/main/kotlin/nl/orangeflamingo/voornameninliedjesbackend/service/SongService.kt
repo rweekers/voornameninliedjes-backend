@@ -2,7 +2,6 @@ package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.*
-import nl.orangeflamingo.voornameninliedjesbackend.repository.mongo.MongoSongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.slf4j.LoggerFactory
@@ -15,7 +14,6 @@ import java.time.Instant
 @Service
 class SongService @Autowired constructor(
     val artistRepository: ArtistRepository,
-    val mongoSongRepository: MongoSongRepository,
     val songRepository: SongRepository,
     val flickrApiClient: FlickrApiClient
 ) {
@@ -26,7 +24,7 @@ class SongService @Autowired constructor(
     }
 
     fun findAll(): List<AggregateSong> {
-        return songRepository.findAll()
+        return songRepository.findAllOrderByNameAsc()
             .map { song ->
                 val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
                 createAggregateSong(song, artist)
@@ -128,12 +126,6 @@ class SongService @Autowired constructor(
         return createAggregateSong(song, artist, photoDetails)
     }
 
-    fun migrateSongs() {
-        val songs = mongoSongRepository.findAll()
-        songs.forEach { migrateSong(it) }
-        log.info("Gotten ${songs.size} songs")
-    }
-
     fun updateSong(aggregateSong: AggregateSong, song: Song, user: String): AggregateSong {
         val artist =
             findLeadArtistForSong(song) ?: throw IllegalStateException("There should be a lead artist for all songs")
@@ -219,69 +211,5 @@ class SongService @Autowired constructor(
         song.addArtist(artist)
         val songDb = songRepository.save(song)
         return createAggregateSong(songDb, artist)
-    }
-
-    private fun migrateSong(mongoSong: DbSong) {
-        val artist = artistRepository.findFirstByName(mongoSong.artist) ?: artistRepository.save(
-            Artist(
-                name = mongoSong.artist,
-                background = null,
-                wikimediaPhotos = mutableSetOf(),
-                flickrPhotos = mutableSetOf(),
-                logEntries = mutableListOf(
-                    ArtistLogEntry(
-                        date = Instant.now(),
-                        username = "Mongo2PostgresMigration"
-                    )
-                )
-            )
-        )
-
-        val song = Song(
-            title = mongoSong.title,
-            name = mongoSong.name,
-            artistImage = mongoSong.artistImage,
-            background = mongoSong.background,
-            youtube = mongoSong.youtube,
-            spotify = mongoSong.spotify,
-            status = mongoSong.status ?: SongStatus.IN_PROGRESS,
-            mongoId = mongoSong.id,
-            sources = mongoSong.sources.map {
-                SongSource(
-                    url = it.url,
-                    name = it.name
-                )
-            }.toMutableList(),
-            logEntries = mongoSong.logs.map {
-                SongLogEntry(
-                    date = it.date,
-                    username = it.user
-                )
-            }.toMutableList()
-        )
-
-        song.addArtist(artist)
-        val songD = songRepository.save(song)
-        val artistD = updateArtist(mongoSong, artist)
-        log.info("Migrated $mongoSong, resulted in $songD and $artistD")
-    }
-
-    private fun updateArtist(song: DbSong, artist: Artist): Artist {
-        song.wikimediaPhotos.forEach {
-            artist.addWikimediaPhoto(
-                ArtistWikimediaPhoto(
-                    url = it.url,
-                    attribution = it.attribution
-                )
-            )
-        }
-        song.flickrPhotos.forEach {
-            artist.addFlickrPhoto(
-                ArtistFlickrPhoto(
-                    flickrId = it
-                )
-            )
-        }
-        return artistRepository.save(artist)
     }
 }

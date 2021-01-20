@@ -1,4 +1,4 @@
-package nl.orangeflamingo.voornameninliedjesbackend.domain
+package nl.orangeflamingo.voornameninliedjesbackend.dto
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
