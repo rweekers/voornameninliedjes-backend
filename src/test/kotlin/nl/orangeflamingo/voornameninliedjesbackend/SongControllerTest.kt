@@ -1,9 +1,9 @@
 package nl.orangeflamingo.voornameninliedjesbackend
 
-import nl.orangeflamingo.voornameninliedjesbackend.domain.DbSong
 import nl.orangeflamingo.voornameninliedjesbackend.domain.User
 import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
-import nl.orangeflamingo.voornameninliedjesbackend.repository.mongo.MongoSongRepository
+import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSongDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.SongDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import org.junit.jupiter.api.BeforeEach
@@ -22,7 +22,6 @@ import kotlin.text.Charsets.UTF_8
 class SongControllerTest(
     @Autowired val client: WebTestClient,
     @Autowired val userRepository: UserRepository,
-    @Autowired val mongoSongRepository: MongoSongRepository,
     @Autowired val songRepository: SongRepository,
     @Autowired val encoder: PasswordEncoder
 ) {
@@ -33,7 +32,6 @@ class SongControllerTest(
 
     @BeforeEach
     fun createUser() {
-        mongoSongRepository.deleteAll()
         songRepository.deleteAll()
         userRepository.deleteAll()
         userRepository.save(
@@ -48,10 +46,10 @@ class SongControllerTest(
     @Test
     fun songControllerTest() {
         client.get()
-            .uri("/beta/songs")
+            .uri("/api/songs")
             .exchange()
             .expectStatus().isOk
-            .expectBodyList<DbSong>().hasSize(0)
+            .expectBodyList<SongDto>().hasSize(0)
     }
 
     @Test
@@ -60,7 +58,7 @@ class SongControllerTest(
             .uri("/api/songs")
             .exchange()
             .expectStatus().isOk
-            .expectBodyList<DbSong>().hasSize(0)
+            .expectBodyList<SongDto>().hasSize(0)
     }
 
     @Test
@@ -72,7 +70,7 @@ class SongControllerTest(
             )
             .exchange()
             .expectStatus().isOk
-            .expectBodyList<DbSong>().hasSize(0)
+            .expectBodyList<AdminSongDto>().hasSize(0)
     }
 
     @Test

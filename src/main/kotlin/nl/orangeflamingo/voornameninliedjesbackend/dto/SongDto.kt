@@ -2,31 +2,22 @@ package nl.orangeflamingo.voornameninliedjesbackend.dto
 
 import com.fasterxml.jackson.annotation.JsonView
 import nl.orangeflamingo.voornameninliedjesbackend.controller.Views
-import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.mapping.Field
 import java.util.*
-import javax.annotation.Generated
 
 data class SongDto(
-        @Id
-        @Generated
         @JsonView(Views.Summary::class, Views.Detail::class)
         val id: String?,
 
         @JsonView(Views.Summary::class, Views.Detail::class)
-        @Field("artist")
         val artist: String,
 
         @JsonView(Views.Summary::class, Views.Detail::class)
-        @Field("title")
         val title: String,
 
         @JsonView(Views.Summary::class, Views.Detail::class)
-        @Field("name")
         val name: String,
 
         @JsonView(Views.Summary::class, Views.Detail::class)
-        @Field("artistImage")
         val artistImage: String?,
 
         @JsonView(Views.Detail::class)

@@ -5,23 +5,10 @@ import com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val buildMyMongoAppImage by tasks.creating(DockerBuildImage::class) {
-    inputDir.set(file("."))
-    dockerFile.set(file("DockerfileMongo"))
-    images.add("mongo:3.6.20")
-}
-
 val buildMyPostgresAppImage by tasks.creating(DockerBuildImage::class) {
     inputDir.set(file("."))
     dockerFile.set(file("DockerfilePostgres"))
     images.add("postgres:13.1")
-}
-
-val createMyMongoAppContainer by tasks.creating(DockerCreateContainer::class) {
-    dependsOn(buildMyMongoAppImage)
-    targetImageId(buildMyMongoAppImage.imageId)
-    containerName.set("some-mongo")
-    hostConfig.portBindings.set(listOf("27017:27017"))
 }
 
 val createMyPostgresAppContainer by tasks.creating(DockerCreateContainer::class) {
@@ -31,25 +18,10 @@ val createMyPostgresAppContainer by tasks.creating(DockerCreateContainer::class)
     hostConfig.portBindings.set(listOf("5433:5432"))
 }
 
-val removeMyMongoAppContainer by tasks.creating(DockerRemoveContainer::class) {
-    force.set(true)
-    removeVolumes.set(true)
-    targetContainerId(createMyMongoAppContainer.containerId)
-}
-
 val removeMyPostgresAppContainer by tasks.creating(DockerRemoveContainer::class) {
     force.set(true)
     removeVolumes.set(true)
     targetContainerId(createMyPostgresAppContainer.containerId)
-}
-
-val startMyMongoAppContainer by tasks.creating(DockerStartContainer::class) {
-    dependsOn(createMyMongoAppContainer)
-    targetContainerId(createMyMongoAppContainer.containerId)
-}
-
-val stopMyMongoAppContainer by tasks.creating(DockerStopContainer::class) {
-    targetContainerId(createMyMongoAppContainer.containerId)
 }
 
 val startMyPostgresAppContainer by tasks.creating(DockerStartContainer::class) {
@@ -80,9 +52,7 @@ tasks.jacocoTestReport {
 tasks.test {
     useJUnitPlatform()
 
-    dependsOn(startMyMongoAppContainer)
     dependsOn(startMyPostgresAppContainer)
-    finalizedBy(removeMyMongoAppContainer)
     finalizedBy(removeMyPostgresAppContainer)
 }
 
@@ -102,7 +72,6 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")

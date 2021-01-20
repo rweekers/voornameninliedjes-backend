@@ -1,5 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
+import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,6 +18,10 @@ class ArtistService {
     fun countArtists(): Long {
         log.info("Count artists")
         return artistRepository.count()
+    }
+
+    fun findByName(name: String): List<Artist> {
+        return artistRepository.findByNameIgnoreCase(name)
     }
 
 }

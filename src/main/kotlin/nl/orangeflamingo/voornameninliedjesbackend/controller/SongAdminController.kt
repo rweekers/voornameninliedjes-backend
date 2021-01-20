@@ -1,6 +1,10 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.*
+import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminLogEntry
+import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSongDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSourceDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminWikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
@@ -9,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.CachePut
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
-import java.lang.IllegalStateException
 import java.time.Instant
 
 @RestController
@@ -65,7 +68,9 @@ class SongAdminController {
     @PostMapping("/songs/{user}")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
     fun newSong(@RequestBody newSong: AdminSongDto, @PathVariable user: String): AdminSongDto {
+        log.info("Saving song with title ${newSong.title} and artist ${newSong.artist}")
         val savedSong = songService.newSong(convertToDomain(newSong), user)
+        log.info("Saved song, id is ${savedSong.id}")
         return convertToDto(savedSong)
     }
 
@@ -171,7 +176,7 @@ class SongAdminController {
             artist = song.artistName,
             title = song.title,
             name = song.name,
-            artistImage = song.artistImage ?: "https://ak9.picdn.net/shutterstock/videos/24149239/thumb/1.jpg",
+            artistImage = if (!song.artistImage.isNullOrEmpty()) song.artistImage else "https://ak9.picdn.net/shutterstock/videos/24149239/thumb/1.jpg",
             background = song.background,
             youtube = song.youtube,
             spotify = song.spotify,
@@ -201,24 +206,6 @@ class SongAdminController {
         return AdminSourceDto(
             url = songSource.url,
             name = songSource.name
-        )
-    }
-
-    private fun convertToDto(song: Song, artist: Artist): AdminSongDto {
-        return AdminSongDto(
-            id = song.id.toString(),
-            artist = artist.name,
-            title = song.title,
-            name = song.name,
-            artistImage = "https://ak9.picdn.net/shutterstock/videos/24149239/thumb/1.jpg",
-            background = song.background,
-            youtube = song.youtube,
-            spotify = song.spotify,
-            status = song.status.name,
-            wikimediaPhotos = artist.wikimediaPhotos.map { w -> convertToDto(w) }.toSet(),
-            flickrPhotos = artist.flickrPhotos.map { it.flickrId }.toSet(),
-            sources = song.sources.map { s -> convertToDto(s) }.toSet(),
-            logs = song.logEntries.map { convertToDto(it) }
         )
     }
 }
