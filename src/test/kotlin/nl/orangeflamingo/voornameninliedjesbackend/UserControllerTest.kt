@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import org.springframework.util.Base64Utils
+import kotlin.random.Random
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
@@ -28,11 +29,12 @@ class UserControllerTest(
     private val ownerUser: String = "owner"
     private val ownerPassword: String = "verysecret"
     private val ownerRole: String = "OWNER"
+    private lateinit var userMap: Map<String, Long>
 
     @BeforeEach
     fun createUser() {
         userRepository.deleteAll()
-        userRepository.saveAll(
+        userMap = userRepository.saveAll(
             listOf(
                 User(
                     username = adminUser,
@@ -45,11 +47,23 @@ class UserControllerTest(
                     roles = mutableSetOf(UserRole(ownerRole))
                 )
             )
-        )
+        ).map { it.username to it.id!! }.toMap()
     }
 
     @Test
-    fun userControllerUnauthorizedTest() {
+    fun userWrongCredentialsTest() {
+        client.get()
+            .uri("/admin/users")
+            .header(
+                "Authorization",
+                "Basic ${Base64Utils.encodeToString("wrongUser:wrongPassword".toByteArray(Charsets.UTF_8))}"
+            )
+            .exchange()
+            .expectStatus().isUnauthorized
+    }
+
+    @Test
+    fun userUnauthorizedTest() {
         client.get()
             .uri("/admin/users")
             .exchange()
@@ -57,7 +71,7 @@ class UserControllerTest(
     }
 
     @Test
-    fun userControllerIncorrectRoleTest() {
+    fun userAuthorizationRoleTest() {
         client.get()
             .uri("/admin/users")
             .header(
@@ -69,7 +83,7 @@ class UserControllerTest(
     }
 
     @Test
-    fun userControllerTest() {
+    fun getUsersTest() {
         client.get()
             .uri("/admin/users")
             .header(
@@ -79,6 +93,36 @@ class UserControllerTest(
             .exchange()
             .expectStatus().isOk
             .expectBodyList<UserDto>().hasSize(2)
+    }
+
+    @Test
+    fun getAdminUserTest() {
+        client.get()
+            .uri("/admin/users/${userMap[adminUser]}")
+            .header(
+                "Authorization",
+                "Basic ${Base64Utils.encodeToString("$ownerUser:$ownerPassword".toByteArray(Charsets.UTF_8))}"
+            )
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.username").isNotEmpty
+            .jsonPath("$.username").isEqualTo(adminUser)
+    }
+
+    @Test
+    fun userNotFoundUserTest() {
+        val maxId = userMap.values.maxOrNull()!!
+        val notExistingId = Random.nextLong(maxId, Long.MAX_VALUE)
+
+        client.get()
+            .uri("/admin/users/$notExistingId")
+            .header(
+                "Authorization",
+                "Basic ${Base64Utils.encodeToString("$ownerUser:$ownerPassword".toByteArray(Charsets.UTF_8))}"
+            )
+            .exchange()
+            .expectStatus().isBadRequest
     }
 }
 
