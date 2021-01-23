@@ -22,6 +22,7 @@ voornameninliedjes:
       pool-name: voornameninliedjes-migration-hikari-pool
 
 jobs:
+  enabled: false
   enrichSong:
     rate: 60000
   updateSong:

@@ -7,10 +7,12 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRep
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
 @Component
+@ConditionalOnProperty(prefix = "jobs", name = ["enabled"], havingValue = "true")
 class SongEnrichmentJob {
 
     private val log = LoggerFactory.getLogger(SongEnrichmentJob::class.java)

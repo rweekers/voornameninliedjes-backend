@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import org.springframework.util.Base64Utils
+import org.springframework.web.reactive.function.BodyInserters
 import kotlin.random.Random
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -48,6 +49,25 @@ class UserControllerTest(
                 )
             )
         ).map { it.username to it.id!! }.toMap()
+    }
+
+    @Test
+    fun authenticateTest() {
+        client.post()
+            .uri("/admin/authenticate")
+            .body(
+                BodyInserters.fromValue(
+                    UserDto(
+                        username = adminUser,
+                        password = adminPassword
+                    )
+                )
+            )
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.username").isNotEmpty
+            .jsonPath("$.username").isEqualTo(adminUser)
     }
 
     @Test
