@@ -1,6 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend
 
-import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrHttpApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
@@ -15,7 +15,7 @@ class SongServiceTest {
 
     private val songRepository = Mockito.mock(SongRepository::class.java)
 
-    private val flickrApiClient = Mockito.mock(FlickrApiClient::class.java)
+    private val flickrApiClient = Mockito.mock(FlickrHttpApiClient::class.java)
 
     private val songService: SongService = SongService(
         artistRepository, songRepository, flickrApiClient
