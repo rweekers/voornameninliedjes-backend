@@ -2,7 +2,6 @@ package nl.orangeflamingo.voornameninliedjesbackend
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.User
 import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
-import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSongDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.SongDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
@@ -14,8 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
-import org.springframework.util.Base64Utils
-import kotlin.text.Charsets.UTF_8
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
@@ -60,26 +57,5 @@ class SongControllerTest(
             .expectStatus().isOk
             .expectBodyList<SongDto>().hasSize(0)
     }
-
-    @Test
-    fun songAdminControllerBetaTest() {
-        client.get()
-            .uri("/admin/songs")
-            .header(
-                "Authorization", "Basic ${Base64Utils.encodeToString("$user:$password".toByteArray(UTF_8))}"
-            )
-            .exchange()
-            .expectStatus().isOk
-            .expectBodyList<AdminSongDto>().hasSize(0)
-    }
-
-    @Test
-    fun songAdminControllerBetaUnauthorizedTest() {
-        client.get()
-            .uri("/admin/songs")
-            .exchange()
-            .expectStatus().isUnauthorized
-    }
-
 }
 
