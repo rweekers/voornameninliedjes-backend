@@ -25,9 +25,7 @@ class SongController {
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     fun getSongById(@PathVariable id: Long): Mono<SongDto> {
         log.info("Requesting song with id $id...")
-
         val song = songService.findByIdDetails(id)
-
         return song.flickrPhotoDetail.collectList().map { photos ->
             convertToDto(song, photos)
         }

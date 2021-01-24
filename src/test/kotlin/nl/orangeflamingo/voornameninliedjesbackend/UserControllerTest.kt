@@ -11,13 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
-import org.springframework.util.Base64Utils
 import org.springframework.web.reactive.function.BodyInserters
 import kotlin.random.Random
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("integration-test")
 @AutoConfigureWebTestClient
 class UserControllerTest(
     @Autowired val client: WebTestClient,
@@ -107,10 +108,7 @@ class UserControllerTest(
     fun newUserTest() {
         client.post()
             .uri("/admin/users")
-            .header(
-                "Authorization",
-                "Basic ${Base64Utils.encodeToString("$ownerUser:$ownerPassword".toByteArray(Charsets.UTF_8))}"
-            )
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(ownerUser, ownerPassword) }
             .body(
                 BodyInserters.fromValue(
                     UserDto(
@@ -131,10 +129,7 @@ class UserControllerTest(
     fun deleteUserTest() {
         client.delete()
             .uri("/admin/users/${userMap[adminUser]}")
-            .header(
-                "Authorization",
-                "Basic ${Base64Utils.encodeToString("$ownerUser:$ownerPassword".toByteArray(Charsets.UTF_8))}"
-            )
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(ownerUser, ownerPassword) }
             .exchange()
             .expectStatus().isOk
         assertNull(userRepository.findByUsername(adminUser))
@@ -144,10 +139,7 @@ class UserControllerTest(
     fun userWrongCredentialsTest() {
         client.get()
             .uri("/admin/users")
-            .header(
-                "Authorization",
-                "Basic ${Base64Utils.encodeToString("wrongUser:wrongPassword".toByteArray(Charsets.UTF_8))}"
-            )
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth("wrongUser", "wrongPassword") }
             .exchange()
             .expectStatus().isUnauthorized
     }
@@ -164,10 +156,7 @@ class UserControllerTest(
     fun userAuthorizationRoleTest() {
         client.get()
             .uri("/admin/users")
-            .header(
-                "Authorization",
-                "Basic ${Base64Utils.encodeToString("$adminUser:$adminPassword".toByteArray(Charsets.UTF_8))}"
-            )
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(adminUser, adminPassword) }
             .exchange()
             .expectStatus().isForbidden
     }
@@ -176,10 +165,7 @@ class UserControllerTest(
     fun getUsersTest() {
         client.get()
             .uri("/admin/users")
-            .header(
-                "Authorization",
-                "Basic ${Base64Utils.encodeToString("$ownerUser:$ownerPassword".toByteArray(Charsets.UTF_8))}"
-            )
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(ownerUser, ownerPassword) }
             .exchange()
             .expectStatus().isOk
             .expectBodyList<UserDto>().hasSize(2)
@@ -189,10 +175,7 @@ class UserControllerTest(
     fun getAdminUserTest() {
         client.get()
             .uri("/admin/users/${userMap[adminUser]}")
-            .header(
-                "Authorization",
-                "Basic ${Base64Utils.encodeToString("$ownerUser:$ownerPassword".toByteArray(Charsets.UTF_8))}"
-            )
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(ownerUser, ownerPassword) }
             .exchange()
             .expectStatus().isOk
             .expectBody()
@@ -207,10 +190,7 @@ class UserControllerTest(
 
         client.get()
             .uri("/admin/users/$notExistingId")
-            .header(
-                "Authorization",
-                "Basic ${Base64Utils.encodeToString("$ownerUser:$ownerPassword".toByteArray(Charsets.UTF_8))}"
-            )
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(ownerUser, ownerPassword) }
             .exchange()
             .expectStatus().isBadRequest
     }

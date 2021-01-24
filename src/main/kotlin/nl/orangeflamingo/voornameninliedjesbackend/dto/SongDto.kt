@@ -30,7 +30,7 @@ data class SongDto(
         val spotify: String?,
 
         @JsonView(Views.Detail::class)
-        val wikimediaPhotos: Set<WikimediaPhotoDto>?,
+        val wikimediaPhotos: Set<WikimediaPhotoDto>,
 
         @JsonView(Views.Detail::class)
         val flickrPhotos: Set<PhotoDto>,

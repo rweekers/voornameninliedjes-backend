@@ -11,12 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
-import org.springframework.util.Base64Utils
-import kotlin.text.Charsets.UTF_8
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("integration-test")
 @AutoConfigureWebTestClient
 class SongAdminControllerTest(
     @Autowired val client: WebTestClient,
@@ -29,6 +29,7 @@ class SongAdminControllerTest(
     private val user: String = "test"
     private val password: String = "secret"
     private val adminRole: String = "ADMIN"
+    private lateinit var songMap: Map<String, Long>
 
     @BeforeEach
     fun createUser() {
@@ -48,39 +49,29 @@ class SongAdminControllerTest(
             )
         )
 
-        songRepository.saveAll(
-            listOf(
-                Song(
-                    title = "Michelle",
-                    name = "Michelle",
-                    status = SongStatus.SHOW,
-                    artists = mutableSetOf(
-                        ArtistRef(
-                            artist = artist.id!!
-                        )
-                    )
-                ),
-                Song(
-                    title = "Lucy in the Sky with Diamonds",
-                    name = "Lucy",
-                    status = SongStatus.SHOW,
-                    artists = mutableSetOf(
-                        ArtistRef(
-                            artist = artist.id!!
-                        )
-                    )
+        val songMichelle = Song(
+            title = "Michelle",
+            name = "Michelle",
+            status = SongStatus.SHOW,
+            artists = mutableSetOf(
+                ArtistRef(
+                    artist = artist.id!!
                 )
             )
         )
+
+        songMap = songRepository.saveAll(
+            listOf(
+                songMichelle, songMichelle.copy(title = "Lucy in the Sky with Diamonds", name = "Lucy")
+            )
+        ).map { it.title to it.id!! }.toMap()
     }
 
     @Test
     fun getAllSongsTest() {
         client.get()
             .uri("/admin/songs")
-            .header(
-                "Authorization", "Basic ${Base64Utils.encodeToString("$user:$password".toByteArray(UTF_8))}"
-            )
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
             .exchange()
             .expectStatus().isOk
             .expectBodyList<AdminSongDto>().hasSize(2)
@@ -95,12 +86,37 @@ class SongAdminControllerTest(
                     .queryParam("name", "Lucy")
                     .build()
             }
-            .header(
-                "Authorization", "Basic ${Base64Utils.encodeToString("$user:$password".toByteArray(UTF_8))}"
-            )
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
             .exchange()
             .expectStatus().isOk
             .expectBodyList<AdminSongDto>().hasSize(1)
+    }
+
+    @Test
+    fun getSongsByWithNameStartingWithTest() {
+        client.get()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/admin/songs")
+                    .queryParam("first-character", "M")
+                    .build()
+            }
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isOk
+            .expectBodyList<AdminSongDto>().hasSize(1)
+    }
+
+    @Test
+    fun getSongByIdTest() {
+        client.get()
+            .uri("/admin/songs/${songMap["Michelle"]}")
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.title").isNotEmpty
+            .jsonPath("$.title").isEqualTo("Michelle")
     }
 
     @Test
