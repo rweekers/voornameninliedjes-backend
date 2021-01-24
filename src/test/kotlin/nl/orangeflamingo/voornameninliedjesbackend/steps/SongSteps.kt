@@ -8,6 +8,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -35,7 +36,7 @@ class SongSteps : En {
 
         Then("there are {int} songs returned") { numberOfSongs: Int ->
             val songsCount = songController.getSongs().size
-            Assertions.assertEquals(numberOfSongs, songsCount)
+            assertEquals(numberOfSongs, songsCount)
         }
 
         DataTableType { entry: Map<String, String> ->

@@ -4,7 +4,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
@@ -24,6 +24,6 @@ class SongServiceTest {
     @Test
     fun countSongsTest() {
         `when`(songRepository.count()).thenReturn(1)
-        Assertions.assertEquals(1, songService.countSongs())
+        assertEquals(1, songService.countSongs())
     }
 }

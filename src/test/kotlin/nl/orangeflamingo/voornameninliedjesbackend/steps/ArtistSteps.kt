@@ -7,6 +7,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.controller.ArtistController
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -33,7 +34,7 @@ class ArtistSteps: En {
 
         Then("there are {int} artists returned") { numberOfSongs: Int ->
             val artistsCount = artistController.getArtists().size
-            Assertions.assertEquals(numberOfSongs, artistsCount)
+            assertEquals(numberOfSongs, artistsCount)
         }
     }
 }

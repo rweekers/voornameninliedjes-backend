@@ -4,6 +4,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.controller.UserDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.User
 import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -52,7 +53,39 @@ class UserControllerTest(
     }
 
     @Test
-    fun authenticateTest() {
+    fun authenticateWrongPasswordTest() {
+        client.post()
+            .uri("/admin/authenticate")
+            .body(
+                BodyInserters.fromValue(
+                    UserDto(
+                        username = adminUser,
+                        password = "wrongPassword"
+                    )
+                )
+            )
+            .exchange()
+            .expectStatus().isUnauthorized
+    }
+
+    @Test
+    fun authenticateWrongUserTest() {
+        client.post()
+            .uri("/admin/authenticate")
+            .body(
+                BodyInserters.fromValue(
+                    UserDto(
+                        username = "nonExistingUser",
+                        password = "nonExistingPassword"
+                    )
+                )
+            )
+            .exchange()
+            .expectStatus().isUnauthorized
+    }
+
+    @Test
+    fun authenticateCorrectTest() {
         client.post()
             .uri("/admin/authenticate")
             .body(
@@ -68,6 +101,43 @@ class UserControllerTest(
             .expectBody()
             .jsonPath("$.username").isNotEmpty
             .jsonPath("$.username").isEqualTo(adminUser)
+    }
+
+    @Test
+    fun newUserTest() {
+        client.post()
+            .uri("/admin/users")
+            .header(
+                "Authorization",
+                "Basic ${Base64Utils.encodeToString("$ownerUser:$ownerPassword".toByteArray(Charsets.UTF_8))}"
+            )
+            .body(
+                BodyInserters.fromValue(
+                    UserDto(
+                        username = "newUser",
+                        password = "newUserPassword",
+                        roles = mutableSetOf("ADMIN")
+                    )
+                )
+            )
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.username").isNotEmpty
+            .jsonPath("$.username").isEqualTo("newUser")
+    }
+
+    @Test
+    fun deleteUserTest() {
+        client.delete()
+            .uri("/admin/users/${userMap[adminUser]}")
+            .header(
+                "Authorization",
+                "Basic ${Base64Utils.encodeToString("$ownerUser:$ownerPassword".toByteArray(Charsets.UTF_8))}"
+            )
+            .exchange()
+            .expectStatus().isOk
+        assertNull(userRepository.findByUsername(adminUser))
     }
 
     @Test
