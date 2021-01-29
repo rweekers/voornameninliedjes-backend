@@ -36,15 +36,6 @@ class ArtistAdminController {
     }
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
-    @DeleteMapping("/artists")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
-    fun deleteArtists() {
-        val count = artistService.countArtists()
-        artistRepository.deleteAll()
-        log.info("$count artists deleted")
-    }
-
-    @PreAuthorize("hasRole('ROLE_OWNER')")
     @DeleteMapping("/artists/{id}")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     fun deleteArtistById(@PathVariable id: Long) {

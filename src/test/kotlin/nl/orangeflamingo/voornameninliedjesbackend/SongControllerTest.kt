@@ -4,13 +4,11 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.*
 import nl.orangeflamingo.voornameninliedjesbackend.dto.TestSongDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
-import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
@@ -20,29 +18,15 @@ import org.springframework.test.web.reactive.server.expectBodyList
 @AutoConfigureWebTestClient
 class SongControllerTest(
     @Autowired val client: WebTestClient,
-    @Autowired val userRepository: UserRepository,
     @Autowired val songRepository: SongRepository,
-    @Autowired val artistRepository: ArtistRepository,
-    @Autowired val encoder: PasswordEncoder
+    @Autowired val artistRepository: ArtistRepository
 ) {
-
-    private val user: String = "test"
-    private val password: String = "secret"
-    private val adminRole: String = "ADMIN"
     private lateinit var songMap: Map<String, Long>
 
     @BeforeEach
     fun createUser() {
         songRepository.deleteAll()
         artistRepository.deleteAll()
-        userRepository.deleteAll()
-        userRepository.save(
-            User(
-                username = user,
-                password = encoder.encode(password),
-                roles = mutableSetOf(UserRole(adminRole))
-            )
-        )
 
         val artist = artistRepository.save(
             Artist(
@@ -99,10 +83,6 @@ class SongControllerTest(
 
     @Test
     fun getSongByIdTest() {
-        val t = client.get()
-            .uri("/api/songs/${songMap["Michelle"]}")
-            .exchange()
-
         client.get()
             .uri("/api/songs/${songMap["Michelle"]}")
             .exchange()
