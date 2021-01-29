@@ -3,6 +3,7 @@ package nl.orangeflamingo.voornameninliedjesbackend
 import nl.orangeflamingo.voornameninliedjesbackend.domain.*
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
+import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
@@ -22,6 +23,7 @@ import java.time.Instant
 class ArtistAdminControllerTest(
     @Autowired val client: WebTestClient,
     @Autowired val userRepository: UserRepository,
+    @Autowired val songRepository: SongRepository,
     @Autowired val artistRepository: ArtistRepository,
     @Autowired val encoder: PasswordEncoder
 ) {
@@ -36,6 +38,7 @@ class ArtistAdminControllerTest(
 
     @BeforeEach
     fun createUser() {
+        songRepository.deleteAll()
         artistRepository.deleteAll()
         userRepository.deleteAll()
         userRepository.saveAll(

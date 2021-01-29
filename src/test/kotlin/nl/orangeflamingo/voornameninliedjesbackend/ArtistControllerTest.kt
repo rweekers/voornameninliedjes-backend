@@ -5,6 +5,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
+import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,12 +20,14 @@ import org.springframework.test.web.reactive.server.expectBodyList
 @AutoConfigureWebTestClient
 class ArtistControllerTest(
     @Autowired val client: WebTestClient,
+    @Autowired val songRepository: SongRepository,
     @Autowired val artistRepository: ArtistRepository,
 ) {
     private lateinit var artistMap: Map<String, Long>
 
     @BeforeEach
     fun createUser() {
+        songRepository.deleteAll()
         artistRepository.deleteAll()
         val artist = Artist(
             name = "The Beatles",
