@@ -13,18 +13,13 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnProperty(prefix = "jobs", name = ["enabled"], havingValue = "true")
-class SongEnrichmentJob {
+class SongEnrichmentJob(
+    @Autowired val songRepository: SongRepository,
+    @Autowired val artistRepository: ArtistRepository,
+    @Autowired val flickrApiClient: FlickrApiClient
+) {
 
     private val log = LoggerFactory.getLogger(SongEnrichmentJob::class.java)
-
-    @Autowired
-    private lateinit var songRepository: SongRepository
-
-    @Autowired
-    private lateinit var artistRepository: ArtistRepository
-
-    @Autowired
-    private lateinit var flickrApiClient: FlickrApiClient
 
     @Scheduled(cron = "\${jobs.updateSong.cron}")
     fun updateSong() {
