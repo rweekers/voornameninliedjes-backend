@@ -7,7 +7,7 @@ import java.util.*
 
 data class AdminSongDto(
 
-        val id: String?,
+        val id: String? = null,
 
         val artist: String,
 
@@ -15,13 +15,13 @@ data class AdminSongDto(
 
         val name: String,
 
-        val artistImage: String?,
+        val artistImage: String? = null,
 
-        val background: String?,
+        val background: String? = null,
 
-        val youtube: String?,
+        val youtube: String? = null,
 
-        val spotify: String?,
+        val spotify: String? = null,
 
         val status: String,
 
