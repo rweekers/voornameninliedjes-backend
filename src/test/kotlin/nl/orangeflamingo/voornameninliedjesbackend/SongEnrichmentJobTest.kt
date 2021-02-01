@@ -11,12 +11,12 @@ import org.mockito.Mockito.*
 import reactor.core.publisher.Mono
 import java.util.*
 
-class SongEnrichtmentJobTest {
+class SongEnrichmentJobTest {
 
-    val mockSongRepository = mock(SongRepository::class.java)
-    val mockArtistRepository = mock(ArtistRepository::class.java)
-    val mockFlickrApiClient = mock(FlickrApiClient::class.java)
-    val songEnrichmentJob = SongEnrichmentJob(
+    private val mockSongRepository = mock(SongRepository::class.java)
+    private val mockArtistRepository = mock(ArtistRepository::class.java)
+    private val mockFlickrApiClient = mock(FlickrApiClient::class.java)
+    private val songEnrichmentJob = SongEnrichmentJob(
         mockSongRepository,
         mockArtistRepository,
         mockFlickrApiClient
