@@ -1,6 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.domain
 
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 
 data class AggregateSong(
@@ -11,6 +12,7 @@ data class AggregateSong(
     val artistBackground: String? = null,
     val artistImage: String? = null,
     val background: String? = null,
+    val wikipediaBackground: Mono<String> = Mono.empty(),
     val youtube: String? = null,
     val spotify: String? = null,
     val status: SongStatus,

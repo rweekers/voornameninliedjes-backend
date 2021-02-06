@@ -1,12 +1,11 @@
-package nl.orangeflamingo.voornameninliedjesbackend.steps
+package nl.orangeflamingo.voornameninliedjesbackend.cucumber.steps
 
 import io.cucumber.java8.En
 import nl.orangeflamingo.voornameninliedjesbackend.controller.SongController
-import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
-import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
+import nl.orangeflamingo.voornameninliedjesbackend.domain.*
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
+import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired
 class SongSteps : En {
 
     private val log = LoggerFactory.getLogger(SongSteps::class.java)
+
+    @Autowired
+    private lateinit var songService: SongService
 
     @Autowired
     private lateinit var songController: SongController
@@ -33,6 +35,11 @@ class SongSteps : En {
             songRepository.save(song)
         }
 
+        When("user {word} updates the song {string} with the following details:") { user: String, songTitle: String, aggregateSong: AggregateSong ->
+            val song = songRepository.findFirstByTitle(songTitle).orElseThrow()
+            songService.updateSong(aggregateSong = aggregateSong, song = song, user = user)
+        }
+
         Then("there are {int} songs returned") { numberOfSongs: Int ->
             val songsCount = songController.getSongs().size
             assertEquals(numberOfSongs, songsCount)
@@ -47,6 +54,17 @@ class SongSteps : En {
                 ),
                 artists = mutableSetOf()
             )
+        }
+
+        DataTableType { entry: Map<String, String> ->
+            TestAggregateSong(
+                artistName = entry["artist"] ?: throw IllegalArgumentException("There should be an artist"),
+                title = entry["title"] ?: throw IllegalArgumentException("There should be a title"),
+                name = entry["name"] ?: throw IllegalArgumentException("There should be a name"),
+                status = SongStatus.valueOf(
+                    entry["status"] ?: throw IllegalArgumentException("There should be a title")
+                )
+            ).toDomain()
         }
     }
 }

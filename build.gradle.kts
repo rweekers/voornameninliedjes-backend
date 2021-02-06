@@ -39,6 +39,7 @@ plugins {
     id("io.spring.dependency-management") version "1.0.10.RELEASE"
     id("com.bmuschko.docker-remote-api") version "6.6.1"
     id("org.sonarqube") version "3.0"
+    id("com.gorylenko.gradle-git-properties") version "2.2.4"
     kotlin("jvm") version "1.4.21"
     kotlin("plugin.spring") version "1.4.21"
 }
@@ -63,7 +64,7 @@ sonarqube {
 }
 
 group = "nl.orangeflamingo"
-version = "0.0.1-SNAPSHOT"
+version = "1.0.0-RELEASE"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {

@@ -1,6 +1,5 @@
-package nl.orangeflamingo.voornameninliedjesbackend
+package nl.orangeflamingo.voornameninliedjesbackend.client
 
-import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrHttpApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.dto.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach

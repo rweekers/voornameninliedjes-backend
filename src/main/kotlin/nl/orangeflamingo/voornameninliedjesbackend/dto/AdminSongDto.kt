@@ -3,61 +3,45 @@ package nl.orangeflamingo.voornameninliedjesbackend.dto
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.time.Instant
-import java.util.*
 
 data class AdminSongDto(
 
-        val id: String? = null,
+    val id: String? = null,
 
-        val artist: String,
+    val artist: String,
 
-        val title: String,
+    val title: String,
 
-        val name: String,
+    val name: String,
 
-        val artistImage: String? = null,
+    val artistImage: String? = null,
 
-        val background: String? = null,
+    val background: String? = null,
 
-        val youtube: String? = null,
+    val youtube: String? = null,
 
-        val spotify: String? = null,
+    val spotify: String? = null,
 
-        val status: String,
+    val status: String,
 
-        val wikimediaPhotos: Set<AdminWikimediaPhotoDto> = setOf(),
+    val wikimediaPhotos: Set<AdminWikimediaPhotoDto> = setOf(),
 
-        val flickrPhotos: Set<String> = setOf(),
+    val flickrPhotos: Set<String> = setOf(),
 
-        val sources: Set<AdminSourceDto> = setOf(),
+    val sources: Set<AdminSourceDto> = setOf(),
 
-        @JsonIgnoreProperties(allowGetters = true)
-        val logs: List<AdminLogEntry> = listOf()
-
-) {
-    override fun toString(): String {
-        return "Song(name=$artist, code=$title"
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (other == null || other !is AdminSongDto)
-            return false
-        return artist == other.artist && title == other.title && name == other.name
-    }
-
-    override fun hashCode(): Int {
-        return Objects.hash(artist, title, name)
-    }
-}
+    @JsonIgnoreProperties(allowGetters = true)
+    val logs: List<AdminLogEntry> = listOf()
+)
 
 data class AdminWikimediaPhotoDto(
-        val url: String,
-        val attribution: String
+    val url: String,
+    val attribution: String
 )
 
 data class AdminSourceDto(
-        val url: String,
-        val name: String
+    val url: String,
+    val name: String
 )
 
 data class AdminLogEntry(

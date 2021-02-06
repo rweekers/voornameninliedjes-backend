@@ -1,4 +1,4 @@
-package nl.orangeflamingo.voornameninliedjesbackend
+package nl.orangeflamingo.voornameninliedjesbackend.cucumber
 
 import io.cucumber.junit.platform.engine.Cucumber
 

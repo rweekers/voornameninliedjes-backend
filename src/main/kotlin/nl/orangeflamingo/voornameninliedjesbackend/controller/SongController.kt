@@ -26,8 +26,9 @@ class SongController {
     fun getSongById(@PathVariable id: Long): Mono<SongDto> {
         log.info("Requesting song with id $id...")
         val song = songService.findByIdDetails(id)
-        return song.flickrPhotoDetail.collectList().map { photos ->
-            convertToDto(song, photos)
+        return song.flickrPhotoDetail.collectList()
+            .zipWith(song.wikipediaBackground.switchIfEmpty(Mono.just(song.background ?: "Geen achtergrond gevonden"))).map { it ->
+            convertToDto(song, it.t1, it.t2)
         }
     }
 
@@ -39,14 +40,14 @@ class SongController {
         return songService.findAllByStatusOrderedByName(SongStatus.SHOW).map { convertToDto(it, emptyList()) }
     }
 
-    private fun convertToDto(song: AggregateSong, photos: List<PhotoDetail>): SongDto {
+    private fun convertToDto(song: AggregateSong, photos: List<PhotoDetail>, background: String = ""): SongDto {
         return SongDto(
             id = song.id.toString(),
             artist = song.artistName,
             title = song.title,
             name = song.name,
             artistImage = song.artistImage,
-            background = song.background,
+            background = background,
             youtube = song.youtube,
             spotify = song.spotify,
             wikimediaPhotos = song.wikimediaPhotos.map { convertWikimediaPhotoToDto(it) }.toSet(),
