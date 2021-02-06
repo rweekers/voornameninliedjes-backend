@@ -6,6 +6,7 @@ import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
 interface SongRepository : CrudRepository<Song, Long> {
@@ -19,6 +20,8 @@ interface SongRepository : CrudRepository<Song, Long> {
     fun findAllByNameStartingWithIgnoreCaseOrderByNameAsc(firstCharacter: String): List<Song>
 
     fun findAllByNameIgnoreCaseOrderByNameAsc(name: String): List<Song>
+
+    fun findFirstByTitle(title: String): Optional<Song>
 
     @Query("select * from songs order by name ASC")
     fun findAllOrderByNameAsc(): List<Song>

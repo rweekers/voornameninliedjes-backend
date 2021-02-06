@@ -1,4 +1,4 @@
-package nl.orangeflamingo.voornameninliedjesbackend
+package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.*
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSongDto
@@ -55,20 +55,27 @@ class SongAdminControllerTest(
         )
         artistMap[artistName] = artist.id!!
 
-        val songMichelle = Song(
+        val songMichelle = TestSong(
             title = songTitle,
             name = "Michelle",
-            status = SongStatus.SHOW,
             artists = mutableSetOf(
                 ArtistRef(
                     artist = artist.id!!
                 )
             )
-        )
+        ).toDomain()
+
+        val songLucy = TestSong(
+            artists = mutableSetOf(
+                ArtistRef(
+                    artist = artist.id!!
+                )
+            )
+        ).toDomain()
 
         songMap = songRepository.saveAll(
             listOf(
-                songMichelle, songMichelle.copy(title = "Lucy in the Sky with Diamonds", name = "Lucy")
+                songMichelle, songLucy
             )
         ).map { it.title to it.id!! }.toMap()
     }

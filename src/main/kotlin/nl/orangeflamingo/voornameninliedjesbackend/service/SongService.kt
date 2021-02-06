@@ -1,6 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.*
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
@@ -15,7 +16,8 @@ import java.time.Instant
 class SongService @Autowired constructor(
     val artistRepository: ArtistRepository,
     val songRepository: SongRepository,
-    val flickrApiClient: FlickrApiClient
+    val flickrApiClient: FlickrApiClient,
+    val wikipediaApiClient: WikipediaApiClient
 ) {
     private val log = LoggerFactory.getLogger(SongService::class.java)
 
@@ -66,13 +68,15 @@ class SongService @Autowired constructor(
     private fun createAggregateSong(
         song: Song,
         artist: Artist,
-        photoDetails: Flux<PhotoDetail> = Flux.empty()
+        photoDetails: Flux<PhotoDetail> = Flux.empty(),
+        wikipediaBackground: Mono<String> = Mono.empty()
     ) = AggregateSong(
         id = song.id ?: throw IllegalStateException("The song should have an id"),
         title = song.title,
         name = song.name,
         artistName = artist.name,
         background = song.background,
+        wikipediaBackground = wikipediaBackground.switchIfEmpty(Mono.empty()),
         youtube = song.youtube,
         spotify = song.spotify,
         status = song.status,
@@ -86,8 +90,11 @@ class SongService @Autowired constructor(
 
     fun findByIdDetails(id: Long): AggregateSong {
         log.info("Getting song with id $id")
+
         val song = songRepository.findById(id).orElseThrow()
         val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
+        val wikipediaBackground =
+            if (song.wikipediaPage != null) wikipediaApiClient.getBackground(song.wikipediaPage) else Mono.empty()
 
         val photos = Flux.mergeSequential(artist.flickrPhotos.map { flickrApiPhoto ->
             flickrApiClient.getPhoto(flickrApiPhoto.flickrId)
@@ -123,7 +130,9 @@ class SongService @Autowired constructor(
             }
         })
 
-        return createAggregateSong(song, artist, photoDetails)
+        return createAggregateSong(
+            song, artist, photoDetails, wikipediaBackground.switchIfEmpty(Mono.empty()).map { it.background }
+        )
     }
 
     fun updateSong(aggregateSong: AggregateSong, song: Song, user: String): AggregateSong {

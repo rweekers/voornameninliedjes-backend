@@ -1,7 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.config
 
-import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
-import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrHttpApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaHttpApiClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -13,23 +13,23 @@ import reactor.netty.http.client.HttpClient
 
 @Configuration
 @Profile("!integration-test")
-class FlickrConfig {
+class WikipediaConfig {
 
     @Bean
-    fun flickrWebClient(): WebClient {
+    fun wikipediaWebClient(): WebClient {
         return WebClient.builder()
             .clientConnector(
                 ReactorClientHttpConnector(
                     HttpClient.create().followRedirect(true)
                 )
             )
-            .baseUrl("https://api.flickr.com")
+            .baseUrl("https://nl.wikipedia.org")
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build()
     }
 
     @Bean
-    fun flickrApiClient(flickrWebClient: WebClient): FlickrApiClient {
-        return FlickrHttpApiClient(flickrWebClient)
+    fun wikipediaApiClient(wikipediaWebClient: WebClient): WikipediaApiClient {
+        return WikipediaHttpApiClient(wikipediaWebClient)
     }
 }

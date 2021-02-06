@@ -1,4 +1,4 @@
-package nl.orangeflamingo.voornameninliedjesbackend.steps
+package nl.orangeflamingo.voornameninliedjesbackend.cucumber.steps
 
 import io.cucumber.java8.En
 import io.cucumber.java8.Scenario

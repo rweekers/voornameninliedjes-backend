@@ -1,6 +1,5 @@
-package nl.orangeflamingo.voornameninliedjesbackend
+package nl.orangeflamingo.voornameninliedjesbackend.controller
 
-import nl.orangeflamingo.voornameninliedjesbackend.controller.UserDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.User
 import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository

@@ -1,4 +1,4 @@
-package nl.orangeflamingo.voornameninliedjesbackend
+package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.*
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistDto
