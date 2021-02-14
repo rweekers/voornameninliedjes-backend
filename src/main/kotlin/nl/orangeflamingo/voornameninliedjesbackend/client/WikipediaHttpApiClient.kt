@@ -26,7 +26,7 @@ class WikipediaHttpApiClient(
             .switchIfEmpty(Mono.empty())
             .map {
                 WikipediaApi(
-                    background = "${it.query.pages.first().extract}${createFooter(wikipediaPage)}"
+                    background = "${it.query.pages.first().extract.replace("\"", "*")}${createFooter(wikipediaPage)}"
                 )
             }
     }
