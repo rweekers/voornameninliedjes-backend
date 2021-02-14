@@ -19,7 +19,7 @@ data class Song(
     var background: String? = null,
     var youtube: String? = null,
     var spotify: String? = null,
-    val wikipediaPage: String? = null,
+    var wikipediaPage: String? = null,
     var status: SongStatus,
     val mongoId: String? = null,
     @MappedCollection(idColumn = "song_id", keyColumn = "song_key")

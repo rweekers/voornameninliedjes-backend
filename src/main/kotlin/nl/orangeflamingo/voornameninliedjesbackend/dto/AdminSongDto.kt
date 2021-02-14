@@ -18,6 +18,8 @@ data class AdminSongDto(
 
     val background: String? = null,
 
+    val wikipediaPage: String? = null,
+
     val youtube: String? = null,
 
     val spotify: String? = null,

@@ -77,6 +77,7 @@ class SongService @Autowired constructor(
         artistName = artist.name,
         background = song.background,
         wikipediaBackground = wikipediaBackground.switchIfEmpty(Mono.empty()),
+        wikipediaPage = song.wikipediaPage,
         youtube = song.youtube,
         spotify = song.spotify,
         status = song.status,
@@ -94,7 +95,7 @@ class SongService @Autowired constructor(
         val song = songRepository.findById(id).orElseThrow()
         val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
         val wikipediaBackground =
-            if (song.wikipediaPage != null) wikipediaApiClient.getBackground(song.wikipediaPage) else Mono.empty()
+            if (song.wikipediaPage != null) wikipediaApiClient.getBackground(song.wikipediaPage!!) else Mono.empty()
 
         val photos = Flux.mergeSequential(artist.flickrPhotos.map { flickrApiPhoto ->
             flickrApiClient.getPhoto(flickrApiPhoto.flickrId)
@@ -142,6 +143,7 @@ class SongService @Autowired constructor(
         song.name = aggregateSong.name
         song.status = aggregateSong.status
         song.background = aggregateSong.background
+        song.wikipediaPage = aggregateSong.wikipediaPage
         song.youtube = aggregateSong.youtube
         song.spotify = aggregateSong.spotify
         song.sources = aggregateSong.sources.map { s -> SongSource(url = s.url, name = s.name) }
@@ -201,6 +203,7 @@ class SongService @Autowired constructor(
             name = aggregateSong.name,
             artistImage = aggregateSong.artistImage,
             background = aggregateSong.background,
+            wikipediaPage = aggregateSong.wikipediaPage,
             youtube = aggregateSong.youtube,
             spotify = aggregateSong.spotify,
             status = aggregateSong.status,
