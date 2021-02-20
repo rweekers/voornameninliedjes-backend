@@ -17,7 +17,7 @@ Feature: Song controller
       | title                         | name | status |
       | Lucy in the Sky with Diamonds | Lucy | SHOW   |
     When user Test updates the song 'Lucy in the Sky with Diamonds' with the following details:
-      | title | name  | status      | artist             |
+      | title | name  | status      | artistName         |
       | Angie | Angie | IN_PROGRESS | The Rolling Stones |
     Then there are 1 artists with name 'The Rolling Stones'
     And there are 0 artists with name 'The Beatles'

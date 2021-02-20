@@ -26,12 +26,18 @@ class WikipediaHttpApiClient(
             .switchIfEmpty(Mono.empty())
             .map {
                 WikipediaApi(
-                    background = "${it.query.pages.first().extract.replace("\"", "*")}${createFooter(wikipediaPage)}"
+                    background = "${formatText(it.query.pages.first().extract)}${createFooter(wikipediaPage)}"
                 )
             }
     }
 
     private fun createFooter(wikipediaPage: String): String {
         return "\n\nhttps://nl.wikipedia.org/wiki/$wikipediaPage"
+    }
+
+    private fun formatText(wikiBackground: String): String {
+        return wikiBackground
+            .replace("\"", "*")
+            .replace("..", ".")
     }
 }

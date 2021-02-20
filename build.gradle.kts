@@ -90,6 +90,7 @@ dependencies {
     testImplementation("io.cucumber:cucumber-java8:6.8.1")
     testImplementation("io.cucumber:cucumber-spring:6.8.1")
     testImplementation("io.cucumber:cucumber-junit-platform-engine:6.8.1")
+    testImplementation("com.beust:klaxon:5.4")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 

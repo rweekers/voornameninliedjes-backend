@@ -1,6 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.domain
 
-import org.springframework.data.relational.core.mapping.MappedCollection
+import com.beust.klaxon.Json
 
 class TestSong(
     val id: Long? = null,
@@ -14,6 +14,7 @@ class TestSong(
     var status: SongStatus = SongStatus.SHOW,
     val mongoId: String? = null,
     var sources: List<SongSource> = listOf(),
+    @Json(ignored = true)
     val artists: MutableSet<ArtistRef> = mutableSetOf()
 ) {
     fun toDomain(): Song {

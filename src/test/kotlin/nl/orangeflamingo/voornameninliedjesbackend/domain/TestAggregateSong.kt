@@ -1,5 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.domain
 
+import com.beust.klaxon.Json
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -11,6 +12,7 @@ data class TestAggregateSong(
     val artistBackground: String? = "Some background on The Beatles",
     val artistImage: String? = null,
     val background: String? = "Some background on the song Michelle",
+    @Json(ignored = true)
     val wikipediaBackground: Mono<String> = Mono.empty(),
     val youtube: String? = "DvYhIotxgOA",
     val spotify: String? = "5By7Pzgl6TMuVJG168VWzS",
@@ -18,6 +20,7 @@ data class TestAggregateSong(
     val mongoId: String? = null,
     val wikimediaPhotos: Set<ArtistWikimediaPhoto> = mutableSetOf(),
     val flickrPhotos: Set<ArtistFlickrPhoto> = mutableSetOf(),
+    @Json(ignored = true)
     val flickrPhotoDetail: Flux<PhotoDetail> = Flux.empty(),
     val sources: List<SongSource> = listOf(),
     val logEntries: MutableList<SongLogEntry> = mutableListOf()

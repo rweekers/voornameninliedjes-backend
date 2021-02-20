@@ -1,5 +1,8 @@
 package nl.orangeflamingo.voornameninliedjesbackend.cucumber.steps
 
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Klaxon
+import com.beust.klaxon.Parser
 import io.cucumber.java8.En
 import nl.orangeflamingo.voornameninliedjesbackend.controller.SongController
 import nl.orangeflamingo.voornameninliedjesbackend.domain.*
@@ -14,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired
 class SongSteps : En {
 
     private val log = LoggerFactory.getLogger(SongSteps::class.java)
+    private val klaxon = Klaxon()
+    private val parser = Parser.default()
 
     @Autowired
     private lateinit var songService: SongService
@@ -46,25 +51,21 @@ class SongSteps : En {
         }
 
         DataTableType { entry: Map<String, String> ->
-            Song(
-                title = entry["title"] ?: throw IllegalArgumentException("There should be a title"),
-                name = entry["name"] ?: throw IllegalArgumentException("There should be a name"),
-                status = SongStatus.valueOf(
-                    entry["status"] ?: throw IllegalArgumentException("There should be a title")
-                ),
-                artists = mutableSetOf()
-            )
+            val testSong = TestSong()
+            val jsonObject = parser.parse(StringBuilder(klaxon.toJsonString(testSong))) as JsonObject
+            entry.forEach { (key, value) -> jsonObject[key] = value }
+
+            val updatedTestSong = klaxon.maybeParse<TestSong>(jsonObject)!!
+            updatedTestSong.toDomain()
         }
 
         DataTableType { entry: Map<String, String> ->
-            TestAggregateSong(
-                artistName = entry["artist"] ?: throw IllegalArgumentException("There should be an artist"),
-                title = entry["title"] ?: throw IllegalArgumentException("There should be a title"),
-                name = entry["name"] ?: throw IllegalArgumentException("There should be a name"),
-                status = SongStatus.valueOf(
-                    entry["status"] ?: throw IllegalArgumentException("There should be a title")
-                )
-            ).toDomain()
+            val testAggregateSong = TestAggregateSong()
+            val jsonObject = parser.parse(StringBuilder(klaxon.toJsonString(testAggregateSong))) as JsonObject
+            entry.forEach { (key, value) -> jsonObject[key] = value }
+
+            val updatedTestAggregateSong = klaxon.maybeParse<TestAggregateSong>(jsonObject)!!
+            updatedTestAggregateSong.toDomain()
         }
     }
 }
