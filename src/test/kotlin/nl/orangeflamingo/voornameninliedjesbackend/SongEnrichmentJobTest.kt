@@ -31,10 +31,10 @@ class SongEnrichmentJobTest {
 
     @BeforeEach
     fun init() {
-        `when`(mockSongRepository.findAllByStatusOrderedByName(SongStatus.SHOW)).thenReturn(
+        `when`(mockSongRepository.findAllByStatusOrderedByName(SongStatus.SHOW.code)).thenReturn(
             listOf(song)
         )
-        `when`(mockSongRepository.findAllByStatusAndArtistImageIsNull(SongStatus.SHOW)).thenReturn(
+        `when`(mockSongRepository.findAllByStatusAndArtistImageIsNull(SongStatus.SHOW.code)).thenReturn(
             listOf(song)
         )
         `when`(mockArtistRepository.findById(100)).thenReturn(

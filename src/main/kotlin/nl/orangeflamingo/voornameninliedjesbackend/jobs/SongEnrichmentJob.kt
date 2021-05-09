@@ -24,14 +24,14 @@ class SongEnrichmentJob(
     @Scheduled(cron = "\${jobs.updateSong.cron}")
     fun updateSong() {
         log.info("Starting update job")
-        songRepository.findAllByStatusOrderedByName(SongStatus.SHOW)
+        songRepository.findAllByStatusOrderedByName(SongStatus.SHOW.code)
             .forEach { updateArtistImageForSong(it) }
     }
 
     @Scheduled(fixedRateString = "\${jobs.enrichSong.rate}")
     fun enrichSong() {
         log.info("Starting enrichment job")
-        songRepository.findAllByStatusAndArtistImageIsNull(SongStatus.SHOW)
+        songRepository.findAllByStatusAndArtistImageIsNull(SongStatus.SHOW.code)
             .forEach { updateArtistImageForSong(it) }
     }
 

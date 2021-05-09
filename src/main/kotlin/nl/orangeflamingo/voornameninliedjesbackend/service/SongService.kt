@@ -41,8 +41,8 @@ class SongService @Autowired constructor(
             }
     }
 
-    fun findByNameStartsWith(firstCharacter: String): List<AggregateSong> {
-        return songRepository.findAllByNameStartingWithIgnoreCaseOrderByNameAsc(firstCharacter)
+    fun findByNameStartsWithAndStatusIn(firstCharacter: String, statusList: List<SongStatus>): List<AggregateSong> {
+        return songRepository.findAllByNameStartingWithIgnoreCaseAndStatusInOrderByNameAsc(firstCharacter, statusList.map { it.code })
             .map { song ->
                 val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
                 createAggregateSong(song, artist)
@@ -50,7 +50,7 @@ class SongService @Autowired constructor(
     }
 
     fun findAllByStatusOrderedByName(status: SongStatus): List<AggregateSong> {
-        return songRepository.findAllByStatusOrderedByName(status)
+        return songRepository.findAllByStatusOrderedByName(status.code)
             .map { song ->
                 val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
                 createAggregateSong(song, artist)

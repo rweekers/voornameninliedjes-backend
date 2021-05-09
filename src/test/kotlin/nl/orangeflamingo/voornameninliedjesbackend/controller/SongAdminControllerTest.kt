@@ -65,6 +65,17 @@ class SongAdminControllerTest(
             )
         ).toDomain()
 
+        val songMadonna = TestSong(
+            title = "Lady Madonna",
+            name = "Madonna",
+            artists = mutableSetOf(
+                ArtistRef(
+                    artist = artist.id!!
+                )
+            ),
+            status = SongStatus.IN_PROGRESS
+        ).toDomain()
+
         val songLucy = TestSong(
             artists = mutableSetOf(
                 ArtistRef(
@@ -75,7 +86,7 @@ class SongAdminControllerTest(
 
         songMap = songRepository.saveAll(
             listOf(
-                songMichelle, songLucy
+                songMichelle, songMadonna, songLucy
             )
         ).map { it.title to it.id!! }.toMap()
     }
@@ -87,7 +98,7 @@ class SongAdminControllerTest(
             .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
             .exchange()
             .expectStatus().isOk
-            .expectBodyList<AdminSongDto>().hasSize(2)
+            .expectBodyList<AdminSongDto>().hasSize(3)
     }
 
     @Test
@@ -112,6 +123,23 @@ class SongAdminControllerTest(
                 uriBuilder
                     .path("/admin/songs")
                     .queryParam("first-character", "M")
+                    .queryParam("status", "SHOW,IN_PROGRESS,TO_BE_DELETED")
+                    .build()
+            }
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isOk
+            .expectBodyList<AdminSongDto>().hasSize(2)
+    }
+
+    @Test
+    fun getSongsByWithNameStartingWithTestAndStatusIn() {
+        client.get()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/admin/songs")
+                    .queryParam("first-character", "M")
+                    .queryParam("status", "IN_PROGRESS")
                     .build()
             }
             .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }

@@ -52,8 +52,8 @@ class SongAdminController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/songs", params = ["first-character"])
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
-    fun getSongsWithNameStartingWith(@RequestParam(name = "first-character") firstCharacter: String): List<AdminSongDto> {
-        return songService.findByNameStartsWith(firstCharacter)
+    fun getSongsWithNameStartingWith(@RequestParam(name = "first-character") firstCharacter: String, @RequestParam(name="status", defaultValue = "") status: List<String> = emptyList()): List<AdminSongDto> {
+        return songService.findByNameStartsWithAndStatusIn(firstCharacter, status.map { SongStatus.valueOf(it) })
             .map { convertToDto(it) }
     }
 
@@ -149,24 +149,24 @@ class SongAdminController {
     private fun convertToDomain(song: AdminSongDto): AggregateSong {
         return AggregateSong(
             id = song.id?.toLong(),
-            title = song.title,
-            name = song.name,
-            artistName = song.artist,
-            artistImage = song.artistImage,
-            background = song.background,
-            wikipediaPage = song.wikipediaPage,
-            youtube = song.youtube,
-            spotify = song.spotify,
-            status = SongStatus.valueOf(song.status),
+            title = song.title.trim(),
+            name = song.name.trim(),
+            artistName = song.artist.trim(),
+            artistImage = song.artistImage?.trim(),
+            background = song.background?.trim(),
+            wikipediaPage = song.wikipediaPage?.trim(),
+            youtube = song.youtube?.trim(),
+            spotify = song.spotify?.trim(),
+            status = SongStatus.valueOf(song.status.trim()),
             wikimediaPhotos = song.wikimediaPhotos.map {
                 ArtistWikimediaPhoto(
-                    url = it.url,
-                    attribution = it.attribution
+                    url = it.url.trim(),
+                    attribution = it.attribution.trim()
                 )
             }.toSet(),
-            flickrPhotos = song.flickrPhotos.map { ArtistFlickrPhoto(it) }.toSet(),
-            sources = song.sources.map { SongSource(it.url, it.name) },
-            logEntries = song.logs.map { SongLogEntry(it.date, it.user) }.toMutableList()
+            flickrPhotos = song.flickrPhotos.map { ArtistFlickrPhoto(it.trim()) }.toSet(),
+            sources = song.sources.map { SongSource(it.url.trim(), it.name.trim()) },
+            logEntries = song.logs.map { SongLogEntry(it.date, it.user.trim()) }.toMutableList()
         )
 
     }
@@ -182,7 +182,7 @@ class SongAdminController {
             wikipediaPage = song.wikipediaPage,
             youtube = song.youtube,
             spotify = song.spotify,
-            status = song.status.name,
+            status = song.status.code,
             wikimediaPhotos = song.wikimediaPhotos.map { w -> convertToDto(w) }.toSet(),
             flickrPhotos = song.flickrPhotos.map { it.flickrId }.toSet(),
             sources = song.sources.map { s -> convertToDto(s) }.toSet(),

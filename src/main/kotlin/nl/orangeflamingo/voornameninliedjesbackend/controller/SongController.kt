@@ -76,7 +76,7 @@ class SongController {
                     name = it.name
                 )
             }.toSet(),
-            status = song.status.name
+            status = song.status.code
         )
     }
 

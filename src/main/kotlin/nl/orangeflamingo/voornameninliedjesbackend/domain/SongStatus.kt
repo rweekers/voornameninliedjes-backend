@@ -1,8 +1,8 @@
 package nl.orangeflamingo.voornameninliedjesbackend.domain
 
-enum class SongStatus {
+enum class SongStatus(val code: String) {
 
-    SHOW,
-    IN_PROGRESS,
-    TO_BE_DELETED
+    SHOW("SHOW"),
+    IN_PROGRESS("IN_PROGRESS"),
+    TO_BE_DELETED("TO_BE_DELETED")
 }
