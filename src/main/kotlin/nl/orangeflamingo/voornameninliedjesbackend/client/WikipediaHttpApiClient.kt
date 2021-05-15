@@ -39,5 +39,9 @@ class WikipediaHttpApiClient(
         return wikiBackground
             .replace("\"", "*")
             .replace("..", ".")
+            .replace("=== ", "###### ")
+            .replace(" ===", " ")
+            .replace("== ", "##### ")
+            .replace(" ==", " ")
     }
 }

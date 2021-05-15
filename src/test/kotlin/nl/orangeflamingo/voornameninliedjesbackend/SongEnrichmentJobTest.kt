@@ -21,7 +21,7 @@ class SongEnrichmentJobTest {
         mockArtistRepository,
         mockFlickrApiClient
     )
-    val song = Song(
+    private val song = Song(
         id = 1,
         title = "Michelle",
         name = "Michelle",
