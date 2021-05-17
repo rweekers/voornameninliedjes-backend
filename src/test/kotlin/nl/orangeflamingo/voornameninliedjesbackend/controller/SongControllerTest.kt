@@ -100,7 +100,7 @@ class SongControllerTest(
     @Test
     fun getSongByArtistAndTitleTest() {
         client.get()
-            .uri("/api/songs/The Beatles/Michelle")
+            .uri("/api/songs/the Beatles/MICHELLE")
             .exchange()
             .expectStatus().isOk
             .expectBody()
