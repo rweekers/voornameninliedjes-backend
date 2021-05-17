@@ -50,6 +50,7 @@ class SongService @Autowired constructor(
     }
 
     fun findAllByStatusOrderedByName(status: SongStatus): List<AggregateSong> {
+        log.info("Getting all songs by status ordered by name...")
         return songRepository.findAllByStatusOrderedByName(status.code)
             .map { song ->
                 val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
@@ -89,10 +90,17 @@ class SongService @Autowired constructor(
         logEntries = song.logEntries
     )
 
-    fun findByIdDetails(id: Long): AggregateSong {
-        log.info("Getting song with id $id")
+    fun findByArtistAndNameDetails(artist: String, title: String): AggregateSong {
+        return getDetails(songRepository.findByArtistAndTitle(artist, title).orElseThrow())
+    }
 
-        val song = songRepository.findById(id).orElseThrow()
+    fun findByIdDetails(id: Long): AggregateSong {
+        return getDetails(songRepository.findById(id).orElseThrow())
+    }
+
+    private fun getDetails(song: Song): AggregateSong {
+        log.info("Getting song with id ${song.id}")
+
         val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
         val wikipediaBackground =
             if (song.wikipediaPage != null) wikipediaApiClient.getBackground(song.wikipediaPage!!) else Mono.empty()

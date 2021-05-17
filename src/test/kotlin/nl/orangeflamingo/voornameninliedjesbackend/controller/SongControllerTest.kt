@@ -96,5 +96,20 @@ class SongControllerTest(
             .jsonPath("$.flickrPhotos").isNotEmpty
             .jsonPath("$.flickrPhotos[0].url").isEqualTo("https://somefakeflickrphotourl.doesnotexist")
     }
+
+    @Test
+    fun getSongByArtistAndTitleTest() {
+        client.get()
+            .uri("/api/songs/The Beatles/Michelle")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.title").isNotEmpty
+            .jsonPath("$.title").isEqualTo("Michelle")
+            .jsonPath("$.artist").isNotEmpty
+            .jsonPath("$.artist").isEqualTo("The Beatles")
+            .jsonPath("$.flickrPhotos").isNotEmpty
+            .jsonPath("$.flickrPhotos[0].url").isEqualTo("https://somefakeflickrphotourl.doesnotexist")
+    }
 }
 

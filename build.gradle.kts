@@ -82,6 +82,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.postgresql:postgresql:42.2.18")
     implementation("org.flywaydb:flyway-core:7.3.2")
+    compile("com.google.guava:guava:30.1.1-jre")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mockito:mockito-core:2.+")
