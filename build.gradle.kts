@@ -35,13 +35,13 @@ val stopMyPostgresAppContainer by tasks.creating(DockerStopContainer::class) {
 
 plugins {
     id("jacoco")
-    id("org.springframework.boot") version "2.4.1"
-    id("io.spring.dependency-management") version "1.0.10.RELEASE"
-    id("com.bmuschko.docker-remote-api") version "6.6.1"
+    id("org.springframework.boot") version "2.4.5"
+    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("com.bmuschko.docker-remote-api") version "7.0.0"
     id("org.sonarqube") version "3.0"
-    id("com.gorylenko.gradle-git-properties") version "2.2.4"
-    kotlin("jvm") version "1.4.21"
-    kotlin("plugin.spring") version "1.4.21"
+    id("com.gorylenko.gradle-git-properties") version "2.3.1"
+    kotlin("jvm") version "1.5.0"
+    kotlin("plugin.spring") version "1.5.0"
 }
 
 tasks.jacocoTestReport {
@@ -80,8 +80,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.postgresql:postgresql:42.2.18")
-    implementation("org.flywaydb:flyway-core:7.3.2")
+    implementation("org.postgresql:postgresql:42.2.20")
+    implementation("org.flywaydb:flyway-core:7.9.0")
     implementation("com.google.guava:guava:30.1.1-jre")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -91,7 +91,7 @@ dependencies {
     testImplementation("io.cucumber:cucumber-java8:6.8.1")
     testImplementation("io.cucumber:cucumber-spring:6.8.1")
     testImplementation("io.cucumber:cucumber-junit-platform-engine:6.8.1")
-    testImplementation("com.beust:klaxon:5.4")
+    testImplementation("com.beust:klaxon:5.5")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
