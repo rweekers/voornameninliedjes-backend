@@ -10,7 +10,6 @@ git:
 
 script:
   - "./gradlew build --scan -s"
-  - "./gradlew jacocoTestReport"
   - "./gradlew sonarqube"
 addons:
   sonarcloud:

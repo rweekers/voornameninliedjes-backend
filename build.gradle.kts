@@ -44,6 +44,10 @@ plugins {
     kotlin("plugin.spring") version "1.5.0"
 }
 
+jacoco {
+    toolVersion = "0.8.7"
+}
+
 tasks.jacocoTestReport {
     reports {
         xml.isEnabled = true
@@ -54,7 +58,7 @@ tasks.test {
     useJUnitPlatform()
 
     dependsOn(startMyPostgresAppContainer)
-    finalizedBy(removeMyPostgresAppContainer)
+    finalizedBy(removeMyPostgresAppContainer, tasks.jacocoTestReport)
 }
 
 sonarqube {
