@@ -22,9 +22,13 @@ class SongController {
 
     private val log = LoggerFactory.getLogger(SongController::class.java)
 
-    private val songCache: LoadingCache<String, List<SongDto>> = CacheBuilder.newBuilder()
+    private val songsCache: LoadingCache<String, List<SongDto>> = CacheBuilder.newBuilder()
         .build(
             CacheLoader.from { _: String? -> songService.findAllByStatusOrderedByName(SongStatus.SHOW).map { convertToDto(it, emptyList()) } }
+        )
+    private val songCache: LoadingCache<Pair<String, String>, Mono<SongDto>> = CacheBuilder.newBuilder()
+        .build(
+            CacheLoader.from { key: Pair<String, String>? -> getSongDetails(key?.first ?: "", key?.second ?: "") }
         )
 
     @Autowired
@@ -46,10 +50,16 @@ class SongController {
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     fun getSongByArtistAndTitle(@PathVariable artist: String, @PathVariable title: String): Mono<SongDto> {
         log.info("Requesting song with artist $artist and title $title...")
+        val artistTitlePair = Pair(artist, title)
+        songCache.refresh(artistTitlePair)
+        return songCache.getUnchecked(artistTitlePair)
+    }
+
+    private fun getSongDetails(artist: String, title: String): Mono<SongDto> {
         val song = songService.findByArtistAndNameDetails(artist, title)
         return song.flickrPhotoDetail.collectList()
             .zipWith(song.wikipediaBackground.switchIfEmpty(Mono.just(song.background ?: "Geen achtergrond gevonden")))
-            .map { it ->
+            .map {
                 convertToDto(song, it.t1, it.t2)
             }
     }
@@ -60,8 +70,8 @@ class SongController {
     fun getSongs(): List<SongDto> {
         log.info("Requesting all songs...")
         // the key is for show for now, cache dedicated for song list only
-        songCache.refresh("songs")
-        return songCache.getUnchecked("songs")
+        songsCache.refresh("songs")
+        return songsCache.getUnchecked("songs")
     }
 
     private fun convertToDto(song: AggregateSong, photos: List<PhotoDetail>, background: String = ""): SongDto {
