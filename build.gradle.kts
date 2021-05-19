@@ -6,6 +6,17 @@ import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val buildMyPostgresAppImage by tasks.creating(DockerBuildImage::class) {
+    dependsOn(
+        tasks.processTestResources,
+        tasks.bootJar,
+        tasks.bootJarMainClassName,
+        tasks.compileJava,
+        tasks.compileKotlin,
+        tasks.compileTestKotlin,
+        tasks.generateGitProperties,
+        tasks.inspectClassesForKotlinIC,
+        tasks.processResources
+    )
     inputDir.set(file("."))
     dockerFile.set(file("DockerfilePostgres"))
     images.add("postgres:13.1")
@@ -103,7 +114,7 @@ dependencies {
 
 configurations {
     "implementation" {
-        exclude(group = "org.springframework.boot", module="spring-boot-starter-logging")
+        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
     }
 }
 
