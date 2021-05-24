@@ -24,7 +24,9 @@ class SongController {
 
     private val songsCache: LoadingCache<String, List<SongDto>> = CacheBuilder.newBuilder()
         .build(
-            CacheLoader.from { _: String? -> songService.findAllByStatusOrderedByName(SongStatus.SHOW).map { convertToDto(it, emptyList()) } }
+            CacheLoader.from { _: String? ->
+                songService.findAllByStatusOrderedByName(SongStatus.SHOW).map { convertToDto(it, emptyList()) }
+            }
         )
     private val songCache: LoadingCache<Pair<String, String>, Mono<SongDto>> = CacheBuilder.newBuilder()
         .build(
@@ -52,7 +54,7 @@ class SongController {
         log.info("Requesting song with artist $artist and title $title...")
         val artistTitlePair = Pair(artist, title)
         songCache.refresh(artistTitlePair)
-        return songCache.getUnchecked(artistTitlePair)
+        return songCache.getIfPresent(artistTitlePair) ?: Mono.empty()
     }
 
     private fun getSongDetails(artist: String, title: String): Mono<SongDto> {

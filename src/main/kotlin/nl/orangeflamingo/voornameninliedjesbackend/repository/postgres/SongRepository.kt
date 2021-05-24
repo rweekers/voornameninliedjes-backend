@@ -32,7 +32,7 @@ interface SongRepository : CrudRepository<Song, Long> {
     @Query("select s.* from songs s\n" +
             "inner join songs_artists sa on s.id = sa.song\n" +
             "inner join artists a on artist = a.id\n" +
-            "where lower(a.name) = lower(:artist)\n" +
+            "where lower(replace(a.name, '?', '')) = lower(replace(:artist, '?', ''))\n" +
             "and lower(s.title) = lower(:title)")
     fun findByArtistAndTitle(@Param("artist") artist: String, @Param("title") title: String): Optional<Song>
 

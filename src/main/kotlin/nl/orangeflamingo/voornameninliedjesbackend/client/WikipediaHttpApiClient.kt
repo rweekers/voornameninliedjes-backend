@@ -32,7 +32,7 @@ class WikipediaHttpApiClient(
     }
 
     private fun createFooter(wikipediaPage: String): String {
-        return "\n\nhttps://nl.wikipedia.org/wiki/$wikipediaPage"
+        return "\n\n[https://nl.wikipedia.org/wiki/$wikipediaPage](https://nl.wikipedia.org/wiki/$wikipediaPage)"
     }
 
     private fun formatText(wikiBackground: String): String {

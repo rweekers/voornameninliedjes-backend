@@ -52,7 +52,7 @@ class WikipediaHttpApiClientTest {
         val requestWikiPage = "some_song"
         val apiResponse = wikipediaHttpApiClient.getBackground(requestWikiPage).block()
         assertEquals(
-            "Some background from wikipedia\n\nhttps://nl.wikipedia.org/wiki/$requestWikiPage",
+            "Some background from wikipedia\n\n[https://nl.wikipedia.org/wiki/$requestWikiPage](https://nl.wikipedia.org/wiki/$requestWikiPage)",
             apiResponse?.background
         )
     }
