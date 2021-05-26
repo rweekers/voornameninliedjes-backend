@@ -20,6 +20,8 @@ voornameninliedjes:
       username: postgres
       password: postgres
       pool-name: voornameninliedjes-migration-hikari-pool
+  cache:
+    enabled: false
 
 jobs:
   enabled: false

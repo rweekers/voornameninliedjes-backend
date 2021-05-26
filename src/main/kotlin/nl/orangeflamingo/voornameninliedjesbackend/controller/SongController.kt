@@ -12,6 +12,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.dto.*
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
 
@@ -21,6 +22,9 @@ import reactor.core.publisher.Mono
 class SongController {
 
     private val log = LoggerFactory.getLogger(SongController::class.java)
+
+    @Value("\${voornameninliedjes.cache.enabled}")
+    private val useCache = false
 
     private val songsCache: LoadingCache<String, List<SongDto>> = CacheBuilder.newBuilder()
         .build(
@@ -51,10 +55,15 @@ class SongController {
     @GetMapping("/songs/{artist}/{title}")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     fun getSongByArtistAndTitle(@PathVariable artist: String, @PathVariable title: String): Mono<SongDto> {
-        log.info("Requesting song with artist $artist and title $title...")
-        val artistTitlePair = Pair(artist, title)
-        songCache.refresh(artistTitlePair)
-        return songCache.getIfPresent(artistTitlePair) ?: Mono.empty()
+        return if (useCache) {
+            log.info("Requesting song with artist $artist and title $title from cache...")
+            val artistTitlePair = Pair(artist, title)
+            songCache.refresh(artistTitlePair)
+            songCache.getIfPresent(artistTitlePair) ?: Mono.empty()
+        } else {
+            log.info("Requesting song with artist $artist and title $title...")
+            getSongDetails(artist, title)
+        }
     }
 
     private fun getSongDetails(artist: String, title: String): Mono<SongDto> {
@@ -70,10 +79,15 @@ class SongController {
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     @JsonView(Views.Summary::class)
     fun getSongs(): List<SongDto> {
-        log.info("Requesting all songs...")
-        // the key is for show for now, cache dedicated for song list only
-        songsCache.refresh("songs")
-        return songsCache.getUnchecked("songs")
+        return if (useCache) {
+            log.info("Requesting all songs from cache...")
+            // the key is for show for now, cache dedicated for song list only
+            songsCache.refresh("songs")
+            songsCache.getUnchecked("songs")
+        } else {
+            log.info("Requesting all songs...")
+            songService.findAllByStatusOrderedByName(SongStatus.SHOW).map { convertToDto(it, emptyList()) }
+        }
     }
 
     private fun convertToDto(song: AggregateSong, photos: List<PhotoDetail>, background: String = ""): SongDto {
