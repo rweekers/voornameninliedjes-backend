@@ -98,6 +98,7 @@ class SongController {
             name = song.name,
             artistImage = song.artistImage,
             background = background,
+            wikipediaPage = song.wikipediaPage,
             youtube = song.youtube,
             spotify = song.spotify,
             wikimediaPhotos = song.wikimediaPhotos.map { convertWikimediaPhotoToDto(it) }.toSet(),
