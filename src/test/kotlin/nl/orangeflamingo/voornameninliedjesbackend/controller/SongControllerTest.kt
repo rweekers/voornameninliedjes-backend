@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.util.ReflectionTestUtils
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 
@@ -19,7 +20,8 @@ import org.springframework.test.web.reactive.server.expectBodyList
 class SongControllerTest(
     @Autowired val client: WebTestClient,
     @Autowired val songRepository: SongRepository,
-    @Autowired val artistRepository: ArtistRepository
+    @Autowired val artistRepository: ArtistRepository,
+    @Autowired val songController: SongController
 ) {
     private lateinit var songMap: Map<String, Long>
 
@@ -83,6 +85,16 @@ class SongControllerTest(
     }
 
     @Test
+    fun getAllSongsFromCacheTest() {
+        ReflectionTestUtils.setField(songController, "useCache", true)
+        client.get()
+            .uri("/api/songs")
+            .exchange()
+            .expectStatus().isOk
+            .expectBodyList<TestSongDto>().hasSize(2)
+    }
+
+    @Test
     fun getSongByIdTest() {
         client.get()
             .uri("/api/songs/${songMap["Michelle"]}")
@@ -99,6 +111,22 @@ class SongControllerTest(
 
     @Test
     fun getSongByArtistAndTitleTest() {
+        client.get()
+            .uri("/api/songs/the Beatles/MICHELLE")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.title").isNotEmpty
+            .jsonPath("$.title").isEqualTo("Michelle")
+            .jsonPath("$.artist").isNotEmpty
+            .jsonPath("$.artist").isEqualTo("The Beatles")
+            .jsonPath("$.flickrPhotos").isNotEmpty
+            .jsonPath("$.flickrPhotos[0].url").isEqualTo("https://somefakeflickrphotourl.doesnotexist")
+    }
+
+    @Test
+    fun getSongByArtistAndTitleFromCacheTest() {
+        ReflectionTestUtils.setField(songController, "useCache", true)
         client.get()
             .uri("/api/songs/the Beatles/MICHELLE")
             .exchange()
