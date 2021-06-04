@@ -33,7 +33,7 @@ class SongAdminController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/songs")
     @CachePut(value = ["songs"])
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun getSongs(): List<AdminSongDto> {
         return songService.findAll()
             .map { convertToDto(it) }
@@ -42,7 +42,7 @@ class SongAdminController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/songs", params = ["name"])
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun getSongsByName(@RequestParam(name = "name") name: String): List<AdminSongDto> {
         return songService.findByName(name)
             .map { convertToDto(it) }
@@ -51,7 +51,7 @@ class SongAdminController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/songs", params = ["first-character"])
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun getSongsWithNameStartingWith(@RequestParam(name = "first-character") firstCharacter: String, @RequestParam(name="status", defaultValue = "") status: List<String> = emptyList()): List<AdminSongDto> {
         return songService.findByNameStartsWithAndStatusIn(firstCharacter, status.map { SongStatus.valueOf(it) })
             .map { convertToDto(it) }
@@ -59,14 +59,14 @@ class SongAdminController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/songs/{id}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun getSongById(@PathVariable("id") id: Long): AdminSongDto {
         return convertToDto(songService.findById(id))
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/{user}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun newSong(@RequestBody newSong: AdminSongDto, @PathVariable user: String): AdminSongDto {
         log.info("Saving song with title ${newSong.title} and artist ${newSong.artist}")
         val savedSong = songService.newSong(convertToDomain(newSong), user)
@@ -77,7 +77,7 @@ class SongAdminController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/songs/{user}/{id}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun replaceSong(@RequestBody song: AdminSongDto, @PathVariable user: String, @PathVariable id: Long): AdminSongDto {
         assert(song.id?.toLong() == id)
         val songFromDb = songRepository.findById(id)
@@ -90,7 +90,7 @@ class SongAdminController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/{user}/{id}/{flickrId}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun addFlickrPhotoForSong(@PathVariable user: String, @PathVariable id: Long, @PathVariable flickrId: String) {
         val songOptional = songRepository.findById(id)
         if (songOptional.isPresent) {
@@ -112,7 +112,7 @@ class SongAdminController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/artists/{user}/{id}/{flickrId}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun addFlickrPhoto(@PathVariable user: String, @PathVariable id: Long, @PathVariable flickrId: String) {
         val artist = artistRepository.findById(id).orElseThrow()
         addFlickrIdToArtist(user, artist, flickrId)
@@ -131,7 +131,7 @@ class SongAdminController {
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @DeleteMapping("/songs")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun deleteSongs() {
         val count = songRepository.count()
         songRepository.updateAllSongStatus(SongStatus.TO_BE_DELETED)
@@ -140,7 +140,7 @@ class SongAdminController {
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @DeleteMapping("/songs/{id}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun deleteSongById(@PathVariable id: Long) {
         songRepository.deleteById(id)
         log.info("song $id deleted")

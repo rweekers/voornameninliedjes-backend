@@ -29,7 +29,7 @@ class ArtistAdminController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/artists", params = ["name"])
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun getArtistsByName(@RequestParam(name = "name") name: String): List<AdminArtistDto> {
         return artistService.findByName(name)
             .map { convertToDto(it) }
@@ -37,7 +37,7 @@ class ArtistAdminController {
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @DeleteMapping("/artists/{id}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun deleteArtistById(@PathVariable id: Long) {
         artistRepository.deleteById(id)
         log.info("artist $id deleted")

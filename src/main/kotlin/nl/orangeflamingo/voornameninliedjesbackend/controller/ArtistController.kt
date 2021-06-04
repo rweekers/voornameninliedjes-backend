@@ -29,7 +29,7 @@ class ArtistController {
     }
 
     @GetMapping("/artists", params = ["name"])
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     fun getArtistsByName(@RequestParam(name = "name") name: String): List<ArtistDto> {
         return artistRepository.findByNameIgnoreCase(name).map { convertToDto(it) }
     }

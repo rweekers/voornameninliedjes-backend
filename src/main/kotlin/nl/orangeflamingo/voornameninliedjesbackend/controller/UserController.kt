@@ -26,14 +26,14 @@ class UserController {
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @GetMapping("/users")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun getUsers(): List<UserDto> {
         log.info("Requesting all users")
         return userRepository.findAll().map { convertToDto(it) }
     }
 
     @PostMapping("/authenticate")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun authenticate(@RequestBody user: UserDto): ResponseEntity<UserDto> {
         log.info("Authenticating user ${user.username}")
         val dbUser = userRepository.findByUsername(username = user.username)
@@ -66,7 +66,7 @@ class UserController {
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @GetMapping("/users/{id}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun getUserById(@PathVariable("id") id: String): UserDto {
         log.info("Requesting user with id $id")
         return userRepository.findById(id).map { convertToDto(it) }.orElseThrow { UserNotFoundException("User with id $id not found") }
@@ -74,7 +74,7 @@ class UserController {
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @PostMapping("/users")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun newUser(@RequestBody newUser: UserDto): User {
         log.info("Requesting creation of new user ${newUser.username}")
         val user = convert(newUser)
@@ -83,7 +83,7 @@ class UserController {
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @DeleteMapping("/users/{userId}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl", "*"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun deleteUser(@PathVariable userId: String) {
         log.info("Deleting user with id $userId")
         userRepository.deleteById(userId)
