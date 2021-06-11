@@ -9,13 +9,13 @@ spring:
 voornameninliedjes:
   datasource:
     application:
-      url: jdbc:postgresql://localhost:5433/voornameninliedjes?createDatabaseIfNotExist=true
+      url: jdbc:postgresql://localhost:5432/voornameninliedjes?createDatabaseIfNotExist=true
       schema: vil
       username: vil_app
       password: secret
       pool-name: voornameninliedjes-app-hikari-pool
     migration:
-      url: jdbc:postgresql://localhost:5433/voornameninliedjes?createDatabaseIfNotExist=true
+      url: jdbc:postgresql://localhost:5432/voornameninliedjes?createDatabaseIfNotExist=true
       schema: vil
       username: postgres
       password: postgres
@@ -24,11 +24,11 @@ voornameninliedjes:
     enabled: false
 
 jobs:
-  enabled: false
+  enabled: true
   enrichSong:
-    rate: 60000
+    rate: 3600000
   updateSong:
-    cron: 10 * * * * MON-FRI
+    cron: 0 50 2 * * MON-FRI
 
 # These will be transferred to System properties, see https://docs.spring.io/spring-boot/docs/2.1.4.RELEASE/reference/html/boot-features-logging.html#boot-features-custom-log-configuration
 # These systems properties are uses in log4j2 configuration

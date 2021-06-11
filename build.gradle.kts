@@ -26,7 +26,7 @@ val createMyPostgresAppContainer by tasks.creating(DockerCreateContainer::class)
     dependsOn(buildMyPostgresAppImage)
     targetImageId(buildMyPostgresAppImage.imageId)
     containerName.set("some-postgres")
-    hostConfig.portBindings.set(listOf("5433:5432"))
+    hostConfig.portBindings.set(listOf("5432:5432"))
 }
 
 val removeMyPostgresAppContainer by tasks.creating(DockerRemoveContainer::class) {
