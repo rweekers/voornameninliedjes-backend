@@ -10,7 +10,7 @@ git:
 
 script:
   - "./gradlew build --scan -s"
-  - "./gradlew sonarqube"
+  - "./gradlew --info sonarqube"
 addons:
   sonarcloud:
     organization: nl-orangeflamingo
