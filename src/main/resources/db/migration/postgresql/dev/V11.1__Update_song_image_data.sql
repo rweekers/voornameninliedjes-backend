@@ -1,0 +1,2 @@
+insert into song_wikimedia_photos(url, attribution, song_id)
+values ('https://upload.wikimedia.org/wikipedia/commons/a/a2/ThePolice_2007.jpg', 'Lionel Urman, CC BY-SA 3.0 <https://creativecommons.org/licenses/by-sa/3.0>, via Wikimedia Commons', (select id from songs where title = 'Roxanne'));

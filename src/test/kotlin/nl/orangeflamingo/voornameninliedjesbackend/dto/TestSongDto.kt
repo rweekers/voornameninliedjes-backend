@@ -13,7 +13,8 @@ data class TestSongDto(
     val wikimediaPhotos: Set<WikimediaPhotoDto> = emptySet(),
     val flickrPhotos: Set<PhotoDto> = emptySet(),
     val sources: Set<SourceDto> = emptySet(),
-    val status: String = "SHOW"
+    val status: String = "SHOW",
+    val hasDetails: Boolean = false
 ) {
     fun toDomain(): SongDto {
         return SongDto(
@@ -29,7 +30,8 @@ data class TestSongDto(
             wikimediaPhotos = wikimediaPhotos,
             flickrPhotos = flickrPhotos,
             sources = sources,
-            status = status
+            status = status,
+            hasDetails = hasDetails
         )
     }
 }

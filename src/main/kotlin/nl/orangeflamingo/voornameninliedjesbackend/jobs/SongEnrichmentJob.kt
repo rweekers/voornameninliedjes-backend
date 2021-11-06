@@ -37,7 +37,10 @@ class SongEnrichmentJob(
 
     private fun updateArtistImageForSong(song: Song) {
         val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
-        val url = artist.wikimediaPhotos.map { wikimediaPhoto -> wikimediaPhoto.url }.firstOrNull()
+        val url =
+            if (song.wikimediaPhotos.isNotEmpty()) song.wikimediaPhotos.map { it.url }
+                .firstOrNull() else artist.wikimediaPhotos.map { it.url }
+                .firstOrNull()
         if (url != null) {
             updateArtistImage(url, song)
         } else {

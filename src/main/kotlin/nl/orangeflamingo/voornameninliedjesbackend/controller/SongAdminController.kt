@@ -158,8 +158,15 @@ class SongAdminController {
             youtube = song.youtube?.trim(),
             spotify = song.spotify?.trim(),
             status = SongStatus.valueOf(song.status.trim()),
-            wikimediaPhotos = song.wikimediaPhotos.map {
+            hasDetails = song.hasDetails,
+            artistWikimediaPhotos = song.artistWikimediaPhotos.map {
                 ArtistWikimediaPhoto(
+                    url = it.url.trim(),
+                    attribution = it.attribution.trim()
+                )
+            }.toSet(),
+            songWikimediaPhotos = song.songWikimediaPhotos.map {
+                SongWikimediaPhoto(
                     url = it.url.trim(),
                     attribution = it.attribution.trim()
                 )
@@ -183,9 +190,11 @@ class SongAdminController {
             youtube = song.youtube,
             spotify = song.spotify,
             status = song.status.code,
-            wikimediaPhotos = song.wikimediaPhotos.map { w -> convertToDto(w) }.toSet(),
+            hasDetails = song.hasDetails,
+            artistWikimediaPhotos = song.artistWikimediaPhotos.map { convertToDto(it) }.toSet(),
+            songWikimediaPhotos = song.songWikimediaPhotos.map { convertToDto(it) }.toSet(),
             flickrPhotos = song.flickrPhotos.map { it.flickrId }.toSet(),
-            sources = song.sources.map { s -> convertToDto(s) }.toSet(),
+            sources = song.sources.map { convertToDto(it) }.toSet(),
             logs = song.logEntries.map { convertToDto(it) }
         )
     }
@@ -198,6 +207,13 @@ class SongAdminController {
     }
 
     private fun convertToDto(wikimediaPhoto: ArtistWikimediaPhoto): AdminWikimediaPhotoDto {
+        return AdminWikimediaPhotoDto(
+            url = wikimediaPhoto.url,
+            attribution = wikimediaPhoto.attribution
+        )
+    }
+
+    private fun convertToDto(wikimediaPhoto: SongWikimediaPhoto): AdminWikimediaPhotoDto {
         return AdminWikimediaPhotoDto(
             url = wikimediaPhoto.url,
             attribution = wikimediaPhoto.attribution

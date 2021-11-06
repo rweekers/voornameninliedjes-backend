@@ -82,8 +82,10 @@ class SongService @Autowired constructor(
         youtube = song.youtube,
         spotify = song.spotify,
         status = song.status,
+        hasDetails = song.hasDetails,
         artistImage = song.artistImage,
-        wikimediaPhotos = artist.wikimediaPhotos,
+        artistWikimediaPhotos = artist.wikimediaPhotos,
+        songWikimediaPhotos = song.wikimediaPhotos,
         flickrPhotos = artist.flickrPhotos,
         flickrPhotoDetail = photoDetails,
         sources = song.sources,
@@ -150,18 +152,20 @@ class SongService @Autowired constructor(
         song.title = aggregateSong.title
         song.name = aggregateSong.name
         song.status = aggregateSong.status
+        song.hasDetails = aggregateSong.hasDetails
         song.background = aggregateSong.background
         song.wikipediaPage = aggregateSong.wikipediaPage
         song.youtube = aggregateSong.youtube
         song.spotify = aggregateSong.spotify
-        song.sources = aggregateSong.sources.map { s -> SongSource(url = s.url, name = s.name) }
+        song.wikimediaPhotos = aggregateSong.songWikimediaPhotos.map { SongWikimediaPhoto(url = it.url, attribution = it.attribution ) }.toMutableSet()
+        song.sources = aggregateSong.sources.map { SongSource(url = it.url, name = it.name) }
         song.logEntries.add(SongLogEntry(Instant.now(), user))
         val savedSong = songRepository.save(song)
 
         // update artist
         if (artistUpdate(aggregateSong, artist)) {
             artist.wikimediaPhotos =
-                aggregateSong.wikimediaPhotos.map { ArtistWikimediaPhoto(it.url, it.attribution) }.toMutableSet()
+                aggregateSong.artistWikimediaPhotos.map { ArtistWikimediaPhoto(it.url, it.attribution) }.toMutableSet()
             artist.flickrPhotos = aggregateSong.flickrPhotos.map { ArtistFlickrPhoto(it.flickrId) }.toMutableSet()
             artist.name = aggregateSong.artistName
             val artistLogEntry = ArtistLogEntry(Instant.now(), user)
@@ -185,7 +189,7 @@ class SongService @Autowired constructor(
 
         if (song.flickrPhotos != artist.flickrPhotos.map { it.flickrId }) return true
 
-        if (song.wikimediaPhotos != artist.wikimediaPhotos) return true
+        if (song.artistWikimediaPhotos != artist.wikimediaPhotos) return true
 
         return false
     }
@@ -195,7 +199,7 @@ class SongService @Autowired constructor(
             Artist(
                 name = aggregateSong.artistName,
                 background = aggregateSong.artistBackground,
-                wikimediaPhotos = aggregateSong.wikimediaPhotos.toMutableSet(),
+                wikimediaPhotos = aggregateSong.artistWikimediaPhotos.toMutableSet(),
                 flickrPhotos = aggregateSong.flickrPhotos.toMutableSet(),
                 logEntries = mutableListOf(
                     ArtistLogEntry(
@@ -214,7 +218,9 @@ class SongService @Autowired constructor(
             wikipediaPage = aggregateSong.wikipediaPage,
             youtube = aggregateSong.youtube,
             spotify = aggregateSong.spotify,
+            wikimediaPhotos = aggregateSong.songWikimediaPhotos.map { SongWikimediaPhoto(url = it.url, attribution = it.attribution ) }.toMutableSet(),
             status = aggregateSong.status,
+            hasDetails = aggregateSong.hasDetails,
             sources = aggregateSong.sources.map {
                 SongSource(
                     url = it.url,

@@ -48,6 +48,11 @@ class SongControllerTest(
             name = "Michelle",
             status = SongStatus.SHOW,
             wikipediaPage = "wikiPageMichelle",
+            wikimediaPhotos = mutableSetOf(
+                SongWikimediaPhoto(
+                    url = "https://somefakewikimediaphotourl.doesnotexist",
+                    attribution = "Attribution for test wikimedia photo"
+                )),
             artists = mutableSetOf(
                 ArtistRef(
                     artist = artist.id!!
@@ -105,6 +110,9 @@ class SongControllerTest(
             .jsonPath("$.title").isEqualTo("Michelle")
             .jsonPath("$.artist").isNotEmpty
             .jsonPath("$.artist").isEqualTo("The Beatles")
+            .jsonPath("$.wikimediaPhotos").isNotEmpty
+            .jsonPath("$.wikimediaPhotos[0].url").isEqualTo("https://somefakewikimediaphotourl.doesnotexist")
+            .jsonPath("$.wikimediaPhotos[0].attribution").isEqualTo("Attribution for test wikimedia photo")
             .jsonPath("$.flickrPhotos").isNotEmpty
             .jsonPath("$.flickrPhotos[0].url").isEqualTo("https://somefakeflickrphotourl.doesnotexist")
     }

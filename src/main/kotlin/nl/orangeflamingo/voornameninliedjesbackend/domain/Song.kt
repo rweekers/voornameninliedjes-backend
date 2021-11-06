@@ -21,7 +21,10 @@ data class Song(
     var spotify: String? = null,
     var wikipediaPage: String? = null,
     var status: SongStatus,
+    var hasDetails: Boolean = false,
     val mongoId: String? = null,
+    @MappedCollection(idColumn = "song_id")
+    var wikimediaPhotos: MutableSet<SongWikimediaPhoto> = mutableSetOf(),
     @MappedCollection(idColumn = "song_id", keyColumn = "song_key")
     var sources: List<SongSource> = listOf(),
     @MappedCollection(idColumn = "song_id", keyColumn = "song_key")
@@ -40,6 +43,12 @@ data class Song(
         )
     }
 }
+
+@Table("song_wikimedia_photos")
+data class SongWikimediaPhoto(
+    val url: String,
+    val attribution: String
+)
 
 @Table("song_sources")
 data class SongSource(

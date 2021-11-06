@@ -1,7 +1,5 @@
 package nl.orangeflamingo.voornameninliedjesbackend.dto
 
-import java.time.Instant
-
 data class ArtistDto(
     val id: Long?,
     val name: String,
