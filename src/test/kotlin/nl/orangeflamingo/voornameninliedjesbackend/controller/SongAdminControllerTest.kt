@@ -2,6 +2,7 @@ package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.*
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSongDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminWikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
@@ -58,7 +59,12 @@ class SongAdminControllerTest(
         val songMichelle = TestSong(
             title = songTitle,
             name = "Michelle",
-            artists = mutableSetOf(
+            wikimediaPhotos = mutableSetOf(
+                SongWikimediaPhoto(
+                url = "https://somefakewikimediaphotourl.doesnotexist",
+                attribution = "Attribution for test wikimedia photo"
+            )),
+                    artists = mutableSetOf(
                 ArtistRef(
                     artist = artist.id!!
                 )
@@ -171,7 +177,14 @@ class SongAdminControllerTest(
                         artist = "newArtist",
                         title = "newTitle with newName",
                         name = "newName",
-                        status = "IN_PROGRESS"
+                        songWikimediaPhotos = setOf(
+                            AdminWikimediaPhotoDto(
+                                url = "https://testurl.doesnotexist",
+                                attribution = "some test attribution"
+                            )
+                        ),
+                        status = "IN_PROGRESS",
+                        hasDetails = true
                     )
                 )
             )
@@ -182,6 +195,11 @@ class SongAdminControllerTest(
             .jsonPath("$.title").isEqualTo("newTitle with newName")
             .jsonPath("$.artist").isNotEmpty
             .jsonPath("$.artist").isEqualTo("newArtist")
+            .jsonPath("$.songWikimediaPhotos").isNotEmpty
+            .jsonPath("$.songWikimediaPhotos[0].url").isEqualTo("https://testurl.doesnotexist")
+            .jsonPath("$.songWikimediaPhotos[0].attribution").isEqualTo("some test attribution")
+            .jsonPath("$.hasDetails").isNotEmpty
+            .jsonPath("$.hasDetails").isEqualTo("true")
     }
 
     @Test
@@ -198,7 +216,14 @@ class SongAdminControllerTest(
                         artist = "newArtist",
                         title = "newTitle with newName",
                         name = "newName",
-                        status = "IN_PROGRESS"
+                        songWikimediaPhotos = setOf(
+                            AdminWikimediaPhotoDto(
+                                url = "https://testurl.doesnotexist",
+                                attribution = "some test attribution"
+                            )
+                        ),
+                        status = "IN_PROGRESS",
+                        hasDetails = true
                     )
                 )
             )
@@ -209,6 +234,11 @@ class SongAdminControllerTest(
             .jsonPath("$.title").isEqualTo("newTitle with newName")
             .jsonPath("$.artist").isNotEmpty
             .jsonPath("$.artist").isEqualTo("newArtist")
+            .jsonPath("$.songWikimediaPhotos").isNotEmpty
+            .jsonPath("$.songWikimediaPhotos[0].url").isEqualTo("https://testurl.doesnotexist")
+            .jsonPath("$.songWikimediaPhotos[0].attribution").isEqualTo("some test attribution")
+            .jsonPath("$.hasDetails").isNotEmpty
+            .jsonPath("$.hasDetails").isEqualTo("true")
     }
 
     @Test

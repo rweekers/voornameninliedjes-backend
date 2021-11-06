@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
-import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.PhotoDetail
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
+import nl.orangeflamingo.voornameninliedjesbackend.domain.*
 import nl.orangeflamingo.voornameninliedjesbackend.dto.*
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.slf4j.LoggerFactory
@@ -101,7 +98,7 @@ class SongController {
             wikipediaPage = song.wikipediaPage,
             youtube = song.youtube,
             spotify = song.spotify,
-            wikimediaPhotos = song.wikimediaPhotos.map { convertWikimediaPhotoToDto(it) }.toSet(),
+            wikimediaPhotos = mergeAndConvertWikimediaPhotos(song.artistWikimediaPhotos, song.songWikimediaPhotos),
             flickrPhotos = photos.map {
                 PhotoDto(
                     id = it.id,
@@ -127,11 +124,23 @@ class SongController {
                     name = it.name
                 )
             }.toSet(),
-            status = song.status.code
+            status = song.status.code,
+            hasDetails = song.hasDetails
         )
     }
 
-    private fun convertWikimediaPhotoToDto(wikimediaPhoto: ArtistWikimediaPhoto): WikimediaPhotoDto {
+    private fun mergeAndConvertWikimediaPhotos(artistWikimediaPhoto: Set<ArtistWikimediaPhoto>, songWikimediaPhotos: Set<SongWikimediaPhoto>): Set<WikimediaPhotoDto> {
+        val mergedPhotos = mutableSetOf<WikimediaPhotoDto>()
+        mergedPhotos.addAll(songWikimediaPhotos.map { convertSongWikimediaPhotoToDto(it) })
+        mergedPhotos.addAll(artistWikimediaPhoto.map { convertArtistWikimediaPhotoToDto(it) })
+        return mergedPhotos
+    }
+
+    private fun convertArtistWikimediaPhotoToDto(wikimediaPhoto: ArtistWikimediaPhoto): WikimediaPhotoDto {
+        return WikimediaPhotoDto(wikimediaPhoto.url, wikimediaPhoto.attribution)
+    }
+
+    private fun convertSongWikimediaPhotoToDto(wikimediaPhoto: SongWikimediaPhoto): WikimediaPhotoDto {
         return WikimediaPhotoDto(wikimediaPhoto.url, wikimediaPhoto.attribution)
     }
 }

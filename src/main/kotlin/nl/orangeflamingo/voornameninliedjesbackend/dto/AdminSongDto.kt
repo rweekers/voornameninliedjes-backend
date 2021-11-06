@@ -26,7 +26,11 @@ data class AdminSongDto(
 
     val status: String,
 
-    val wikimediaPhotos: Set<AdminWikimediaPhotoDto> = setOf(),
+    val hasDetails: Boolean = false,
+
+    val artistWikimediaPhotos: Set<AdminWikimediaPhotoDto> = setOf(),
+
+    val songWikimediaPhotos: Set<AdminWikimediaPhotoDto> = setOf(),
 
     val flickrPhotos: Set<String> = setOf(),
 
