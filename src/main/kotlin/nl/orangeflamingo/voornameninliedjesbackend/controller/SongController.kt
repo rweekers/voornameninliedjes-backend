@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
+import java.util.Optional
 
 
 @RestController
@@ -23,12 +24,6 @@ class SongController {
     @Value("\${voornameninliedjes.cache.enabled}")
     private val useCache = false
 
-    private val songsCache: LoadingCache<String, List<SongDto>> = CacheBuilder.newBuilder()
-        .build(
-            CacheLoader.from { _: String? ->
-                songService.findAllByStatusOrderedByName(SongStatus.SHOW).map { convertToDto(it, emptyList()) }
-            }
-        )
     private val songCache: LoadingCache<Pair<String, String>, Mono<SongDto>> = CacheBuilder.newBuilder()
         .build(
             CacheLoader.from { key: Pair<String, String>? -> getSongDetails(key?.first ?: "", key?.second ?: "") }
@@ -75,16 +70,13 @@ class SongController {
     @GetMapping("/songs")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     @JsonView(Views.Summary::class)
-    fun getSongs(): List<SongDto> {
-        return if (useCache) {
-            log.info("Requesting all songs from cache...")
-            // the key is for show for now, cache dedicated for song list only
-            songsCache.refresh("songs")
-            songsCache.getUnchecked("songs")
-        } else {
-            log.info("Requesting all songs...")
-            songService.findAllByStatusOrderedByName(SongStatus.SHOW).map { convertToDto(it, emptyList()) }
-        }
+    fun getSongs(@RequestParam("first-characters") firstCharacters: Optional<List<String>>): List<SongDto> {
+        return firstCharacters.map {
+            songService.findAllByStatusOrderedByNameFilteredByFirstCharacter(
+                listOf(SongStatus.SHOW, SongStatus.IN_PROGRESS), it.distinct().map { it.first() }
+            )
+        }.orElseGet { songService.findAllByStatusOrderedByName(SongStatus.SHOW) }
+            .map { convertToDto(it, emptyList()) }
     }
 
     private fun convertToDto(song: AggregateSong, photos: List<PhotoDetail>, background: String = ""): SongDto {
@@ -129,7 +121,10 @@ class SongController {
         )
     }
 
-    private fun mergeAndConvertWikimediaPhotos(artistWikimediaPhoto: Set<ArtistWikimediaPhoto>, songWikimediaPhotos: Set<SongWikimediaPhoto>): Set<WikimediaPhotoDto> {
+    private fun mergeAndConvertWikimediaPhotos(
+        artistWikimediaPhoto: Set<ArtistWikimediaPhoto>,
+        songWikimediaPhotos: Set<SongWikimediaPhoto>
+    ): Set<WikimediaPhotoDto> {
         val mergedPhotos = mutableSetOf<WikimediaPhotoDto>()
         mergedPhotos.addAll(songWikimediaPhotos.map { convertSongWikimediaPhotoToDto(it) })
         mergedPhotos.addAll(artistWikimediaPhoto.map { convertArtistWikimediaPhotoToDto(it) })

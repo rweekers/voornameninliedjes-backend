@@ -12,6 +12,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import java.util.*
 
 @Suppress("SpringJavaAutowiredMembersInspection")
 class SongSteps : En {
@@ -46,7 +47,7 @@ class SongSteps : En {
         }
 
         Then("there are {int} songs returned") { numberOfSongs: Int ->
-            val songsCount = songController.getSongs().size
+            val songsCount = songController.getSongs(Optional.empty()).size
             assertEquals(numberOfSongs, songsCount)
         }
 
