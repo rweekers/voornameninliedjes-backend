@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.Instant
+import java.util.*
 
 @Service
 class SongService @Autowired constructor(
@@ -52,6 +53,25 @@ class SongService @Autowired constructor(
     fun findAllByStatusOrderedByName(status: SongStatus): List<AggregateSong> {
         log.info("Getting all songs by status ordered by name...")
         return songRepository.findAllByStatusOrderedByName(status.code)
+            .map { song ->
+                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
+                createAggregateSong(song, artist)
+            }
+    }
+
+    fun findAllByStatusOrderedByNameFilteredByFirstCharacter(statuses: List<SongStatus>, firstChars: List<Char>): List<AggregateSong> {
+        log.info(
+            "Getting all songs for statuses {} and first characters {}...",
+            statuses.joinToString { it.code },
+            firstChars.joinToString()
+        )
+        return songRepository.findAllByStatusesAndNameStartingWithOrderedByName(
+            statuses.map { it.code },
+            firstChars.map {
+                it.lowercase(
+                    Locale.getDefault()
+                )
+            })
             .map { song ->
                 val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
                 createAggregateSong(song, artist)

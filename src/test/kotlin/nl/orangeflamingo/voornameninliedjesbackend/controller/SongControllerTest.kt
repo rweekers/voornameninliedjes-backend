@@ -90,13 +90,17 @@ class SongControllerTest(
     }
 
     @Test
-    fun getAllSongsFromCacheTest() {
-        ReflectionTestUtils.setField(songController, "useCache", true)
+    fun getAllSongsStartingWithTest() {
         client.get()
-            .uri("/api/songs")
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/api/songs")
+                    .queryParam("first-characters", "m")
+                    .build()
+            }
             .exchange()
             .expectStatus().isOk
-            .expectBodyList<TestSongDto>().hasSize(2)
+            .expectBodyList<TestSongDto>().hasSize(1)
     }
 
     @Test
