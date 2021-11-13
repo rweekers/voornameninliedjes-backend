@@ -1,4 +1,4 @@
-package nl.orangeflamingo.voornameninliedjesbackend
+package nl.orangeflamingo.voornameninliedjesbackend.jobs
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
@@ -7,7 +7,6 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistRef
 import nl.orangeflamingo.voornameninliedjesbackend.domain.FlickrPhotoDetail
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
-import nl.orangeflamingo.voornameninliedjesbackend.jobs.SongEnrichmentJob
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.junit.jupiter.api.BeforeEach
