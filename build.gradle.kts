@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val buildMyPostgresAppImage by tasks.creating(DockerBuildImage::class) {
     dependsOn(
+        tasks.jar,
         tasks.processTestResources,
         tasks.bootJar,
         tasks.bootJarMainClassName,
@@ -51,8 +52,8 @@ plugins {
     id("com.bmuschko.docker-remote-api") version "7.0.0"
     id("org.sonarqube") version "3.0"
     id("com.gorylenko.gradle-git-properties") version "2.3.1"
-    kotlin("jvm") version "1.5.0"
-    kotlin("plugin.spring") version "1.5.0"
+    kotlin("jvm") version "1.5.31"
+    kotlin("plugin.spring") version "1.5.31"
 }
 
 jacoco {
@@ -61,7 +62,7 @@ jacoco {
 
 tasks.jacocoTestReport {
     reports {
-        xml.isEnabled = true
+        xml.required
     }
 }
 
@@ -95,8 +96,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.postgresql:postgresql:42.2.24.jre7")
-    implementation("org.flywaydb:flyway-core:8.0.1")
+    implementation("org.postgresql:postgresql:42.3.1")
+    implementation("org.flywaydb:flyway-core:8.0.2")
     implementation("com.google.guava:guava:31.0.1-jre")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
