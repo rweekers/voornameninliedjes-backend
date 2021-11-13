@@ -5,8 +5,11 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
 import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
+import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistNameStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.PhotoDetail
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongNameFirstCharacterStatistics
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongNameStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWikimediaPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrLicenseDto
@@ -15,6 +18,9 @@ import nl.orangeflamingo.voornameninliedjesbackend.dto.PhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.SongDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.SourceDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.WikimediaPhotoDto
+import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistNameStatisticsRepository
+import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongNameStatisticsRepository
+import nl.orangeflamingo.voornameninliedjesbackend.service.SongNameFirstCharacterStatisticsService
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -45,6 +51,15 @@ class SongController {
 
     @Autowired
     private lateinit var songService: SongService
+
+    @Autowired
+    private lateinit var songNameFirstCharacterStatisticsService: SongNameFirstCharacterStatisticsService
+
+    @Autowired
+    private lateinit var songNameStatisticsRepository: SongNameStatisticsRepository
+
+    @Autowired
+    private lateinit var artistNameStatisticsRepository: ArtistNameStatisticsRepository
 
     @GetMapping("/songs/{id}")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
@@ -91,6 +106,24 @@ class SongController {
             )
         }.orElseGet { songService.findAllByStatusOrderedByName(SongStatus.SHOW) }
             .map { convertToDto(it, emptyList()) }
+    }
+
+    @GetMapping("/song-name-first-char-statistics")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
+    fun getSongNameFirstCharacterStatistics(@RequestParam("max-size", defaultValue = "10") maxSize: Int): List<SongNameFirstCharacterStatistics> {
+        return songNameFirstCharacterStatisticsService.redivide(maxSize)
+    }
+
+    @GetMapping("/song-name-statistics")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
+    fun getSongNameStatistics(): List<SongNameStatistics> {
+        return songNameStatisticsRepository.findAllStatusShowGroupedByNameOrderedByCountDescending()
+    }
+
+    @GetMapping("/artist-name-statistics")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
+    fun getArtistNameStatistics(): List<ArtistNameStatistics> {
+        return artistNameStatisticsRepository.findAllStatusShowGroupedByArtistNameOrderedByCountDescending()
     }
 
     private fun convertToDto(song: AggregateSong, photos: List<PhotoDetail>, background: String = ""): SongDto {

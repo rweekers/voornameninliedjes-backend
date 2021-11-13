@@ -62,7 +62,7 @@ jacoco {
 
 tasks.jacocoTestReport {
     reports {
-        xml.required
+        xml.required.set(true)
     }
 }
 
@@ -102,8 +102,9 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mockito:mockito-core:4.0.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.4.2")
+    testImplementation("org.junit.platform:junit-platform-commons:1.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
     testImplementation("io.cucumber:cucumber-java8:6.8.1")
     testImplementation("io.cucumber:cucumber-spring:6.8.1")
     testImplementation("io.cucumber:cucumber-junit-platform-engine:6.8.1")

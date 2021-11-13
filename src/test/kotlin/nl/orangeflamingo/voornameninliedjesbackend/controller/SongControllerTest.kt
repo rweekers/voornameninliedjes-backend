@@ -59,7 +59,8 @@ class SongControllerTest(
                 SongWikimediaPhoto(
                     url = "https://somefakewikimediaphotourl.doesnotexist",
                     attribution = "Attribution for test wikimedia photo"
-                )),
+                )
+            ),
             artists = mutableSetOf(
                 ArtistRef(
                     artist = artist.id!!
@@ -157,6 +158,48 @@ class SongControllerTest(
             .jsonPath("$.artist").isEqualTo("The Beatles")
             .jsonPath("$.flickrPhotos").isNotEmpty
             .jsonPath("$.flickrPhotos[0].url").isEqualTo("https://somefakeflickrphotourl.doesnotexist")
+    }
+
+    @Test
+    fun getStatisticsPerSongName() {
+        client.get()
+            .uri("/api/song-name-statistics")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$[0].name").isNotEmpty
+            .jsonPath("$[0].name").isEqualTo("Lucy")
+            .jsonPath("$[0].count").isEqualTo("1")
+    }
+
+    @Test
+    fun getStatisticsPerArtistName() {
+        client.get()
+            .uri("/api/artist-name-statistics")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$[0].name").isNotEmpty
+            .jsonPath("$[0].name").isEqualTo("The Beatles")
+            .jsonPath("$[0].count").isEqualTo("2")
+    }
+
+    @Test
+    fun getStatisticsPerFirstCharOfName() {
+        client.get()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/api/song-name-first-char-statistics")
+                    .queryParam("max-size", 2)
+                    .build()
+            }
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.length()").isEqualTo(1)
+            .jsonPath("$[0].name").isNotEmpty
+            .jsonPath("$[0].name").isEqualTo("lm")
+            .jsonPath("$[0].count").isEqualTo("2")
     }
 }
 

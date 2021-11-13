@@ -14,6 +14,21 @@ insert into artist_wikimedia_photos(url, attribution, artist_id)
 values ('https://upload.wikimedia.org/wikipedia/commons/0/04/Michael_Jackson_1984.jpg', 'White House Photo Office, Public domain, via Wikimedia Commons', (select id from artists where name = 'Michael Jackson'));
 
 insert into artists(name)
+values('Rolling Stones');
+insert into songs(title, name, status, background, youtube, spotify)
+values ('Angie', 'Angie', 'SHOW', 'Background on Angie', 'RcZn2-bGXqQ', '1GcVa4jFySlun4jLSuMhiq');
+insert into songs_artists(song, artist, original_artist)
+values ((select id from songs where title = 'Angie'), (select id from artists where name = 'Rolling Stones'), true);
+insert into artist_wikimedia_photos(url, attribution, artist_id)
+values ('https://upload.wikimedia.org/wikipedia/commons/a/af/Stones_members_montage2.jpg', 'Larry Rogers (1972 Jagger photo from File:Jagger-early Stones.jpg); User:Machocarioca (1995 Keith Richards photo from File:KeithR2.JPG); Catharine Anderson (October 1981 photo from File:Ron-Wood in CA.jpg); Patrick Baumbach (2006 photo from File:Charlie Watts Hannover 19-07-2006.jpg), CC BY 3.0 <https://creativecommons.org/licenses/by/3.0>, via Wikimedia Commons', (select id from artists where name = 'Rolling Stones'));
+insert into song_sources(url, name, song_id, song_key)
+values ('https://nl.wikipedia.org/wiki/Angie_(nummer)', 'Wikipedia over ''Angie''', (select id from songs where title = 'Angie'), 0);
+insert into song_log_entries(date, username, song_id, song_key)
+values ('2021-11-13 15:40:00+01', 'Parser', (select id from songs where title = 'Angie'), 1);
+insert into song_log_entries(date, username, song_id, song_key)
+values ('2021-11-13 16:43:00+01', 'Temp', (select id from songs where title = 'Angie'), 0);
+
+insert into artists(name)
 values ('Paul Simon');
 insert into songs(title, name, status, background, youtube, spotify)
 values ('You can call me Al', 'Al', 'SHOW', 'Background on You Can Call Me All', 'uq-gYOrU8bA', '0qxYx4F3vm1AOnfux6dDxP');
