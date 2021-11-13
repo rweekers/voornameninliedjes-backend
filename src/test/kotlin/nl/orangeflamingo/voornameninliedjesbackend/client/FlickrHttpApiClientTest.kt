@@ -1,6 +1,16 @@
 package nl.orangeflamingo.voornameninliedjesbackend.client
 
-import nl.orangeflamingo.voornameninliedjesbackend.dto.*
+import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrApiLicenseDetailDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrApiLicenseDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrApiLicensesDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrApiOwnerDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrApiOwnerIdDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrApiPersonDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrApiPhotoDetailDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrApiPhotoDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrApiPhotoTitleDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrApiPhotosurlDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrApiUsernameDto
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
