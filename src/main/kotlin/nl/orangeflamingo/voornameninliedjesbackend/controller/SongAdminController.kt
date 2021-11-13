@@ -1,6 +1,15 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
-import nl.orangeflamingo.voornameninliedjesbackend.domain.*
+import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
+import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistLogEntry
+import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLogEntry
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongSource
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWikimediaPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminLogEntry
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSongDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSourceDto
@@ -12,7 +21,16 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.CachePut
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import java.time.Instant
 
 @RestController

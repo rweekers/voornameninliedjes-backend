@@ -5,14 +5,18 @@ import com.beust.klaxon.Klaxon
 import com.beust.klaxon.Parser
 import io.cucumber.java8.En
 import nl.orangeflamingo.voornameninliedjesbackend.controller.SongController
-import nl.orangeflamingo.voornameninliedjesbackend.domain.*
+import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
+import nl.orangeflamingo.voornameninliedjesbackend.domain.TestAggregateSong
+import nl.orangeflamingo.voornameninliedjesbackend.domain.TestSong
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import java.util.*
+import java.util.Optional
 
 @Suppress("SpringJavaAutowiredMembersInspection")
 class SongSteps : En {

@@ -2,7 +2,19 @@ package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClient
-import nl.orangeflamingo.voornameninliedjesbackend.domain.*
+import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
+import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistLogEntry
+import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.License
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Owner
+import nl.orangeflamingo.voornameninliedjesbackend.domain.PhotoDetail
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLogEntry
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongSource
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWikimediaPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.slf4j.LoggerFactory
@@ -11,7 +23,7 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.Instant
-import java.util.*
+import java.util.Locale
 
 @Service
 class SongService @Autowired constructor(
