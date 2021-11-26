@@ -2,7 +2,8 @@
 
 package nl.orangeflamingo.voornameninliedjesbackend.cucumber.steps
 
-import io.cucumber.java8.En
+import io.cucumber.java.en.Given
+import io.cucumber.java.en.Then
 import nl.orangeflamingo.voornameninliedjesbackend.controller.ArtistController
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
@@ -11,7 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 
 @Suppress("SpringJavaAutowiredMembersInspection")
-class ArtistSteps: En {
+class ArtistSteps {
 
     private val log = LoggerFactory.getLogger(ArtistSteps::class.java)
 
@@ -21,8 +22,8 @@ class ArtistSteps: En {
     @Autowired
     private lateinit var artistRepository: ArtistRepository
 
-    init {
-        Given("the artist {string}") { artistName: String ->
+    @Given("the artist {string}")
+    fun givenArtist(artistName: String) {
             val artist = Artist(
                 name = artistName
             )
@@ -30,15 +31,15 @@ class ArtistSteps: En {
             artistRepository.save(artist)
         }
 
-
-        Then("there are {int} artists returned") { numberOfSongs: Int ->
+    @Then("there are {int} artists returned")
+     fun thereAreXArtistsReturned(numberOfArtists: Int) {
             val artistsCount = artistController.getArtists().size
-            assertEquals(numberOfSongs, artistsCount)
-        }
-
-        Then("there are {int} artists with name {string}") { numberOfArtists: Int, artistName: String ->
-            val artistsCount = artistController.getArtistsByName(artistName).size
             assertEquals(numberOfArtists, artistsCount)
         }
+
+    @Then("there are {int} artists with name {string}")
+    fun thereAreXArtistsWithNameY(numberOfArtists: Int, artistName: String) {
+        val artistsCount = artistController.getArtistsByName(artistName).size
+        assertEquals(numberOfArtists, artistsCount)
     }
 }

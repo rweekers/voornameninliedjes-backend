@@ -3,7 +3,10 @@ package nl.orangeflamingo.voornameninliedjesbackend.cucumber.steps
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Klaxon
 import com.beust.klaxon.Parser
-import io.cucumber.java8.En
+import io.cucumber.java.DataTableType
+import io.cucumber.java.en.Given
+import io.cucumber.java.en.Then
+import io.cucumber.java.en.When
 import nl.orangeflamingo.voornameninliedjesbackend.controller.SongController
 import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
@@ -19,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.util.Optional
 
 @Suppress("SpringJavaAutowiredMembersInspection")
-class SongSteps : En {
+class SongSteps {
 
     private val log = LoggerFactory.getLogger(SongSteps::class.java)
     private val klaxon = Klaxon()
@@ -37,40 +40,43 @@ class SongSteps : En {
     @Autowired
     private lateinit var songRepository: SongRepository
 
-    init {
-        Given("the next song for artist {string}:") { artistName: String, song: Song ->
-            log.info("Song: $song")
-            val artist = artistRepository.findFirstByName(artistName) ?: Artist(name = artistName)
-            song.addArtist(artist)
-            songRepository.save(song)
-        }
+    @Given("the next song for artist {string}:")
+    fun givenSongXForArtistY(artistName: String, song: Song) {
+        log.info("Song: $song")
+        val artist = artistRepository.findFirstByName(artistName) ?: Artist(name = artistName)
+        song.addArtist(artist)
+        songRepository.save(song)
+    }
 
-        When("user {word} updates the song {string} with the following details:") { user: String, songTitle: String, aggregateSong: AggregateSong ->
-            val song = songRepository.findFirstByTitle(songTitle).orElseThrow()
-            songService.updateSong(aggregateSong = aggregateSong, song = song, user = user)
-        }
+    @When("user {word} updates the song {string} with the following details:")
+    fun whenUserXUpdatesSongYWithDetailsZ(user: String, songTitle: String, aggregateSong: AggregateSong) {
+        val song = songRepository.findFirstByTitle(songTitle).orElseThrow()
+        songService.updateSong(aggregateSong = aggregateSong, song = song, user = user)
+    }
 
-        Then("there are {int} songs returned") { numberOfSongs: Int ->
-            val songsCount = songController.getSongs(Optional.empty()).size
-            assertEquals(numberOfSongs, songsCount)
-        }
+    @Then("there are {int} songs returned")
+    fun thenThereAreXSongsReturned(numberOfSongs: Int) {
+        val songsCount = songController.getSongs(Optional.empty()).size
+        assertEquals(numberOfSongs, songsCount)
+    }
 
-        DataTableType { entry: Map<String, String> ->
-            val testSong = TestSong()
-            val jsonObject = parser.parse(StringBuilder(klaxon.toJsonString(testSong))) as JsonObject
-            entry.forEach { (key, value) -> jsonObject[key] = value }
+    @DataTableType
+    fun song(entry: Map<String, String>): Song {
+        val testSong = TestSong()
+        val jsonObject = parser.parse(StringBuilder(klaxon.toJsonString(testSong))) as JsonObject
+        entry.forEach { (key, value) -> jsonObject[key] = value }
 
-            val updatedTestSong = klaxon.maybeParse<TestSong>(jsonObject)!!
-            updatedTestSong.toDomain()
-        }
+        val updatedTestSong = klaxon.maybeParse<TestSong>(jsonObject)!!
+        return updatedTestSong.toDomain()
+    }
 
-        DataTableType { entry: Map<String, String> ->
-            val testAggregateSong = TestAggregateSong()
-            val jsonObject = parser.parse(StringBuilder(klaxon.toJsonString(testAggregateSong))) as JsonObject
-            entry.forEach { (key, value) -> jsonObject[key] = value }
+    @DataTableType
+    fun aggregateSong(entry: Map<String, String>): AggregateSong {
+        val testAggregateSong = TestAggregateSong()
+        val jsonObject = parser.parse(StringBuilder(klaxon.toJsonString(testAggregateSong))) as JsonObject
+        entry.forEach { (key, value) -> jsonObject[key] = value }
 
-            val updatedTestAggregateSong = klaxon.maybeParse<TestAggregateSong>(jsonObject)!!
-            updatedTestAggregateSong.toDomain()
-        }
+        val updatedTestAggregateSong = klaxon.maybeParse<TestAggregateSong>(jsonObject)!!
+        return updatedTestAggregateSong.toDomain()
     }
 }

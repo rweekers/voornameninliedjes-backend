@@ -1,7 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.cucumber.steps
 
-import io.cucumber.java8.En
-import io.cucumber.java8.Scenario
+import io.cucumber.java.Before
 import io.cucumber.spring.CucumberContextConfiguration
 import nl.orangeflamingo.voornameninliedjesbackend.IntegrationTestConfiguration
 import nl.orangeflamingo.voornameninliedjesbackend.SongApplication
@@ -13,14 +12,12 @@ import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestExecutionListeners
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = [IntegrationTestConfiguration::class])
 @ContextConfiguration(classes = [SongApplication::class], loader = SpringBootContextLoader::class)
 @ActiveProfiles("integration-test")
-@TestExecutionListeners
-class CucumberHooksSteps : En {
+class CucumberHooksSteps {
 
     private val log = LoggerFactory.getLogger(CucumberHooksSteps::class.java)
 
@@ -30,11 +27,10 @@ class CucumberHooksSteps : En {
     @Autowired
     private lateinit var songRepository: SongRepository
 
-    init {
-        Before { _: Scenario ->
-            log.info("Running before steps")
-            clean()
-        }
+    @Before
+    fun before() {
+        log.info("Running before steps")
+        clean()
     }
 
     private fun clean() {
