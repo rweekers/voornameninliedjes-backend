@@ -31,7 +31,7 @@ data class SongDto(
     @JsonView(Views.Detail::class)
     val youtube: String?,
 
-    @JsonView(Views.Detail::class)
+    @JsonView(Views.Summary::class, Views.Detail::class)
     val spotify: String?,
 
     @JsonView(Views.Detail::class)
