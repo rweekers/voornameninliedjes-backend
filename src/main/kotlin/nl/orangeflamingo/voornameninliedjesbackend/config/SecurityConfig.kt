@@ -35,11 +35,6 @@ class SecurityConfig(val userRepository: UserRepository, val authenticationEntry
             .authenticationEntryPoint(authenticationEntryPoint)
     }
 
-    @Bean
-    override fun userDetailsServiceBean(): UserDetailsService {
-        return super.userDetailsServiceBean()
-    }
-
     override fun userDetailsService(): UserDetailsService {
         return UserDetailsService { username ->
             val user = userRepository.findByUsername(username) ?: throw UsernameNotFoundException(username)
@@ -47,8 +42,7 @@ class SecurityConfig(val userRepository: UserRepository, val authenticationEntry
         }
     }
 
-    @Bean
-    fun authenticationProvider(): DaoAuthenticationProvider {
+    private fun authenticationProvider(): DaoAuthenticationProvider {
         val authProvider = DaoAuthenticationProvider()
         authProvider.setUserDetailsService(userDetailsService())
         authProvider.setPasswordEncoder(passwordEncoder())
