@@ -1,7 +1,4 @@
 spring:
-  # TODO remove circular reference and remove this setting
-  main:
-    allow-circular-references: true
   output:
     ansi:
       enabled: always

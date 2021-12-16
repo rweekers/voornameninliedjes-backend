@@ -1,7 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.config
 
-import nl.orangeflamingo.voornameninliedjesbackend.service.MyUserDetailsService
-import org.springframework.beans.factory.annotation.Autowired
+import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
+import nl.orangeflamingo.voornameninliedjesbackend.service.MyUserPrincipal
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 
@@ -17,18 +19,10 @@ import org.springframework.security.crypto.password.PasswordEncoder
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-class SecurityConfig : WebSecurityConfigurerAdapter() {
+class SecurityConfig(val userRepository: UserRepository, val authenticationEntryPoint: MyBasicAuthPoint) : WebSecurityConfigurerAdapter() {
 
-    @Autowired
-    private lateinit var authenticationEntryPoint: MyBasicAuthPoint
-
-    @Autowired
-    private lateinit var myUserDetailsService: MyUserDetailsService
-
-    @Autowired
-    fun configureGlobal(auth: AuthenticationManagerBuilder) {
-        auth
-            .authenticationProvider(authenticationProvider())
+    override fun configure(auth: AuthenticationManagerBuilder) {
+        auth.authenticationProvider(authenticationProvider())
     }
 
     override fun configure(http: HttpSecurity) {
@@ -42,9 +36,21 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
+    override fun userDetailsServiceBean(): UserDetailsService {
+        return super.userDetailsServiceBean()
+    }
+
+    override fun userDetailsService(): UserDetailsService {
+        return UserDetailsService { username ->
+            val user = userRepository.findByUsername(username) ?: throw UsernameNotFoundException(username)
+            MyUserPrincipal(user)
+        }
+    }
+
+    @Bean
     fun authenticationProvider(): DaoAuthenticationProvider {
         val authProvider = DaoAuthenticationProvider()
-        authProvider.setUserDetailsService(myUserDetailsService)
+        authProvider.setUserDetailsService(userDetailsService())
         authProvider.setPasswordEncoder(passwordEncoder())
         return authProvider
     }
