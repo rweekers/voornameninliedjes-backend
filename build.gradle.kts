@@ -52,8 +52,8 @@ plugins {
     id("com.bmuschko.docker-remote-api") version "7.0.0"
     id("org.sonarqube") version "3.0"
     id("com.gorylenko.gradle-git-properties") version "2.3.1"
-    kotlin("jvm") version "1.5.31"
-    kotlin("plugin.spring") version "1.5.31"
+    kotlin("jvm") version "1.6.0"
+    kotlin("plugin.spring") version "1.6.0"
 }
 
 // Remove after update Spring Boot 2.6.2 (23 december 2021)
@@ -84,7 +84,7 @@ sonarqube {
 
 group = "nl.orangeflamingo"
 version = "1.0.0-RELEASE"
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
@@ -108,7 +108,7 @@ dependencies {
     testImplementation("org.junit.platform:junit-platform-commons:1.8.2")
     testImplementation("org.junit.platform:junit-platform-engine:1.8.2")
     testImplementation("org.junit.platform:junit-platform-launcher:1.8.2")
-    testImplementation("org.junit.platform:junit-platform-suite-engine:1.8.1")
+    testImplementation("org.junit.platform:junit-platform-suite-engine:1.8.2")
     testImplementation("org.junit.platform:junit-platform-suite-api:1.8.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
@@ -130,6 +130,6 @@ configurations {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 }

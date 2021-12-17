@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM openjdk:17
 RUN addgroup --system spring && adduser --system --group spring
 USER spring:spring
 ARG JAR_FILE=target/*.jar
