@@ -19,7 +19,10 @@ import org.springframework.security.crypto.password.PasswordEncoder
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-class SecurityConfig(val userRepository: UserRepository, val authenticationEntryPoint: MyBasicAuthPoint) : WebSecurityConfigurerAdapter() {
+class SecurityConfig(
+    private val userRepository: UserRepository,
+    private val authenticationEntryPoint: MyBasicAuthPoint
+) : WebSecurityConfigurerAdapter() {
 
     override fun configure(auth: AuthenticationManagerBuilder) {
         auth.authenticationProvider(authenticationProvider())

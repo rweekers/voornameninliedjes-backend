@@ -8,7 +8,6 @@ import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistFlickrPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistWikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,12 +18,9 @@ import java.util.Optional
 
 @RestController
 @RequestMapping("/api")
-class ArtistController {
+class ArtistController(private val artistRepository: ArtistRepository) {
 
     private val log = LoggerFactory.getLogger(ArtistController::class.java)
-
-    @Autowired
-    private lateinit var artistRepository: ArtistRepository
 
     @GetMapping("/artists/{id}")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])

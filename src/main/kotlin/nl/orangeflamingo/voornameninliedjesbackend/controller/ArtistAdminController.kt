@@ -11,7 +11,6 @@ import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistWikimediaPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistService
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -23,22 +22,15 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/admin")
-class ArtistAdminController {
+class ArtistAdminController(private val artistRepository: ArtistRepository, private val artistService: ArtistService) {
 
     private val log = LoggerFactory.getLogger(ArtistAdminController::class.java)
-
-    @Autowired
-    private lateinit var artistRepository: ArtistRepository
-
-    @Autowired
-    private lateinit var artistService: ArtistService
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/artists", params = ["name"])
     @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun getArtistsByName(@RequestParam(name = "name") name: String): List<AdminArtistDto> {
-        return artistService.findByName(name)
-            .map { convertToDto(it) }
+        return artistService.findByName(name).map { convertToDto(it) }
     }
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
@@ -51,20 +43,17 @@ class ArtistAdminController {
 
 
     private fun convertToDto(artist: Artist): AdminArtistDto {
-        return AdminArtistDto(
-            id = artist.id,
+        return AdminArtistDto(id = artist.id,
             name = artist.name,
             background = artist.background,
             wikimediaPhotos = artist.wikimediaPhotos.map { convertToDto(it) }.toSet(),
             flickrPhotos = artist.flickrPhotos.map { convertToDto(it) }.toSet(),
-            logEntries = artist.logEntries.map { convertToDto(it) }
-        )
+            logEntries = artist.logEntries.map { convertToDto(it) })
     }
 
     private fun convertToDto(wikimediaPhoto: ArtistWikimediaPhoto): AdminArtistWikimediaPhotoDto {
         return AdminArtistWikimediaPhotoDto(
-            url = wikimediaPhoto.url,
-            attribution = wikimediaPhoto.attribution
+            url = wikimediaPhoto.url, attribution = wikimediaPhoto.attribution
         )
     }
 
@@ -76,8 +65,7 @@ class ArtistAdminController {
 
     private fun convertToDto(logEntry: ArtistLogEntry): AdminArtistLogEntryDto {
         return AdminArtistLogEntryDto(
-            date = logEntry.date,
-            username = logEntry.username
+            date = logEntry.date, username = logEntry.username
         )
     }
 }

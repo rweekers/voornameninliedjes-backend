@@ -5,7 +5,6 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.User
 import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -23,14 +22,8 @@ import java.util.Optional
 
 @RestController
 @RequestMapping("/admin")
-class UserController {
+class UserController(private val userRepository: UserRepository, private val passwordEncoder: PasswordEncoder) {
     private val log = LoggerFactory.getLogger(UserController::class.java)
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
-
-    @Autowired
-    private lateinit var passwordEncoder: PasswordEncoder
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @GetMapping("/users")

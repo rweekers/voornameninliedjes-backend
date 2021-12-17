@@ -23,7 +23,6 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongNameS
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongNameFirstCharacterStatisticsService
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
@@ -37,7 +36,12 @@ import java.util.Optional
 
 @RestController
 @RequestMapping("/api")
-class SongController {
+class SongController(
+    private val songService: SongService,
+    private val songNameFirstCharacterStatisticsService: SongNameFirstCharacterStatisticsService,
+    private val songNameStatisticsRepository: SongNameStatisticsRepository,
+    private val artistNameStatisticsRepository: ArtistNameStatisticsRepository
+) {
 
     private val log = LoggerFactory.getLogger(SongController::class.java)
 
@@ -48,18 +52,6 @@ class SongController {
         .build(
             CacheLoader.from { key: Pair<String, String>? -> getSongDetails(key?.first ?: "", key?.second ?: "") }
         )
-
-    @Autowired
-    private lateinit var songService: SongService
-
-    @Autowired
-    private lateinit var songNameFirstCharacterStatisticsService: SongNameFirstCharacterStatisticsService
-
-    @Autowired
-    private lateinit var songNameStatisticsRepository: SongNameStatisticsRepository
-
-    @Autowired
-    private lateinit var artistNameStatisticsRepository: ArtistNameStatisticsRepository
 
     @GetMapping("/songs/{id}")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
@@ -110,7 +102,12 @@ class SongController {
 
     @GetMapping("/song-name-first-char-statistics")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
-    fun getSongNameFirstCharacterStatistics(@RequestParam("max-size", defaultValue = "10") maxSize: Int): List<SongNameFirstCharacterStatistics> {
+    fun getSongNameFirstCharacterStatistics(
+        @RequestParam(
+            "max-size",
+            defaultValue = "10"
+        ) maxSize: Int
+    ): List<SongNameFirstCharacterStatistics> {
         return songNameFirstCharacterStatisticsService.redivide(maxSize)
     }
 

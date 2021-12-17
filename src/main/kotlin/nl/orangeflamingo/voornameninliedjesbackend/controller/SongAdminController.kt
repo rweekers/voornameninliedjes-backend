@@ -18,7 +18,6 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRep
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.CachePut
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -35,18 +34,13 @@ import java.time.Instant
 
 @RestController
 @RequestMapping("/admin")
-class SongAdminController {
+class SongAdminController(
+    private val songRepository: SongRepository,
+    private val artistRepository: ArtistRepository,
+    private val songService: SongService
+) {
 
     private val log = LoggerFactory.getLogger(SongAdminController::class.java)
-
-    @Autowired
-    private lateinit var songRepository: SongRepository
-
-    @Autowired
-    private lateinit var artistRepository: ArtistRepository
-
-    @Autowired
-    private lateinit var songService: SongService
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/songs")
@@ -70,7 +64,13 @@ class SongAdminController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/songs", params = ["first-character"])
     @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
-    fun getSongsWithNameStartingWith(@RequestParam(name = "first-character") firstCharacter: String, @RequestParam(name="status", defaultValue = "") status: List<String> = emptyList()): List<AdminSongDto> {
+    fun getSongsWithNameStartingWith(
+        @RequestParam(name = "first-character") firstCharacter: String,
+        @RequestParam(
+            name = "status",
+            defaultValue = ""
+        ) status: List<String> = emptyList()
+    ): List<AdminSongDto> {
         return songService.findByNameStartsWithAndStatusIn(firstCharacter, status.map { SongStatus.valueOf(it) })
             .map { convertToDto(it) }
     }
