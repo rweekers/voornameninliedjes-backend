@@ -57,7 +57,7 @@ plugins {
 }
 
 // Remove after update Spring Boot 2.6.2 (23 december 2021)
-ext["log4j2.version"] = "2.16.0"
+ext["log4j2.version"] = "2.17.0"
 
 jacoco {
     toolVersion = "0.8.7"
@@ -83,7 +83,7 @@ sonarqube {
 }
 
 group = "nl.orangeflamingo"
-version = "1.0.0-RELEASE"
+version = "1.1.0-RELEASE"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
