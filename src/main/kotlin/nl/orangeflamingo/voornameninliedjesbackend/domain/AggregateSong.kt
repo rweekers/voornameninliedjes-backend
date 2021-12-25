@@ -11,6 +11,7 @@ data class AggregateSong(
     val artistName: String,
     val artistBackground: String? = null,
     val artistImage: String? = null,
+    val artistImageAttribution: String? = null,
     val background: String? = null,
     val wikipediaPage: String? = null,
     val wikipediaBackground: Mono<String> = Mono.empty(),

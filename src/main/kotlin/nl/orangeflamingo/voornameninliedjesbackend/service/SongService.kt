@@ -116,6 +116,7 @@ class SongService @Autowired constructor(
         status = song.status,
         hasDetails = song.hasDetails,
         artistImage = song.artistImage,
+        artistImageAttribution = song.artistImageAttribution,
         artistWikimediaPhotos = artist.wikimediaPhotos,
         songWikimediaPhotos = song.wikimediaPhotos,
         flickrPhotos = artist.flickrPhotos,
@@ -180,7 +181,7 @@ class SongService @Autowired constructor(
 
     fun updateSong(aggregateSong: AggregateSong, song: Song, user: String): AggregateSong {
         val artist =
-            findLeadArtistForSong(song) ?: throw IllegalStateException("There should be a lead artist for all songs")
+            findLeadArtistForSong(song)
         song.title = aggregateSong.title
         song.name = aggregateSong.name
         song.status = aggregateSong.status
@@ -208,12 +209,11 @@ class SongService @Autowired constructor(
         return createAggregateSong(savedSong, artist)
     }
 
-    fun findLeadArtistForSong(song: Song): Artist? {
-        val artist = song.artists
+    fun findLeadArtistForSong(song: Song): Artist {
+        return song.artists
             .filter { artistRef -> artistRef.originalArtist }
             .map { artistRepository.findById(it.artist) }
             .first().orElseThrow()
-        return artist
     }
 
     private fun artistUpdate(song: AggregateSong, artist: Artist): Boolean {
@@ -246,6 +246,7 @@ class SongService @Autowired constructor(
             title = aggregateSong.title,
             name = aggregateSong.name,
             artistImage = aggregateSong.artistImage,
+            artistImageAttribution = aggregateSong.artistImageAttribution,
             background = aggregateSong.background,
             wikipediaPage = aggregateSong.wikipediaPage,
             youtube = aggregateSong.youtube,

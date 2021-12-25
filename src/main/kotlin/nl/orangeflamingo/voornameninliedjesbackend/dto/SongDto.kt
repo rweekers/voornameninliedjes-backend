@@ -20,6 +20,9 @@ data class SongDto(
     val artistImage: String?,
 
     @JsonView(Views.Summary::class, Views.Detail::class)
+    val artistImageAttribution: String?,
+
+    @JsonView(Views.Summary::class, Views.Detail::class)
     val hasDetails: Boolean,
 
     @JsonView(Views.Detail::class)

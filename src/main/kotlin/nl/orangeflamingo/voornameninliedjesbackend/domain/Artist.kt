@@ -18,15 +18,7 @@ data class Artist(
     var flickrPhotos: MutableSet<ArtistFlickrPhoto> = mutableSetOf(),
     @MappedCollection(idColumn = "artist_id", keyColumn = "artist_key")
     val logEntries: MutableList<ArtistLogEntry> = mutableListOf()
-) {
-    fun addWikimediaPhoto(wikimediaPhoto: ArtistWikimediaPhoto) {
-        this.wikimediaPhotos.add(wikimediaPhoto)
-    }
-
-    fun addFlickrPhoto(flickrPhotoPhoto: ArtistFlickrPhoto) {
-        this.flickrPhotos.add(flickrPhotoPhoto)
-    }
-}
+)
 
 @Table("artist_wikimedia_photos")
 data class ArtistWikimediaPhoto(

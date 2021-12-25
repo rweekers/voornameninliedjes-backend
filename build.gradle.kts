@@ -100,7 +100,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.postgresql:postgresql:42.3.1")
-    implementation("org.flywaydb:flyway-core:8.1.0")
+    implementation("org.flywaydb:flyway-core:8.2.3")
     implementation("com.google.guava:guava:31.0.1-jre")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
