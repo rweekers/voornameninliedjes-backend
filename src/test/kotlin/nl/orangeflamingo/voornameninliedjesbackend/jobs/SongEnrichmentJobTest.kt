@@ -4,6 +4,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistRef
+import nl.orangeflamingo.voornameninliedjesbackend.domain.FlickrApiOwner
 import nl.orangeflamingo.voornameninliedjesbackend.domain.FlickrPhotoDetail
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
@@ -66,13 +67,22 @@ class SongEnrichmentJobTest {
                 )
             )
         )
+        `when`(mockFlickrApiClient.getOwnerInformation("flickrOwnerId")).thenReturn(
+            Mono.just(
+                FlickrApiOwner(
+                    id = "flickrOwnerId",
+                    username = "Some flickr owner",
+                    photosUrl = "https://flickrUrl"
+                )
+            )
+        )
     }
 
     @Test
     fun `test updateSong`() {
         songEnrichmentJob.updateSong()
         verify(mockSongRepository).save(
-            song.copy(artistImage = "https://flickrUrl")
+            song.copy(artistImage = "https://flickrUrl", artistImageAttribution = "Photo by Some flickr owner to be found at https://flickrUrl")
         )
     }
 
@@ -80,7 +90,7 @@ class SongEnrichmentJobTest {
     fun `test enrichSong`() {
         songEnrichmentJob.enrichSong()
         verify(mockSongRepository).save(
-            song.copy(artistImage = "https://flickrUrl")
+            song.copy(artistImage = "https://flickrUrl", artistImageAttribution = "Photo by Some flickr owner to be found at https://flickrUrl")
         )
     }
 

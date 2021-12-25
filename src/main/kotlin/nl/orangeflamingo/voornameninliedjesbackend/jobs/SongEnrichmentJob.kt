@@ -37,23 +37,27 @@ class SongEnrichmentJob(
 
     private fun updateArtistImageForSong(song: Song) {
         val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
-        val url =
-            if (song.wikimediaPhotos.isNotEmpty()) song.wikimediaPhotos.map { it.url }
-                .firstOrNull() else artist.wikimediaPhotos.map { it.url }
+        val urlToAttribution =
+            if (song.wikimediaPhotos.isNotEmpty()) song.wikimediaPhotos.map { it.url to it.attribution }
+                .firstOrNull() else artist.wikimediaPhotos.map { it.url to it.attribution }
                 .firstOrNull()
-        if (url != null) {
-            updateArtistImage(url, song)
+        if (urlToAttribution != null) {
+            val (url, attribution) = urlToAttribution
+            updateArtistImage(url, attribution, song)
         } else {
             val photo = flickrApiClient.getPhoto(artist.flickrPhotos.first().flickrId)
             photo.subscribe { p ->
-                updateArtistImage(p.url, song)
+                flickrApiClient.getOwnerInformation(p.ownerId).subscribe { o ->
+                    val attribution = "Photo by ${o.username} to be found at ${p.url}"
+                    updateArtistImage(p.url, attribution, song)
+                }
             }
         }
     }
 
-    private fun updateArtistImage(url: String, song: Song) {
+    private fun updateArtistImage(url: String, attribution: String, song: Song) {
         if (url != song.artistImage) {
-            val updatedSong = song.copy(artistImage = url)
+            val updatedSong = song.copy(artistImage = url, artistImageAttribution = attribution)
             songRepository.save(updatedSong)
         }
     }

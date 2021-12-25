@@ -57,9 +57,7 @@ class SongController(
         val song = songService.findByIdDetails(id)
         return song.flickrPhotoDetail.collectList()
             .zipWith(song.wikipediaBackground.switchIfEmpty(Mono.just(song.background ?: "Geen achtergrond gevonden")))
-            .map { it ->
-                convertToDto(song, it.t1, it.t2)
-            }
+            .map { convertToDto(song, it.t1, it.t2) }
     }
 
     @GetMapping("/songs/{artist}/{title}")
@@ -89,9 +87,9 @@ class SongController(
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     @JsonView(Views.Summary::class)
     fun getSongs(@RequestParam("first-characters") firstCharacters: Optional<List<String>>): List<SongDto> {
-        return firstCharacters.map {
+        return firstCharacters.map { firstCharacter ->
             songService.findAllByStatusOrderedByNameFilteredByFirstCharacter(
-                listOf(SongStatus.SHOW, SongStatus.IN_PROGRESS), it.distinct().map { it.first() }
+                listOf(SongStatus.SHOW, SongStatus.IN_PROGRESS), firstCharacter.distinct().map { it.first() }
             )
         }.orElseGet { songService.findAllByStatusOrderedByName(SongStatus.SHOW) }
             .map { convertToDto(it, emptyList()) }
