@@ -183,23 +183,5 @@ class SongControllerTest(
             .jsonPath("$[0].name").isEqualTo("The Beatles")
             .jsonPath("$[0].count").isEqualTo("2")
     }
-
-    @Test
-    fun getStatisticsPerFirstCharOfName() {
-        client.get()
-            .uri { uriBuilder ->
-                uriBuilder
-                    .path("/api/song-name-first-char-statistics")
-                    .queryParam("max-size", 2)
-                    .build()
-            }
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.length()").isEqualTo(1)
-            .jsonPath("$[0].name").isNotEmpty
-            .jsonPath("$[0].name").isEqualTo("lm")
-            .jsonPath("$[0].count").isEqualTo("2")
-    }
 }
 
