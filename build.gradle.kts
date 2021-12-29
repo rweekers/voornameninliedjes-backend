@@ -57,7 +57,7 @@ plugins {
 }
 
 // Remove after update Spring Boot 2.6.2 (23 december 2021)
-ext["log4j2.version"] = "2.17.0"
+ext["log4j2.version"] = "2.17.1"
 
 jacoco {
     toolVersion = "0.8.7"
