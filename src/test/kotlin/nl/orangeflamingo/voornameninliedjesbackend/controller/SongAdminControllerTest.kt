@@ -67,10 +67,11 @@ class SongAdminControllerTest(
             name = "Michelle",
             wikimediaPhotos = mutableSetOf(
                 SongWikimediaPhoto(
-                url = "https://somefakewikimediaphotourl.doesnotexist",
-                attribution = "Attribution for test wikimedia photo"
-            )),
-                    artists = mutableSetOf(
+                    url = "https://somefakewikimediaphotourl.doesnotexist",
+                    attribution = "Attribution for test wikimedia photo"
+                )
+            ),
+            artists = mutableSetOf(
                 ArtistRef(
                     artist = artist.id!!
                 )
@@ -93,7 +94,8 @@ class SongAdminControllerTest(
                 ArtistRef(
                     artist = artist.id!!
                 )
-            )
+            ),
+            wikimediaPhotos = mutableSetOf(SongWikimediaPhoto("some url", "some attribution"))
         ).toDomain()
 
         songMap = songRepository.saveAll(
@@ -269,6 +271,19 @@ class SongAdminControllerTest(
             .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
             .exchange()
         assertEquals(1, artistRepository.findById(id).orElseThrow().flickrPhotos.size)
+    }
+
+    @Test
+    fun enrichSongs() {
+        client.post()
+            .uri { uriBuilder ->
+                uriBuilder
+                .path("/admin/songs/enrich")
+                .queryParam("update-all", "true")
+                .build() }
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isOk
     }
 
     @Test
