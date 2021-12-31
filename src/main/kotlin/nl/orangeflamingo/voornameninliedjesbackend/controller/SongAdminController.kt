@@ -16,6 +16,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSourceDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminWikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
+import nl.orangeflamingo.voornameninliedjesbackend.service.SongEnrichmentService
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CachePut
@@ -37,7 +38,8 @@ import java.time.Instant
 class SongAdminController(
     private val songRepository: SongRepository,
     private val artistRepository: ArtistRepository,
-    private val songService: SongService
+    private val songService: SongService,
+    private val songEnrichmentService: SongEnrichmentService
 ) {
 
     private val log = LoggerFactory.getLogger(SongAdminController::class.java)
@@ -104,6 +106,13 @@ class SongAdminController(
             return convertToDto(songService.updateSong(convertToDomain(song), songFromDb.get(), user))
         }
         return convertToDto(songService.newSong(convertToDomain(song), user))
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/songs/enrich")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
+    fun enrichSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
+        songEnrichmentService.enrichSongs(updateAll)
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
