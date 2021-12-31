@@ -30,22 +30,29 @@ class SongEnrichmentService(
     }
 
     private fun updateArtistImageForSong(song: Song) {
-        val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
-        val urlToAttribution =
-            if (song.wikimediaPhotos.isNotEmpty()) song.wikimediaPhotos.map { it.url to it.attribution }
-                .firstOrNull() else artist.wikimediaPhotos.map { it.url to it.attribution }
-                .firstOrNull()
-        if (urlToAttribution != null) {
-            val (url, attribution) = urlToAttribution
-            updateArtistImage(url, attribution, song)
-        } else {
-            val photo = flickrApiClient.getPhoto(artist.flickrPhotos.first().flickrId)
-            photo.subscribe { p ->
-                flickrApiClient.getOwnerInformation(p.ownerId).subscribe { o ->
-                    val attribution = "Photo by ${o.username} to be found at ${p.url}"
-                    updateArtistImage(p.url, attribution, song)
+        try {
+            val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
+
+            log.info("Updating ${song.title} from ${artist.name}")
+
+            val urlToAttribution =
+                if (song.wikimediaPhotos.isNotEmpty()) song.wikimediaPhotos.map { it.url to it.attribution }
+                    .firstOrNull() else artist.wikimediaPhotos.map { it.url to it.attribution }
+                    .firstOrNull()
+            if (urlToAttribution != null) {
+                val (url, attribution) = urlToAttribution
+                updateArtistImage(url, attribution, song)
+            } else {
+                val photo = flickrApiClient.getPhoto(artist.flickrPhotos.first().flickrId)
+                photo.subscribe { p ->
+                    flickrApiClient.getOwnerInformation(p.ownerId).subscribe { o ->
+                        val attribution = "Photo by ${o.username} to be found at ${p.url}"
+                        updateArtistImage(p.url, attribution, song)
+                    }
                 }
             }
+        } catch (e: Exception) {
+            log.error("Could not update ${song.title} due to error", e)
         }
     }
 
