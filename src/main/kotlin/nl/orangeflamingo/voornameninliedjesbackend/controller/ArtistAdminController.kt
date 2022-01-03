@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -31,6 +32,20 @@ class ArtistAdminController(private val artistRepository: ArtistRepository, priv
     @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun getArtistsByName(@RequestParam(name = "name") name: String): List<AdminArtistDto> {
         return artistService.findByName(name).map { convertToDto(it) }
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/artists/{id}", params = ["name"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
+    fun updateArtistName(@PathVariable id: Long, @RequestParam(name = "name") name: String) {
+        val artistOptional = artistRepository.findById(id)
+        if (artistOptional.isPresent) {
+            val artist = artistOptional.get()
+            artist.name = name
+            artistRepository.save(artist)
+        } else {
+            log.warn("Artist with id $id not found")
+        }
     }
 
     @PreAuthorize("hasRole('ROLE_OWNER')")

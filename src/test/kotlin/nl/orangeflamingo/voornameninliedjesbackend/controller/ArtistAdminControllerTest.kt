@@ -10,6 +10,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -110,6 +111,21 @@ class ArtistAdminControllerTest(
             .exchange()
             .expectStatus().isOk
         assertFalse(artistRepository.findById(artistMap["The Beatles"]!!).isPresent)
+    }
+
+    @Test
+    fun updateArtistNameTest() {
+        client.post()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/admin/artists/${artistMap["The Beatles"]}")
+                    .queryParam("name", "The Beat")
+                    .build()
+            }
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(adminUser, adminPassword) }
+            .exchange()
+            .expectStatus().isOk
+        assertThat(artistRepository.findFirstByName("The Beat")).isNotNull
     }
 }
 
