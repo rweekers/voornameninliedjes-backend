@@ -22,7 +22,7 @@ class SongEnrichmentService(
         log.info("Starting enrichment with update all: $updateAll")
 
         val songsToUpdate =
-            if (updateAll) songRepository.findAllByStatusOrderedByName(SongStatus.SHOW.code)
+            if (updateAll) songRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)
             else songRepository.findAllByStatusAndArtistImageIsNullOrArtistImageAttributionIsNull(
                 SongStatus.SHOW.code
             )
@@ -31,7 +31,8 @@ class SongEnrichmentService(
 
     private fun updateArtistImageForSong(song: Song) {
         try {
-            val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
+            val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
+                .orElseThrow { ArtistNotFoundException("Artist with id ${song.artists.first { it.originalArtist }} for song with title ${song.title} not found") }
 
             log.info("Updating ${song.title} from ${artist.name}")
 

@@ -5,9 +5,6 @@ import nl.orangeflamingo.voornameninliedjesbackend.controller.Views
 
 data class SongDto(
     @JsonView(Views.Summary::class, Views.Detail::class)
-    val id: String?,
-
-    @JsonView(Views.Summary::class, Views.Detail::class)
     val artist: String,
 
     @JsonView(Views.Summary::class, Views.Detail::class)
@@ -45,9 +42,6 @@ data class SongDto(
 
     @JsonView(Views.Detail::class)
     val sources: Set<SourceDto>,
-
-    @JsonView(Views.Detail::class)
-    val status: String
 )
 
 data class WikimediaPhotoDto(

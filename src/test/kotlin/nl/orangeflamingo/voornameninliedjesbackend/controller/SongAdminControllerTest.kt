@@ -86,7 +86,7 @@ class SongAdminControllerTest(
                     artist = artist.id!!
                 )
             ),
-            status = SongStatus.IN_PROGRESS
+            status = SongStatus.INCOMPLETE
         ).toDomain()
 
         val songLucy = TestSong(
@@ -137,7 +137,7 @@ class SongAdminControllerTest(
                 uriBuilder
                     .path("/admin/songs")
                     .queryParam("first-character", "M")
-                    .queryParam("status", "SHOW,IN_PROGRESS,TO_BE_DELETED")
+                    .queryParam("status", "SHOW,IN_PROGRESS,INCOMPLETE, TO_BE_DELETED")
                     .build()
             }
             .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
@@ -153,7 +153,7 @@ class SongAdminControllerTest(
                 uriBuilder
                     .path("/admin/songs")
                     .queryParam("first-character", "M")
-                    .queryParam("status", "IN_PROGRESS")
+                    .queryParam("status", "INCOMPLETE")
                     .build()
             }
             .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
@@ -230,7 +230,8 @@ class SongAdminControllerTest(
                                 attribution = "some test attribution"
                             )
                         ),
-                        status = "IN_PROGRESS",
+                        status = "INCOMPLETE",
+                        remarks = "Geen spotify link gevonden...",
                         hasDetails = true
                     )
                 )
@@ -247,6 +248,10 @@ class SongAdminControllerTest(
             .jsonPath("$.songWikimediaPhotos[0].attribution").isEqualTo("some test attribution")
             .jsonPath("$.hasDetails").isNotEmpty
             .jsonPath("$.hasDetails").isEqualTo("true")
+            .jsonPath("$.status").isNotEmpty
+            .jsonPath("$.status").isEqualTo("INCOMPLETE")
+            .jsonPath("$.remarks").isNotEmpty
+            .jsonPath("$.remarks").isEqualTo("Geen spotify link gevonden...")
     }
 
     @Test

@@ -16,24 +16,4 @@ data class TestSongDto(
     val sources: Set<SourceDto> = emptySet(),
     val status: String = "SHOW",
     val hasDetails: Boolean = false
-) {
-    fun toDomain(): SongDto {
-        return SongDto(
-            id = id,
-            artist = artist,
-            title = title,
-            name = name,
-            artistImage = artistImage,
-            artistImageAttribution = artistImageAttribution,
-            background = background,
-            wikipediaPage = wikipediaPage,
-            youtube = youtube,
-            spotify = spotify,
-            wikimediaPhotos = wikimediaPhotos,
-            flickrPhotos = flickrPhotos,
-            sources = sources,
-            status = status,
-            hasDetails = hasDetails
-        )
-    }
-}
+)

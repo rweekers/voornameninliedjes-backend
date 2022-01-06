@@ -112,24 +112,6 @@ class SongControllerTest(
     }
 
     @Test
-    fun getSongByIdTest() {
-        client.get()
-            .uri("/api/songs/${songMap["Michelle"]}")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.title").isNotEmpty
-            .jsonPath("$.title").isEqualTo("Michelle")
-            .jsonPath("$.artist").isNotEmpty
-            .jsonPath("$.artist").isEqualTo("The Beatles")
-            .jsonPath("$.wikimediaPhotos").isNotEmpty
-            .jsonPath("$.wikimediaPhotos[0].url").isEqualTo("https://somefakewikimediaphotourl.doesnotexist")
-            .jsonPath("$.wikimediaPhotos[0].attribution").isEqualTo("Attribution for test wikimedia photo")
-            .jsonPath("$.flickrPhotos").isNotEmpty
-            .jsonPath("$.flickrPhotos[0].url").isEqualTo("https://somefakeflickrphotourl.doesnotexist")
-    }
-
-    @Test
     fun getSongByArtistAndTitleTest() {
         client.get()
             .uri("/api/songs/the Beatles/MICHELLE")

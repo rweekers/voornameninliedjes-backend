@@ -16,13 +16,18 @@ import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSourceDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminWikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
+import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistNotFoundException
+import nl.orangeflamingo.voornameninliedjesbackend.service.NotFoundException
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongEnrichmentService
+import nl.orangeflamingo.voornameninliedjesbackend.service.SongNotFoundException
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CachePut
+import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -30,6 +35,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import java.time.Instant
 
@@ -43,6 +49,12 @@ class SongAdminController(
 ) {
 
     private val log = LoggerFactory.getLogger(SongAdminController::class.java)
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ExceptionHandler(SongNotFoundException::class, ArtistNotFoundException::class)
+    fun notFoundHandler(ex: NotFoundException) {
+        log.warn("Gotten request with message {}", ex.message)
+    }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/songs")
@@ -134,14 +146,15 @@ class SongAdminController(
         return song.artists
             .filter { artistRef -> artistRef.originalArtist }
             .map { artistRepository.findById(it.artist) }
-            .first().orElseThrow()
+            .first()
+            .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/artists/{user}/{id}/{flickrId}")
     @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun addFlickrPhoto(@PathVariable user: String, @PathVariable id: Long, @PathVariable flickrId: String) {
-        val artist = artistRepository.findById(id).orElseThrow()
+        val artist = artistRepository.findById(id).orElseThrow { ArtistNotFoundException("Artist with id $id not found") }
         addFlickrIdToArtist(user, artist, flickrId)
     }
 
@@ -185,6 +198,7 @@ class SongAdminController(
             youtube = song.youtube?.trim(),
             spotify = song.spotify?.trim(),
             status = SongStatus.valueOf(song.status.trim()),
+            remarks = song.remarks?.trim(),
             hasDetails = song.hasDetails,
             artistWikimediaPhotos = song.artistWikimediaPhotos.map {
                 ArtistWikimediaPhoto(
@@ -217,6 +231,7 @@ class SongAdminController(
             youtube = song.youtube,
             spotify = song.spotify,
             status = song.status.code,
+            remarks = song.remarks,
             hasDetails = song.hasDetails,
             artistWikimediaPhotos = song.artistWikimediaPhotos.map { convertToDto(it) }.toSet(),
             songWikimediaPhotos = song.songWikimediaPhotos.map { convertToDto(it) }.toSet(),

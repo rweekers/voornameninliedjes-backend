@@ -39,34 +39,38 @@ class SongService @Autowired constructor(
     }
 
     fun findAll(): List<AggregateSong> {
-        return songRepository.findAllOrderByNameAsc()
+        return songRepository.findAllOrderByNameAscTitleAsc()
             .map { song ->
-                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
+                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
+                    .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
                 createAggregateSong(song, artist)
             }
     }
 
     fun findByName(name: String): List<AggregateSong> {
-        return songRepository.findAllByNameIgnoreCaseOrderByNameAsc(name)
+        return songRepository.findAllByNameIgnoreCaseOrderByNameAscTitleAsc(name)
             .map { song ->
-                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
+                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
+                    .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
                 createAggregateSong(song, artist)
             }
     }
 
     fun findByNameStartsWithAndStatusIn(firstCharacter: String, statusList: List<SongStatus>): List<AggregateSong> {
-        return songRepository.findAllByNameStartingWithIgnoreCaseAndStatusInOrderByNameAsc(firstCharacter, statusList.map { it.code })
+        return songRepository.findAllByNameStartingWithIgnoreCaseAndStatusInOrderByNameAscTitleAsc(firstCharacter, statusList.map { it.code })
             .map { song ->
-                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
+                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
+                    .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
                 createAggregateSong(song, artist)
             }
     }
 
     fun findAllByStatusOrderedByName(status: SongStatus): List<AggregateSong> {
         log.info("Getting all songs by status ordered by name...")
-        return songRepository.findAllByStatusOrderedByName(status.code)
+        return songRepository.findAllByStatusOrderedByNameAndTitle(status.code)
             .map { song ->
-                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
+                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
+                    .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
                 createAggregateSong(song, artist)
             }
     }
@@ -77,7 +81,7 @@ class SongService @Autowired constructor(
             statuses.joinToString { it.code },
             firstChars.joinToString()
         )
-        return songRepository.findAllByStatusesAndNameStartingWithOrderedByName(
+        return songRepository.findAllByStatusesAndNameStartingWithOrderedByNameAndTitle(
             statuses.map { it.code },
             firstChars.map {
                 it.lowercase(
@@ -85,15 +89,17 @@ class SongService @Autowired constructor(
                 )
             })
             .map { song ->
-                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
+                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
+                    .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
                 createAggregateSong(song, artist)
             }
     }
 
     fun findById(id: Long): AggregateSong {
         log.info("Getting song with id $id")
-        val song = songRepository.findById(id).orElseThrow()
-        val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
+        val song = songRepository.findById(id).orElseThrow { SongNotFoundException("Song with id $id not found") }
+        val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
+            .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
 
         return createAggregateSong(song, artist)
     }
@@ -114,6 +120,7 @@ class SongService @Autowired constructor(
         youtube = song.youtube,
         spotify = song.spotify,
         status = song.status,
+        remarks = song.remarks,
         hasDetails = song.hasDetails,
         artistImage = song.artistImage,
         artistImageAttribution = song.artistImageAttribution,
@@ -126,17 +133,19 @@ class SongService @Autowired constructor(
     )
 
     fun findByArtistAndNameDetails(artist: String, title: String): AggregateSong {
-        return getDetails(songRepository.findByArtistAndTitle(artist, title).orElseThrow())
+        return songRepository.findByArtistAndTitle(artist, title).map { getDetails(it) }
+            .orElseThrow { SongNotFoundException("Song with title $title and artist $artist not found") }
     }
 
     fun findByIdDetails(id: Long): AggregateSong {
-        return getDetails(songRepository.findById(id).orElseThrow())
+        return getDetails(songRepository.findById(id).orElseThrow { SongNotFoundException("Song with id $id not found") })
     }
 
     private fun getDetails(song: Song): AggregateSong {
         log.info("Getting song with id ${song.id}")
 
-        val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist).orElseThrow()
+        val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
+            .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
         val wikipediaBackground =
             if (song.wikipediaPage != null) wikipediaApiClient.getBackground(song.wikipediaPage!!) else Mono.empty()
 
@@ -185,6 +194,7 @@ class SongService @Autowired constructor(
         song.title = aggregateSong.title
         song.name = aggregateSong.name
         song.status = aggregateSong.status
+        song.remarks = aggregateSong.remarks
         song.hasDetails = aggregateSong.hasDetails
         song.background = aggregateSong.background
         song.wikipediaPage = aggregateSong.wikipediaPage
@@ -213,7 +223,8 @@ class SongService @Autowired constructor(
         return song.artists
             .filter { artistRef -> artistRef.originalArtist }
             .map { artistRepository.findById(it.artist) }
-            .first().orElseThrow()
+            .first()
+            .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
     }
 
     private fun artistUpdate(song: AggregateSong, artist: Artist): Boolean {
@@ -253,6 +264,7 @@ class SongService @Autowired constructor(
             spotify = aggregateSong.spotify,
             wikimediaPhotos = aggregateSong.songWikimediaPhotos.map { SongWikimediaPhoto(url = it.url, attribution = it.attribution ) }.toMutableSet(),
             status = aggregateSong.status,
+            remarks = aggregateSong.remarks,
             hasDetails = aggregateSong.hasDetails,
             sources = aggregateSong.sources.map {
                 SongSource(
