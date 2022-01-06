@@ -19,14 +19,20 @@ import nl.orangeflamingo.voornameninliedjesbackend.dto.SourceDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.WikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistNameStatisticsRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongNameStatisticsRepository
+import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistNotFoundException
+import nl.orangeflamingo.voornameninliedjesbackend.service.NotFoundException
+import nl.orangeflamingo.voornameninliedjesbackend.service.SongNotFoundException
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 import java.util.Optional
@@ -50,14 +56,10 @@ class SongController(
             CacheLoader.from { key: Pair<String, String>? -> getSongDetails(key?.first ?: "", key?.second ?: "") }
         )
 
-    @GetMapping("/songs/{id}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
-    fun getSongById(@PathVariable id: Long): Mono<SongDto> {
-        log.info("Requesting song with id $id...")
-        val song = songService.findByIdDetails(id)
-        return song.flickrPhotoDetail.collectList()
-            .zipWith(song.wikipediaBackground.switchIfEmpty(Mono.just(song.background ?: "Geen achtergrond gevonden")))
-            .map { convertToDto(song, it.t1, it.t2) }
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ExceptionHandler(SongNotFoundException::class, ArtistNotFoundException::class)
+    fun notFoundHandler(ex: NotFoundException) {
+        log.warn("Gotten request with message {}", ex.message)
     }
 
     @GetMapping("/songs/{artist}/{title}")
@@ -109,7 +111,6 @@ class SongController(
 
     private fun convertToDto(song: AggregateSong, photos: List<PhotoDetail>, background: String = ""): SongDto {
         return SongDto(
-            id = song.id.toString(),
             artist = song.artistName,
             title = song.title,
             name = song.name,
@@ -145,7 +146,6 @@ class SongController(
                     name = it.name
                 )
             }.toSet(),
-            status = song.status.code,
             hasDetails = song.hasDetails
         )
     }

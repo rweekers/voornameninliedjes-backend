@@ -38,7 +38,7 @@ class SongEnrichmentServiceTest {
 
     @BeforeEach
     fun init() {
-        `when`(mockSongRepository.findAllByStatusOrderedByName(SongStatus.SHOW.code)).thenReturn(
+        `when`(mockSongRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)).thenReturn(
             listOf(song)
         )
         `when`(mockSongRepository.findAllByStatusAndArtistImageIsNullOrArtistImageAttributionIsNull(SongStatus.SHOW.code)).thenReturn(

@@ -11,23 +11,23 @@ import java.util.Optional
 @Repository
 interface SongRepository : CrudRepository<Song, Long> {
 
-    @Query("select * from songs where status = :status order by name ASC")
-    fun findAllByStatusOrderedByName(@Param("status") status: String): List<Song>
+    @Query("select * from songs where status = :status order by name ASC, title ASC")
+    fun findAllByStatusOrderedByNameAndTitle(@Param("status") status: String): List<Song>
 
-    @Query("select * from songs where status in (:statuses) and lower(left(name, 1)) in (:firstChars) order by name ASC")
-    fun findAllByStatusesAndNameStartingWithOrderedByName(@Param("statuses") statuses: List<String>, @Param("firstChars") firstChars: List<String>): List<Song>
+    @Query("select * from songs where status in (:statuses) and lower(left(name, 1)) in (:firstChars) order by name ASC, title ASC")
+    fun findAllByStatusesAndNameStartingWithOrderedByNameAndTitle(@Param("statuses") statuses: List<String>, @Param("firstChars") firstChars: List<String>): List<Song>
 
     @Query("select * from songs where status = :status order by name ASC")
     fun findAllByStatusAndArtistImageIsNullOrArtistImageAttributionIsNull(@Param("status") status: String): List<Song>
 
-    fun findAllByNameStartingWithIgnoreCaseAndStatusInOrderByNameAsc(firstCharacter: String, status: List<String>): List<Song>
+    fun findAllByNameStartingWithIgnoreCaseAndStatusInOrderByNameAscTitleAsc(firstCharacter: String, status: List<String>): List<Song>
 
-    fun findAllByNameIgnoreCaseOrderByNameAsc(name: String): List<Song>
+    fun findAllByNameIgnoreCaseOrderByNameAscTitleAsc(name: String): List<Song>
 
     fun findFirstByTitle(title: String): Optional<Song>
 
-    @Query("select * from songs order by name ASC")
-    fun findAllOrderByNameAsc(): List<Song>
+    @Query("select * from songs order by name ASC, title ASC")
+    fun findAllOrderByNameAscTitleAsc(): List<Song>
 
     @Query("update songs set status = :status")
     fun updateAllSongStatus(@Param("status") status: SongStatus)
@@ -36,7 +36,7 @@ interface SongRepository : CrudRepository<Song, Long> {
             "inner join songs_artists sa on s.id = sa.song\n" +
             "inner join artists a on artist = a.id\n" +
             "where lower(replace(replace(a.name, '?', ''), '/', '')) = lower(replace(replace(:artist, '?', ''), '/', ''))\n" +
-            "and lower(s.title) = lower(:title)")
+            "and lower(replace(replace(s.title, '?', ''), '#', '')) = lower(replace(replace(:title, '?', ''), '#', ''))")
     fun findByArtistAndTitle(@Param("artist") artist: String, @Param("title") title: String): Optional<Song>
 
 }

@@ -18,6 +18,7 @@ data class AggregateSong(
     val youtube: String? = null,
     val spotify: String? = null,
     val status: SongStatus,
+    val remarks: String? = null,
     val hasDetails: Boolean,
     val mongoId: String? = null,
     val artistWikimediaPhotos: Set<ArtistWikimediaPhoto> = mutableSetOf(),

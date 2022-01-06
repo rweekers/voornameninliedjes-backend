@@ -23,6 +23,7 @@ data class Song(
     var wikipediaPage: String? = null,
     var status: SongStatus,
     var hasDetails: Boolean = false,
+    var remarks: String? = null,
     val mongoId: String? = null,
     @MappedCollection(idColumn = "song_id")
     var wikimediaPhotos: MutableSet<SongWikimediaPhoto> = mutableSetOf(),
