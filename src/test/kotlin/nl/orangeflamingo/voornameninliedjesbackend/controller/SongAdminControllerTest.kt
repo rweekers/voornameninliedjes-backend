@@ -175,6 +175,15 @@ class SongAdminControllerTest(
     }
 
     @Test
+    fun getSongNofFoundByIdTest() {
+        client.get()
+            .uri("/admin/songs/${songMap.values.maxOf { it } + 1}")
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isNotFound
+    }
+
+    @Test
     fun newSongTest() {
         client.post()
             .uri("/admin/songs/temp")
@@ -283,9 +292,10 @@ class SongAdminControllerTest(
         client.post()
             .uri { uriBuilder ->
                 uriBuilder
-                .path("/admin/songs/enrich")
-                .queryParam("update-all", "true")
-                .build() }
+                    .path("/admin/songs/enrich")
+                    .queryParam("update-all", "true")
+                    .build()
+            }
             .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
             .exchange()
             .expectStatus().isOk

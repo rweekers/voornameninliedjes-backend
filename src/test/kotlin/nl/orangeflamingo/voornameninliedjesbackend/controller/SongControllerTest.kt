@@ -127,6 +127,14 @@ class SongControllerTest(
     }
 
     @Test
+    fun getNotExistingSongByArtistAndTitleTest() {
+        client.get()
+            .uri("/api/songs/no artist/no song")
+            .exchange()
+            .expectStatus().isNotFound
+    }
+
+    @Test
     fun getSongByArtistAndTitleFromCacheTest() {
         ReflectionTestUtils.setField(songController, "useCache", true)
         client.get()
