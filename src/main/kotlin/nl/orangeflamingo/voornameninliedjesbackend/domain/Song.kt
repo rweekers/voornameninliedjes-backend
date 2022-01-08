@@ -4,7 +4,6 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.MappedCollection
 import org.springframework.data.relational.core.mapping.Table
 import org.springframework.util.Assert.notNull
-import java.lang.IllegalStateException
 import java.time.Instant
 
 
@@ -31,6 +30,8 @@ data class Song(
     var sources: List<SongSource> = listOf(),
     @MappedCollection(idColumn = "song_id", keyColumn = "song_key")
     val logEntries: MutableList<SongLogEntry> = mutableListOf(),
+    @MappedCollection(idColumn = "song_id", keyColumn = "song_key")
+    val lastFmTags: MutableSet<SongLastFmTag> = mutableSetOf(),
     val artists: MutableSet<ArtistRef> = mutableSetOf()
 ) {
     fun addArtist(artist: Artist, originalArtist: Boolean = true) {
@@ -62,4 +63,10 @@ data class SongSource(
 data class SongLogEntry(
     val date: Instant,
     val username: String
+)
+
+@Table("song_last_fm_tags")
+data class SongLastFmTag(
+    val name: String,
+    val url: String
 )
