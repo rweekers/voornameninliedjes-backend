@@ -10,15 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class SongEnrichmentService(
+class ImagesEnrichmentService(
     @Autowired val songRepository: SongRepository,
     @Autowired val artistRepository: ArtistRepository,
     @Autowired val flickrApiClient: FlickrApiClient
 ) {
 
-    private val log = LoggerFactory.getLogger(SongEnrichmentService::class.java)
+    private val log = LoggerFactory.getLogger(ImagesEnrichmentService::class.java)
 
-    fun enrichSongs(updateAll: Boolean = false) {
+    fun enrichImagesForSongs(updateAll: Boolean = false) {
         log.info("Starting enrichment with update all: $updateAll")
 
         val songsToUpdate =

@@ -18,12 +18,12 @@ import org.mockito.Mockito.verify
 import reactor.core.publisher.Mono
 import java.util.Optional
 
-class SongEnrichmentServiceTest {
+class ImagesEnrichmentServiceTest {
 
     private val mockSongRepository = mock(SongRepository::class.java)
     private val mockArtistRepository = mock(ArtistRepository::class.java)
     private val mockFlickrApiClient = mock(FlickrApiClient::class.java)
-    private val songEnrichmentService = SongEnrichmentService(
+    private val imagesEnrichmentService = ImagesEnrichmentService(
         mockSongRepository,
         mockArtistRepository,
         mockFlickrApiClient
@@ -80,7 +80,8 @@ class SongEnrichmentServiceTest {
 
     @Test
     fun `test updateSong`() {
-        songEnrichmentService.enrichSongs(true)
+        imagesEnrichmentService.enrichImagesForSongs(true)
+        verify(mockSongRepository).findAllByStatusOrderedByNameAndTitle("SHOW")
         verify(mockSongRepository).save(
             song.copy(artistImage = "https://flickrUrl", artistImageAttribution = "Photo by Some flickr owner to be found at https://flickrUrl")
         )
@@ -88,7 +89,7 @@ class SongEnrichmentServiceTest {
 
     @Test
     fun `test enrichSong`() {
-        songEnrichmentService.enrichSongs()
+        imagesEnrichmentService.enrichImagesForSongs()
         verify(mockSongRepository).save(
             song.copy(artistImage = "https://flickrUrl", artistImageAttribution = "Photo by Some flickr owner to be found at https://flickrUrl")
         )

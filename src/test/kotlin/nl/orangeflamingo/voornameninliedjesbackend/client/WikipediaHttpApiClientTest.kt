@@ -42,7 +42,6 @@ class WikipediaHttpApiClientTest {
     fun init() {
         `when`(mockWebClient.get()).thenReturn(mockRequestHeadersUriSpec)
         `when`(mockRequestHeadersUriSpec.uri(anyString(), anyString())).thenReturn(mockRequestHeadersSpec)
-        `when`(mockRequestHeadersUriSpec.uri(anyString())).thenReturn(mockRequestHeadersSpec)
         `when`(mockRequestHeadersSpec.retrieve()).thenReturn(mockResponseSpec)
         `when`(mockResponseSpec.bodyToMono(WikipediaSongDto::class.java)).thenReturn(wikipediaResponse)
     }

@@ -17,8 +17,9 @@ import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminWikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistNotFoundException
+import nl.orangeflamingo.voornameninliedjesbackend.service.LastFmEnrichmentService
 import nl.orangeflamingo.voornameninliedjesbackend.service.NotFoundException
-import nl.orangeflamingo.voornameninliedjesbackend.service.SongEnrichmentService
+import nl.orangeflamingo.voornameninliedjesbackend.service.ImagesEnrichmentService
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongNotFoundException
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.slf4j.LoggerFactory
@@ -45,7 +46,8 @@ class SongAdminController(
     private val songRepository: SongRepository,
     private val artistRepository: ArtistRepository,
     private val songService: SongService,
-    private val songEnrichmentService: SongEnrichmentService
+    private val imagesEnrichmentService: ImagesEnrichmentService,
+    private val lastFmEnrichmentService: LastFmEnrichmentService
 ) {
 
     private val log = LoggerFactory.getLogger(SongAdminController::class.java)
@@ -124,7 +126,14 @@ class SongAdminController(
     @PostMapping("/songs/enrich")
     @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun enrichSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
-        songEnrichmentService.enrichSongs(updateAll)
+        imagesEnrichmentService.enrichImagesForSongs(updateAll)
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/songs/enrich-lastfm")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
+    fun enrichLastFmInfoForSongs() {
+        lastFmEnrichmentService.enrichLastFmInfoForSongs()
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
