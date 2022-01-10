@@ -17,8 +17,14 @@ interface SongRepository : CrudRepository<Song, Long> {
     @Query("select * from songs where status in (:statuses) and lower(left(name, 1)) in (:firstChars) order by name ASC, title ASC")
     fun findAllByStatusesAndNameStartingWithOrderedByNameAndTitle(@Param("statuses") statuses: List<String>, @Param("firstChars") firstChars: List<String>): List<Song>
 
-    @Query("select * from songs where status = :status order by name ASC")
+    @Query("select * from songs where status = :status and (artist_image is null or artist_image_attribution is null) order by name ASC")
     fun findAllByStatusAndArtistImageIsNullOrArtistImageAttributionIsNull(@Param("status") status: String): List<Song>
+
+    @Query("select * from songs where status = :status and wikipedia_page is not null and wiki_content_nl is null order by name ASC, title ASC")
+    fun findAllByStatusAndWikipediaPageIsNotNullAndWikiContentNlIsNullOrderedByNameAndTitle(@Param("status") status: String): List<Song>
+
+    @Query("select * from songs where status = :status and mbid is null order by name ASC, title ASC")
+    fun findAllByStatusAndMbidIsNullOrderedByNameAndTitle(@Param("status") status: String): List<Song>
 
     fun findAllByNameStartingWithIgnoreCaseAndStatusInOrderByNameAscTitleAsc(firstCharacter: String, status: List<String>): List<Song>
 

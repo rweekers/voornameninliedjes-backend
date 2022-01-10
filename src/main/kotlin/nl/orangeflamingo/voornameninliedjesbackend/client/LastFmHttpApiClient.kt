@@ -35,13 +35,16 @@ class LastFmHttpApiClient(
             .map {
                 LastFmTrack(
                     name = it.track.name,
+                    mbid = it.track.mbid,
                     url = it.track.url,
                     artist = LastFmArtist(
                         name = it.track.artist.name,
+                        mbid = it.track.artist.mbid,
                         url = it.track.artist.url
                     ),
                     album = if (it.track.album != null) LastFmAlbum(
                         name = it.track.album.title,
+                        mbid = it.track.album.mbid,
                         url = it.track.album.url
                     ) else null,
                     tags = it.track.toptags.tag.map { tag ->

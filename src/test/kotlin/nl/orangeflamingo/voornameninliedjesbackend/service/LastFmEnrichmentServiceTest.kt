@@ -39,10 +39,7 @@ class LastFmEnrichmentServiceTest {
 
     @BeforeEach
     fun init() {
-        `when`(mockSongRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)).thenReturn(
-            listOf(song)
-        )
-        `when`(mockSongRepository.findAllByStatusAndArtistImageIsNullOrArtistImageAttributionIsNull(SongStatus.SHOW.code)).thenReturn(
+        `when`(mockSongRepository.findAllByStatusAndMbidIsNullOrderedByNameAndTitle(SongStatus.SHOW.code)).thenReturn(
             listOf(song)
         )
         `when`(mockArtistRepository.findById(100)).thenReturn(
@@ -57,9 +54,11 @@ class LastFmEnrichmentServiceTest {
             Mono.just(
                 LastFmTrack(
                     name = "Roxanne",
+                    mbid = "8c2ead25-9d14-437b-aad2-cbc88958bf76",
                     url = "https://www.last.fm/music/The+Police/_/Roxanne",
                     artist = LastFmArtist(
                         name = "The Police",
+                        mbid = "9e0e2b01-41db-4008-bd8b-988977d6019a",
                         url = "https://www.last.fm/music/The+Police"
                     ),
                     album = null,
@@ -86,7 +85,7 @@ class LastFmEnrichmentServiceTest {
     @Test
     fun `test enrich last fm data`() {
         lastFmEnrichmentService.enrichLastFmInfoForSongs()
-        verify(mockSongRepository).findAllByStatusOrderedByNameAndTitle("SHOW")
+        verify(mockSongRepository).findAllByStatusAndMbidIsNullOrderedByNameAndTitle("SHOW")
         verify(mockSongRepository).save(
             song.copy(
                 lastFmTags = mutableSetOf(

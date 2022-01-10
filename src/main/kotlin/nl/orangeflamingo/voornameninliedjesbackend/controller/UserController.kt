@@ -1,6 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
-import nl.orangeflamingo.voornameninliedjesbackend.controller.Utils.Companion.INVALID_CREDENTIALS
+import nl.orangeflamingo.voornameninliedjesbackend.controller.UserControllerUtils.Companion.INVALID_CREDENTIALS
 import nl.orangeflamingo.voornameninliedjesbackend.domain.User
 import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
@@ -119,7 +119,7 @@ class InvalidCredentialsException(message: String) : Exception(message)
 
 class UserNotFoundException(message: String) : Exception(message)
 
-class Utils {
+class UserControllerUtils {
     companion object {
         const val INVALID_CREDENTIALS = "Gebruikersnaam en/of wachtwoord onjuist"
     }

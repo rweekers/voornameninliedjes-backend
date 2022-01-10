@@ -12,13 +12,16 @@ class FakeLastFmApiClient : LastFmApiClient {
         return Mono.just(
             LastFmTrack(
                 name = "fake track name",
+                mbid = "fake track mbid",
                 url = "fake track url",
                 album = LastFmAlbum(
                     name = "fake album name",
+                    mbid = "fake album mbid",
                     url = "fake album url"
                 ),
                 artist = LastFmArtist(
                     name = "fake artist name",
+                    mbid = "fake artist mbid",
                     url = "fake artist url"
                 ),
                 tags = listOf(

@@ -19,7 +19,7 @@ class ImagesEnrichmentService(
     private val log = LoggerFactory.getLogger(ImagesEnrichmentService::class.java)
 
     fun enrichImagesForSongs(updateAll: Boolean = false) {
-        log.info("Starting enrichment with update all: $updateAll")
+        log.info("Starting images enrichment with update all: $updateAll")
 
         val songsToUpdate =
             if (updateAll) songRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)
@@ -30,11 +30,11 @@ class ImagesEnrichmentService(
     }
 
     private fun updateArtistImageForSong(song: Song) {
+        val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
+            .orElseThrow { ArtistNotFoundException("Artist with id ${song.artists.first { it.originalArtist }} for song with title ${song.title} not found") }
         try {
-            val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
-                .orElseThrow { ArtistNotFoundException("Artist with id ${song.artists.first { it.originalArtist }} for song with title ${song.title} not found") }
 
-            log.info("Updating ${song.title} from ${artist.name}")
+            log.info("[images] Updating ${song.title} from ${artist.name}")
 
             val urlToAttribution =
                 if (song.wikimediaPhotos.isNotEmpty()) song.wikimediaPhotos.map { it.url to it.attribution }
@@ -53,7 +53,7 @@ class ImagesEnrichmentService(
                 }
             }
         } catch (e: Exception) {
-            log.error("Could not update ${song.title} due to error", e)
+            log.error("Could not update images information for ${artist.name} - ${song.title} due to error", e)
         }
     }
 

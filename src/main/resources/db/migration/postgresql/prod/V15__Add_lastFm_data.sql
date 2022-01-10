@@ -1,0 +1,9 @@
+ALTER TABLE SONGS
+    ADD COLUMN MBID                 text,
+    ADD COLUMN LAST_FM_URL          text,
+    ADD COLUMN WIKI_SUMMARY_EN      text,
+    ADD COLUMN WIKI_CONTENT_EN      text;
+
+ALTER TABLE ARTISTS
+    ADD COLUMN MBID         text,
+    ADD COLUMN LAST_FM_URL  text;
