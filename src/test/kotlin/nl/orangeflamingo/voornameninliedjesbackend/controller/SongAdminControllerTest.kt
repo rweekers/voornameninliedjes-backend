@@ -288,11 +288,39 @@ class SongAdminControllerTest(
     }
 
     @Test
-    fun enrichSongs() {
+    fun enrichImagesForSongs() {
         client.post()
             .uri { uriBuilder ->
                 uriBuilder
-                    .path("/admin/songs/enrich")
+                    .path("/admin/songs/enrich-images")
+                    .queryParam("update-all", "true")
+                    .build()
+            }
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    fun enrichLastFmInfoForSongs() {
+        client.post()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/admin/songs/enrich-lastfm")
+                    .queryParam("update-all", "true")
+                    .build()
+            }
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    fun enrichWikipediaForSongs() {
+        client.post()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/admin/songs/enrich-wikipedia")
                     .queryParam("update-all", "true")
                     .build()
             }

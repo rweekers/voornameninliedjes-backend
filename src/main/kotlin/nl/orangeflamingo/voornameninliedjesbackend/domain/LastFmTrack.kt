@@ -4,6 +4,7 @@ package nl.orangeflamingo.voornameninliedjesbackend.domain
 data class LastFmTrack(
         val name: String,
         val url: String,
+        val mbid: String?,
         val album: LastFmAlbum?,
         val artist: LastFmArtist,
         val tags: List<LastFmTag>,
@@ -12,11 +13,13 @@ data class LastFmTrack(
 
 data class LastFmAlbum(
         val name: String,
+        val mbid: String?,
         val url: String
 )
 
 data class LastFmArtist(
         val name: String,
+        val mbid: String?,
         val url: String
 )
 

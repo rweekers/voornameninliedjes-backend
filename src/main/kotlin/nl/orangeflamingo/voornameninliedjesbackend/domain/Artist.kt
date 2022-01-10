@@ -11,6 +11,8 @@ data class Artist(
     @Id
     var id: Long? = null,
     var name: String,
+    var mbid: String? = null,
+    var lastFmUrl: String? = null,
     val background: String? = null,
     @MappedCollection(idColumn = "artist_id")
     var wikimediaPhotos: MutableSet<ArtistWikimediaPhoto> = mutableSetOf(),

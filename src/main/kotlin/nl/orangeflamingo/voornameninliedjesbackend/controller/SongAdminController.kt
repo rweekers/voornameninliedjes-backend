@@ -22,6 +22,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.service.NotFoundException
 import nl.orangeflamingo.voornameninliedjesbackend.service.ImagesEnrichmentService
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongNotFoundException
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
+import nl.orangeflamingo.voornameninliedjesbackend.service.WikipediaEnrichmentService
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CachePut
 import org.springframework.http.HttpStatus
@@ -47,6 +48,7 @@ class SongAdminController(
     private val artistRepository: ArtistRepository,
     private val songService: SongService,
     private val imagesEnrichmentService: ImagesEnrichmentService,
+    private val wikipediaEnrichmentService: WikipediaEnrichmentService,
     private val lastFmEnrichmentService: LastFmEnrichmentService
 ) {
 
@@ -123,17 +125,23 @@ class SongAdminController(
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/songs/enrich")
+    @PostMapping("/songs/enrich-images")
     @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
-    fun enrichSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
+    fun enrichImagesForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
         imagesEnrichmentService.enrichImagesForSongs(updateAll)
+    }
+
+    @PostMapping("/songs/enrich-wikipedia")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
+    fun enrichWikipediaForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
+        wikipediaEnrichmentService.enrichWikipediaForSongs(updateAll)
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/enrich-lastfm")
     @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
-    fun enrichLastFmInfoForSongs() {
-        lastFmEnrichmentService.enrichLastFmInfoForSongs()
+    fun enrichLastFmInfoForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
+        lastFmEnrichmentService.enrichLastFmInfoForSongs(updateAll)
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
