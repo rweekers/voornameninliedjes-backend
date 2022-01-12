@@ -47,6 +47,9 @@ class LastFmEnrichmentService(
                 song.lastFmUrl = it.url
                 song.wikiSummaryEn = html2md(it.wiki?.summary)
                 song.wikiContentEn = html2md(it.wiki?.content)
+                song.albumName = it.album?.name
+                song.albumMbid = it.album?.mbid
+                song.albumLastFmUrl = it.album?.url
                 artist.mbid = it.artist.mbid
                 artist.lastFmUrl = it.artist.url
                 it.tags.forEach { tag ->

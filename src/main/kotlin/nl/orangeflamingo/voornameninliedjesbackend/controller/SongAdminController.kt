@@ -5,7 +5,9 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistLogEntry
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLastFmTag
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLogEntry
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongSource
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
@@ -17,9 +19,9 @@ import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminWikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistNotFoundException
+import nl.orangeflamingo.voornameninliedjesbackend.service.ImagesEnrichmentService
 import nl.orangeflamingo.voornameninliedjesbackend.service.LastFmEnrichmentService
 import nl.orangeflamingo.voornameninliedjesbackend.service.NotFoundException
-import nl.orangeflamingo.voornameninliedjesbackend.service.ImagesEnrichmentService
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongNotFoundException
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import nl.orangeflamingo.voornameninliedjesbackend.service.WikipediaEnrichmentService
@@ -243,10 +245,20 @@ class SongAdminController(
             title = song.title,
             name = song.name,
             artistImage = if (!song.artistImage.isNullOrEmpty()) song.artistImage else "https://ak9.picdn.net/shutterstock/videos/24149239/thumb/1.jpg",
+            artistMbid = song.artistMbid,
+            artistLastFmUrl = song.artistLastFmUrl,
             background = song.background,
             wikipediaPage = song.wikipediaPage,
             youtube = song.youtube,
             spotify = song.spotify,
+            wikipediaContentNl = song.wikipediaContentNl,
+            wikipediaContentEn = song.wikipediaContentEn,
+            wikipediaSummaryEn = song.wikipediaSummaryEn,
+            albumName = song.albumName,
+            albumMbid = song.albumMbid,
+            albumLastFmUrl = song.albumLastFmUrl,
+            mbid = song.mbid,
+            lastFmUrl = song.lastFmUrl,
             status = song.status.code,
             remarks = song.remarks,
             hasDetails = song.hasDetails,
@@ -254,6 +266,7 @@ class SongAdminController(
             songWikimediaPhotos = song.songWikimediaPhotos.map { convertToDto(it) }.toSet(),
             flickrPhotos = song.flickrPhotos.map { it.flickrId }.toSet(),
             sources = song.sources.map { convertToDto(it) }.toSet(),
+            tags = song.tags.map { convertToDto(it) }.toSet(),
             logs = song.logEntries.map { convertToDto(it) }
         )
     }
@@ -283,6 +296,13 @@ class SongAdminController(
         return AdminSourceDto(
             url = songSource.url,
             name = songSource.name
+        )
+    }
+
+    private fun convertToDto(lastFmTag: SongLastFmTag): LastFmTagDto {
+        return LastFmTagDto(
+            url = lastFmTag.url,
+            name = lastFmTag.name
         )
     }
 }

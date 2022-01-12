@@ -7,6 +7,7 @@ import com.google.common.cache.LoadingCache
 import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistNameStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.PhotoDetail
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongNameStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
@@ -79,9 +80,8 @@ class SongController(
     private fun getSongDetails(artist: String, title: String): Mono<SongDto> {
         val song = songService.findByArtistAndNameDetails(artist, title)
         return song.flickrPhotoDetail.collectList()
-            .zipWith(song.wikipediaBackground.switchIfEmpty(Mono.just(song.background ?: "Geen achtergrond gevonden")))
             .map {
-                convertToDto(song, it.t1, it.t2)
+                convertToDto(song, it)
             }
     }
 
@@ -109,17 +109,26 @@ class SongController(
         return artistNameStatisticsRepository.findAllStatusShowGroupedByArtistNameOrderedByCountDescending()
     }
 
-    private fun convertToDto(song: AggregateSong, photos: List<PhotoDetail>, background: String = ""): SongDto {
+    private fun convertToDto(song: AggregateSong, photos: List<PhotoDetail>): SongDto {
         return SongDto(
             artist = song.artistName,
             title = song.title,
             name = song.name,
             artistImage = song.artistImage,
             artistImageAttribution = song.artistImageAttribution,
-            background = background,
+            artistMbid = song.artistMbid,
+            artistLastFmUrl = song.artistLastFmUrl,
             wikipediaPage = song.wikipediaPage,
             youtube = song.youtube,
+            mbid = song.mbid,
+            lastFmUrl = song.lastFmUrl,
+            albumName = song.albumName,
+            albumMbid = song.albumMbid,
+            albumLastFmUrl = song.albumLastFmUrl,
             spotify = song.spotify,
+            wikipediaContentNl = song.wikipediaContentNl,
+            wikipediaContentEn = song.wikipediaContentEn,
+            wikipediaSummaryEn = song.wikipediaSummaryEn,
             wikimediaPhotos = mergeAndConvertWikimediaPhotos(song.artistWikimediaPhotos, song.songWikimediaPhotos),
             flickrPhotos = photos.map {
                 PhotoDto(
@@ -144,6 +153,12 @@ class SongController(
                 SourceDto(
                     url = it.url,
                     name = it.name
+                )
+            }.toSet(),
+            tags = song.tags.map {
+                LastFmTagDto(
+                    name = it.name,
+                    url = it.url
                 )
             }.toSet(),
             hasDetails = song.hasDetails
