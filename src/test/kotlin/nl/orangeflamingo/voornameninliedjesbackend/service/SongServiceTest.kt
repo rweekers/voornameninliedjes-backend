@@ -1,7 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrHttpApiClient
-import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaHttpApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistRef
 import nl.orangeflamingo.voornameninliedjesbackend.domain.TestSong
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
@@ -21,10 +20,8 @@ class SongServiceTest {
 
     private val flickrApiClient = mock(FlickrHttpApiClient::class.java)
 
-    private val wikipediaHttpApiClient = mock(WikipediaHttpApiClient::class.java)
-
     private val songService: SongService = SongService(
-        artistRepository, songRepository, flickrApiClient, wikipediaHttpApiClient
+        artistRepository, songRepository, flickrApiClient
     )
 
     @Test

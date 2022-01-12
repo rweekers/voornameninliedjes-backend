@@ -1,7 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
-import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
@@ -29,8 +28,7 @@ import java.util.Locale
 class SongService @Autowired constructor(
     val artistRepository: ArtistRepository,
     val songRepository: SongRepository,
-    val flickrApiClient: FlickrApiClient,
-    val wikipediaApiClient: WikipediaApiClient
+    val flickrApiClient: FlickrApiClient
 ) {
     private val log = LoggerFactory.getLogger(SongService::class.java)
 
@@ -107,18 +105,26 @@ class SongService @Autowired constructor(
     private fun createAggregateSong(
         song: Song,
         artist: Artist,
-        photoDetails: Flux<PhotoDetail> = Flux.empty(),
-        wikipediaBackground: Mono<String> = Mono.empty()
+        photoDetails: Flux<PhotoDetail> = Flux.empty()
     ) = AggregateSong(
         id = song.id ?: throw IllegalStateException("The song should have an id"),
         title = song.title,
         name = song.name,
         artistName = artist.name,
+        artistMbid = artist.mbid,
+        artistLastFmUrl = artist.lastFmUrl,
         background = song.background,
-        wikipediaBackground = wikipediaBackground.switchIfEmpty(Mono.empty()),
         wikipediaPage = song.wikipediaPage,
         youtube = song.youtube,
         spotify = song.spotify,
+        wikipediaContentNl = song.wikiContentNl,
+        wikipediaContentEn = song.wikiContentEn,
+        wikipediaSummaryEn = song.wikiSummaryEn,
+        mbid = song.mbid,
+        lastFmUrl = song.lastFmUrl,
+        albumName = song.albumName,
+        albumMbid = song.albumMbid,
+        albumLastFmUrl = song.albumLastFmUrl,
         status = song.status,
         remarks = song.remarks,
         hasDetails = song.hasDetails,
@@ -129,6 +135,7 @@ class SongService @Autowired constructor(
         flickrPhotos = artist.flickrPhotos,
         flickrPhotoDetail = photoDetails,
         sources = song.sources,
+        tags = song.lastFmTags.toSet(),
         logEntries = song.logEntries
     )
 
@@ -137,17 +144,11 @@ class SongService @Autowired constructor(
             .orElseThrow { SongNotFoundException("Song with title $title and artist $artist not found") }
     }
 
-    fun findByIdDetails(id: Long): AggregateSong {
-        return getDetails(songRepository.findById(id).orElseThrow { SongNotFoundException("Song with id $id not found") })
-    }
-
     private fun getDetails(song: Song): AggregateSong {
         log.info("Getting song with id ${song.id}")
 
         val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
             .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
-        val wikipediaBackground =
-            if (song.wikipediaPage != null) wikipediaApiClient.getBackground(song.wikipediaPage!!) else Mono.empty()
 
         val photos = Flux.mergeSequential(artist.flickrPhotos.map { flickrApiPhoto ->
             flickrApiClient.getPhoto(flickrApiPhoto.flickrId)
@@ -184,7 +185,7 @@ class SongService @Autowired constructor(
         })
 
         return createAggregateSong(
-            song, artist, photoDetails, wikipediaBackground.switchIfEmpty(Mono.empty()).map { it.background }
+            song, artist, photoDetails
         )
     }
 

@@ -2,6 +2,7 @@ package nl.orangeflamingo.voornameninliedjesbackend.dto
 
 import com.fasterxml.jackson.annotation.JsonView
 import nl.orangeflamingo.voornameninliedjesbackend.controller.Views
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
 
 data class SongDto(
     @JsonView(Views.Summary::class, Views.Detail::class)
@@ -23,13 +24,40 @@ data class SongDto(
     val hasDetails: Boolean,
 
     @JsonView(Views.Detail::class)
-    val background: String?,
+    val artistMbid: String?,
+
+    @JsonView(Views.Detail::class)
+    val artistLastFmUrl: String?,
 
     @JsonView(Views.Detail::class)
     val wikipediaPage: String?,
 
     @JsonView(Views.Detail::class)
     val youtube: String?,
+
+    @JsonView(Views.Detail::class)
+    val wikipediaContentNl: String?,
+
+    @JsonView(Views.Detail::class)
+    val wikipediaContentEn: String?,
+
+    @JsonView(Views.Detail::class)
+    val wikipediaSummaryEn: String?,
+
+    @JsonView(Views.Detail::class)
+    val mbid: String?,
+
+    @JsonView(Views.Detail::class)
+    val lastFmUrl: String?,
+
+    @JsonView(Views.Detail::class)
+    val albumName: String?,
+
+    @JsonView(Views.Detail::class)
+    val albumMbid: String?,
+
+    @JsonView(Views.Detail::class)
+    val albumLastFmUrl: String?,
 
     @JsonView(Views.Summary::class, Views.Detail::class)
     val spotify: String?,
@@ -42,6 +70,9 @@ data class SongDto(
 
     @JsonView(Views.Detail::class)
     val sources: Set<SourceDto>,
+
+    @JsonView(Views.Detail::class)
+    val tags: Set<LastFmTagDto>,
 )
 
 data class WikimediaPhotoDto(

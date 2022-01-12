@@ -2,6 +2,7 @@ package nl.orangeflamingo.voornameninliedjesbackend.dto
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
 import java.time.Instant
 
 data class AdminSongDto(
@@ -16,6 +17,10 @@ data class AdminSongDto(
 
     val artistImage: String? = null,
 
+    val artistMbid: String? = null,
+
+    val artistLastFmUrl: String? = null,
+
     val background: String? = null,
 
     val wikipediaPage: String? = null,
@@ -23,6 +28,22 @@ data class AdminSongDto(
     val youtube: String? = null,
 
     val spotify: String? = null,
+
+    val wikipediaContentNl: String? = null,
+
+    val wikipediaContentEn: String? = null,
+
+    val wikipediaSummaryEn: String? = null,
+
+    val mbid: String? = null,
+
+    val lastFmUrl: String? = null,
+
+    val albumName: String? = null,
+
+    val albumMbid: String? = null,
+
+    val albumLastFmUrl: String? = null,
 
     val status: String,
 
@@ -37,6 +58,8 @@ data class AdminSongDto(
     val flickrPhotos: Set<String> = setOf(),
 
     val sources: Set<AdminSourceDto> = setOf(),
+
+    val tags: Set<LastFmTagDto> = setOf(),
 
     @JsonIgnoreProperties(allowGetters = true)
     val logs: List<AdminLogEntry> = listOf()
