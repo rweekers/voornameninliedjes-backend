@@ -1,9 +1,11 @@
 package nl.orangeflamingo.voornameninliedjesbackend.dto
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonView
 import nl.orangeflamingo.voornameninliedjesbackend.controller.Views
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 data class SongDto(
     @JsonView(Views.Summary::class, Views.Detail::class)
     val artist: String,
