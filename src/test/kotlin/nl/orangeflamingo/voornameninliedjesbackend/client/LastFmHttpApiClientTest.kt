@@ -2,15 +2,19 @@ package nl.orangeflamingo.voornameninliedjesbackend.client
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmAlbumDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmArtistDto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmError
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmResponseDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTopTagsDto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTrack
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTrackDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmWikiDto
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import org.springframework.web.reactive.function.client.WebClient
@@ -22,6 +26,9 @@ class LastFmHttpApiClientTest {
     private val mockRequestHeadersUriSpec = mock(WebClient.RequestHeadersUriSpec::class.java)
     private val mockRequestHeadersSpec = mock(WebClient.RequestHeadersSpec::class.java)
     private val mockResponseSpec = mock(WebClient.ResponseSpec::class.java)
+
+    private val mockErrorRequestHeadersSpec = mock(WebClient.RequestHeadersSpec::class.java)
+    private val mockErrorResponseSpec = mock(WebClient.ResponseSpec::class.java)
 
     private val lastFmResponse: Mono<LastFmResponseDto> = Mono.just(
         LastFmResponseDto(
@@ -63,6 +70,13 @@ class LastFmHttpApiClientTest {
             )
         )
     )
+    private val lastFmErrorResponse: Mono<LastFmResponseDto> = Mono.just(
+        LastFmResponseDto(
+            error = "6",
+            message = "Track not found",
+            track = null
+        )
+    )
 
     private val lastFmHttpApiClient = LastFmHttpApiClient(
         mockWebClient
@@ -71,14 +85,27 @@ class LastFmHttpApiClientTest {
     @BeforeEach
     fun init() {
         `when`(mockWebClient.get()).thenReturn(mockRequestHeadersUriSpec)
-        `when`(mockRequestHeadersUriSpec.uri(anyString(), anyString(), anyString())).thenReturn(mockRequestHeadersSpec)
+        `when`(mockRequestHeadersUriSpec.uri(anyString(), eq("The Police"), eq("Roxanne"))).thenReturn(mockRequestHeadersSpec)
+        `when`(mockRequestHeadersUriSpec.uri(anyString(), eq("The Police"), eq("Not actually Roxanne"))).thenReturn(mockErrorRequestHeadersSpec)
         `when`(mockRequestHeadersSpec.retrieve()).thenReturn(mockResponseSpec)
         `when`(mockResponseSpec.bodyToMono(LastFmResponseDto::class.java)).thenReturn(lastFmResponse)
+        `when`(mockErrorRequestHeadersSpec.retrieve()).thenReturn(mockErrorResponseSpec)
+        `when`(mockErrorResponseSpec.bodyToMono(LastFmResponseDto::class.java)).thenReturn(lastFmErrorResponse)
     }
 
     @Test
     fun `get track info`() {
         val apiResponse = lastFmHttpApiClient.getTrack("The Police", "Roxanne").block()
-        assertEquals("https://www.last.fm/music/The+Police/_/Roxanne", apiResponse?.url)
+        assertThat(apiResponse).isInstanceOf(LastFmTrack::class.java)
+        val apiResponseTrack = apiResponse as LastFmTrack
+        assertEquals("https://www.last.fm/music/The+Police/_/Roxanne", apiResponseTrack.url)
+    }
+
+    @Test
+    fun `track info not found`() {
+        val apiResponse = lastFmHttpApiClient.getTrack("The Police", "Not actually Roxanne").block()
+        assertThat(apiResponse).isInstanceOf(LastFmError::class.java)
+        val apiResponseTrack = apiResponse as LastFmError
+        assertEquals("6", apiResponseTrack.code)
     }
 }

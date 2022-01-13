@@ -1,6 +1,8 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.LastFmApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmError
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTrack
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLastFmTag
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
@@ -43,25 +45,30 @@ class LastFmEnrichmentService(
             val lastFmTrack = lastFmApiClient.getTrack(artist.name, song.title)
 
             lastFmTrack.subscribe {
-                song.mbid = it.mbid
-                song.lastFmUrl = it.url
-                song.wikiSummaryEn = html2md(it.wiki?.summary)
-                song.wikiContentEn = html2md(it.wiki?.content)
-                song.albumName = it.album?.name
-                song.albumMbid = it.album?.mbid
-                song.albumLastFmUrl = it.album?.url
-                artist.mbid = it.artist.mbid
-                artist.lastFmUrl = it.artist.url
-                it.tags.forEach { tag ->
-                    song.lastFmTags.add(
-                        SongLastFmTag(
-                            name = tag.name,
-                            url = tag.url
-                        )
-                    )
+                when (it) {
+                    is LastFmTrack -> {
+                        song.mbid = it.mbid
+                        song.lastFmUrl = it.url
+                        song.wikiSummaryEn = html2md(it.wiki?.summary)
+                        song.wikiContentEn = html2md(it.wiki?.content)
+                        song.albumName = it.album?.name
+                        song.albumMbid = it.album?.mbid
+                        song.albumLastFmUrl = it.album?.url
+                        artist.mbid = it.artist.mbid
+                        artist.lastFmUrl = it.artist.url
+                        it.tags.forEach { tag ->
+                            song.lastFmTags.add(
+                                SongLastFmTag(
+                                    name = tag.name,
+                                    url = tag.url
+                                )
+                            )
+                        }
+                        songRepository.save(song)
+                        artistRepository.save(artist)
+                    }
+                    is LastFmError -> log.warn("Error calling last fm api for ${artist.name} - ${song.title}. Gotten code ${it.code} and message ${it.message}")
                 }
-                songRepository.save(song)
-                artistRepository.save(artist)
             }
         } catch (e: Exception) {
             log.error("Could not update last fm information for ${artist.name} - ${song.title} due to error", e)

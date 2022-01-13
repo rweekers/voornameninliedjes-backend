@@ -1,5 +1,11 @@
 package nl.orangeflamingo.voornameninliedjesbackend.domain
 
+sealed interface LastFmResponse
+
+data class LastFmError(
+        val code: String,
+        val message: String?
+): LastFmResponse
 
 data class LastFmTrack(
         val name: String,
@@ -9,7 +15,7 @@ data class LastFmTrack(
         val artist: LastFmArtist,
         val tags: List<LastFmTag>,
         val wiki: LastFmWiki?
-)
+): LastFmResponse
 
 data class LastFmAlbum(
         val name: String,

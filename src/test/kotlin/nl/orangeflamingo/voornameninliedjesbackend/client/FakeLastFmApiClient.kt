@@ -2,13 +2,14 @@ package nl.orangeflamingo.voornameninliedjesbackend.client
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmAlbum
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmArtist
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmResponse
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTag
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTrack
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmWiki
 import reactor.core.publisher.Mono
 
 class FakeLastFmApiClient : LastFmApiClient {
-    override fun getTrack(artist: String, title: String): Mono<LastFmTrack> {
+    override fun getTrack(artist: String, title: String): Mono<LastFmResponse> {
         return Mono.just(
             LastFmTrack(
                 name = "fake track name",
