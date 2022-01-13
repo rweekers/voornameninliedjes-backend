@@ -1,7 +1,9 @@
 package nl.orangeflamingo.voornameninliedjesbackend.domain
 
 data class LastFmResponseDto(
-    val track: LastFmTrackDto
+    val error: String? = null,
+    val message: String? = null,
+    val track: LastFmTrackDto?
 )
 
 data class LastFmTrackDto(
