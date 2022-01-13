@@ -19,8 +19,6 @@ data class AdminSongDto(
 
     val artistImage: String? = null,
 
-    val artistMbid: String? = null,
-
     val artistLastFmUrl: String? = null,
 
     val background: String? = null,
@@ -31,19 +29,15 @@ data class AdminSongDto(
 
     val spotify: String? = null,
 
-    val wikipediaContentNl: String? = null,
+    val wikipediaNl: String? = null,
 
-    val wikipediaContentEn: String? = null,
+    val wikipediaEn: String? = null,
 
     val wikipediaSummaryEn: String? = null,
-
-    val mbid: String? = null,
 
     val lastFmUrl: String? = null,
 
     val albumName: String? = null,
-
-    val albumMbid: String? = null,
 
     val albumLastFmUrl: String? = null,
 

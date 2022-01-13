@@ -26,9 +26,6 @@ data class SongDto(
     val hasDetails: Boolean,
 
     @JsonView(Views.Detail::class)
-    val artistMbid: String?,
-
-    @JsonView(Views.Detail::class)
     val artistLastFmUrl: String?,
 
     @JsonView(Views.Detail::class)
@@ -38,25 +35,19 @@ data class SongDto(
     val youtube: String?,
 
     @JsonView(Views.Detail::class)
-    val wikipediaContentNl: String?,
+    val wikipediaNl: String?,
 
     @JsonView(Views.Detail::class)
-    val wikipediaContentEn: String?,
+    val wikipediaEn: String?,
 
     @JsonView(Views.Detail::class)
     val wikipediaSummaryEn: String?,
-
-    @JsonView(Views.Detail::class)
-    val mbid: String?,
 
     @JsonView(Views.Detail::class)
     val lastFmUrl: String?,
 
     @JsonView(Views.Detail::class)
     val albumName: String?,
-
-    @JsonView(Views.Detail::class)
-    val albumMbid: String?,
 
     @JsonView(Views.Detail::class)
     val albumLastFmUrl: String?,
