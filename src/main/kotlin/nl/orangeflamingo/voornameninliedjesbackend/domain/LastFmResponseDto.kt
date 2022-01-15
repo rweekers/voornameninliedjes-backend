@@ -25,7 +25,7 @@ data class LastFmArtistDto(
 data class LastFmAlbumDto(
     val artist: String,
     val title: String,
-    val mbid: String,
+    val mbid: String?,
     val url: String
 )
 

@@ -10,4 +10,8 @@ object Utils {
         if (input == null) return ""
         return converter.convert(input)
     }
+
+    fun cleanString(input: String): String {
+        return input.replace(Regex("[#\\[\\]]"), "")
+    }
 }

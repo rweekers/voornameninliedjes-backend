@@ -8,6 +8,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLastFmTag
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
+import nl.orangeflamingo.voornameninliedjesbackend.utils.Utils.cleanString
 import nl.orangeflamingo.voornameninliedjesbackend.utils.Utils.html2md
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,20 +16,20 @@ import org.springframework.stereotype.Service
 
 
 @Service
-class LastFmEnrichmentService(
-    @Autowired val songRepository: SongRepository,
-    @Autowired val artistRepository: ArtistRepository,
-    @Autowired val lastFmApiClient: LastFmApiClient
+class LastFmEnrichmentService @Autowired constructor(
+    private val songRepository: SongRepository,
+    private val artistRepository: ArtistRepository,
+    private val lastFmApiClient: LastFmApiClient
 ) {
 
     private val log = LoggerFactory.getLogger(ImagesEnrichmentService::class.java)
 
     fun enrichLastFmInfoForSongs(updateAll: Boolean = false) {
-        log.info("Starting last fm enrichment")
+        log.info("Starting last fm enrichment with update all: $updateAll")
 
         val songsToUpdate =
             if (updateAll) songRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)
-            else songRepository.findAllByStatusAndMbidIsNullOrderedByNameAndTitle(
+            else songRepository.findAllByStatusAndLastFmUrlIsNullOrderedByNameAndTitle(
                 SongStatus.SHOW.code
             )
 
@@ -42,9 +43,13 @@ class LastFmEnrichmentService(
         try {
             log.info("[last fm] Updating ${song.title} from ${artist.name}")
 
-            val lastFmTrack = lastFmApiClient.getTrack(artist.name, song.title)
+            val lastFmTrack =
+                lastFmApiClient.getTrack(
+                    artist.name.replace("'", ""),
+                    cleanString(song.title)
+                )
 
-            lastFmTrack.subscribe {
+            lastFmTrack.subscribe({
                 when (it) {
                     is LastFmTrack -> {
                         song.mbid = it.mbid
@@ -69,7 +74,10 @@ class LastFmEnrichmentService(
                     }
                     is LastFmError -> log.warn("Error calling last fm api for ${artist.name} - ${song.title}. Gotten code ${it.code} and message ${it.message}")
                 }
-            }
+            },
+                {
+                    log.warn("Gotten eror with message ${it.message}")
+                })
         } catch (e: Exception) {
             log.error("Could not update last fm information for ${artist.name} - ${song.title} due to error", e)
         }
