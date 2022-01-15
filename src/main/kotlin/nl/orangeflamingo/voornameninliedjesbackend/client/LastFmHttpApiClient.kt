@@ -32,7 +32,6 @@ class LastFmHttpApiClient(
             .bodyToMono(
                 LastFmResponseDto::class.java
             )
-            .onErrorResume { Mono.empty() }
             .switchIfEmpty(Mono.empty())
             .map {
                 when (it.error) {

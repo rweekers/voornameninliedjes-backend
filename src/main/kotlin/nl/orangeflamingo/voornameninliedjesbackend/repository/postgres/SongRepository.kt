@@ -20,11 +20,11 @@ interface SongRepository : CrudRepository<Song, Long> {
     @Query("select * from songs where status = :status and (artist_image is null or artist_image_attribution is null) order by name ASC")
     fun findAllByStatusAndArtistImageIsNullOrArtistImageAttributionIsNull(@Param("status") status: String): List<Song>
 
-    @Query("select * from songs where status = :status and wikipedia_page is not null and wiki_content_nl is null order by name ASC, title ASC")
+    @Query("select * from songs where status = :status and wikipedia_page <> '' and wiki_content_nl is null order by name ASC, title ASC")
     fun findAllByStatusAndWikipediaPageIsNotNullAndWikiContentNlIsNullOrderedByNameAndTitle(@Param("status") status: String): List<Song>
 
-    @Query("select * from songs where status = :status and mbid is null order by name ASC, title ASC")
-    fun findAllByStatusAndMbidIsNullOrderedByNameAndTitle(@Param("status") status: String): List<Song>
+    @Query("select * from songs where status = :status and last_fm_url is null order by name ASC, title ASC")
+    fun findAllByStatusAndLastFmUrlIsNullOrderedByNameAndTitle(@Param("status") status: String): List<Song>
 
     fun findAllByNameStartingWithIgnoreCaseAndStatusInOrderByNameAscTitleAsc(firstCharacter: String, status: List<String>): List<Song>
 

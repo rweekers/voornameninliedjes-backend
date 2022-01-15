@@ -39,7 +39,7 @@ class LastFmEnrichmentServiceTest {
 
     @BeforeEach
     fun init() {
-        `when`(mockSongRepository.findAllByStatusAndMbidIsNullOrderedByNameAndTitle(SongStatus.SHOW.code)).thenReturn(
+        `when`(mockSongRepository.findAllByStatusAndLastFmUrlIsNullOrderedByNameAndTitle(SongStatus.SHOW.code)).thenReturn(
             listOf(song)
         )
         `when`(mockArtistRepository.findById(100)).thenReturn(
@@ -85,7 +85,7 @@ class LastFmEnrichmentServiceTest {
     @Test
     fun `test enrich last fm data`() {
         lastFmEnrichmentService.enrichLastFmInfoForSongs()
-        verify(mockSongRepository).findAllByStatusAndMbidIsNullOrderedByNameAndTitle("SHOW")
+        verify(mockSongRepository).findAllByStatusAndLastFmUrlIsNullOrderedByNameAndTitle("SHOW")
         verify(mockSongRepository).save(
             song.copy(
                 lastFmTags = mutableSetOf(

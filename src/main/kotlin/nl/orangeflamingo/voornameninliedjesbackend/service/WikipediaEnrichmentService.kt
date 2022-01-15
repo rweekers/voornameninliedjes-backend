@@ -10,15 +10,15 @@ import org.springframework.stereotype.Service
 
 
 @Service
-class WikipediaEnrichmentService(
-    @Autowired val songRepository: SongRepository,
-    @Autowired val wikipediaApiClient: WikipediaApiClient
+class WikipediaEnrichmentService @Autowired constructor(
+    private val songRepository: SongRepository,
+    private val wikipediaApiClient: WikipediaApiClient
 ) {
 
     private val log = LoggerFactory.getLogger(ImagesEnrichmentService::class.java)
 
     fun enrichWikipediaForSongs(updateAll: Boolean = false) {
-        log.info("Starting wikipedia enrichment")
+        log.info("Starting wikipedia enrichment with update all: $updateAll")
 
         val songsToUpdate =
             if (updateAll) songRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)
