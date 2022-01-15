@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class ImagesEnrichmentService(
-    @Autowired val songRepository: SongRepository,
-    @Autowired val artistRepository: ArtistRepository,
-    @Autowired val flickrApiClient: FlickrApiClient
+class ImagesEnrichmentService @Autowired constructor(
+    private val songRepository: SongRepository,
+    private val artistRepository: ArtistRepository,
+    private val flickrApiClient: FlickrApiClient
 ) {
 
     private val log = LoggerFactory.getLogger(ImagesEnrichmentService::class.java)

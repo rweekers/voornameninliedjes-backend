@@ -1,7 +1,9 @@
 package nl.orangeflamingo.voornameninliedjesbackend.dto
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import java.time.Instant
 
+@JsonInclude(JsonInclude.Include.NON_ABSENT)
 data class AdminArtistDto(
     val id: Long?,
     val name: String,
