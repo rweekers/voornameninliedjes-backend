@@ -45,7 +45,7 @@ class LastFmEnrichmentService @Autowired constructor(
 
             val lastFmTrack =
                 lastFmApiClient.getTrack(
-                    cleanString(artist.name),
+                    artist.name.replace("'", ""),
                     cleanString(song.title)
                 )
 

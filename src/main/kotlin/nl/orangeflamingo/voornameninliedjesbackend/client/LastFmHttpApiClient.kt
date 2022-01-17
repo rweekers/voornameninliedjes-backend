@@ -8,6 +8,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmResponseDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTag
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTrack
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmWiki
+import nl.orangeflamingo.voornameninliedjesbackend.service.LastFmException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
@@ -32,11 +33,11 @@ class LastFmHttpApiClient(
             .bodyToMono(
                 LastFmResponseDto::class.java
             )
-            .switchIfEmpty(Mono.empty())
+            .switchIfEmpty(Mono.error { throw LastFmException("Gotten empty response from last.fm!") })
             .map {
                 when (it.error) {
                     null -> {
-                        val track = it.track ?: throw RuntimeException("")
+                        val track = it.track ?: throw LastFmException("Track not found on last.fm response!")
                         LastFmTrack(
                             name = track.name,
                             mbid = track.mbid,

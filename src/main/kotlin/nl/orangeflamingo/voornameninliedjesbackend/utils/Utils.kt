@@ -12,6 +12,6 @@ object Utils {
     }
 
     fun cleanString(input: String): String {
-        return input.replace(Regex("['#\\[\\]]"), "")
+        return input.replace(Regex("[#\\[\\]]"), "")
     }
 }
