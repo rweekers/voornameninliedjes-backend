@@ -123,6 +123,7 @@ class SongController(
             albumName = song.albumName,
             albumLastFmUrl = song.albumLastFmUrl,
             spotify = song.spotify,
+            background = song.background,
             wikipediaNl = song.wikipediaContentNl,
             wikipediaEn = song.wikipediaContentEn,
             wikipediaSummaryEn = song.wikipediaSummaryEn,

@@ -35,6 +35,9 @@ data class SongDto(
     val youtube: String?,
 
     @JsonView(Views.Detail::class)
+    val background: String?,
+
+    @JsonView(Views.Detail::class)
     val wikipediaNl: String?,
 
     @JsonView(Views.Detail::class)

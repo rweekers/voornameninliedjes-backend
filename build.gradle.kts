@@ -47,17 +47,14 @@ val stopMyPostgresAppContainer by tasks.creating(DockerStopContainer::class) {
 
 plugins {
     id("jacoco")
-    id("org.springframework.boot") version "2.6.2"
+    id("org.springframework.boot") version "2.6.3"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("com.bmuschko.docker-remote-api") version "7.0.0"
     id("org.sonarqube") version "3.0"
     id("com.gorylenko.gradle-git-properties") version "2.3.1"
-    kotlin("jvm") version "1.6.0"
-    kotlin("plugin.spring") version "1.6.0"
+    kotlin("jvm") version "1.6.10"
+    kotlin("plugin.spring") version "1.6.10"
 }
-
-// Remove after update Spring Boot 2.6.3
-ext["log4j2.version"] = "2.17.1"
 
 jacoco {
     toolVersion = "0.8.7"
