@@ -15,6 +15,8 @@ data class Song(
     var title: String,
     var name: String,
     val artistImage: String? = null,
+    var artistImageWidth: Int? = null,
+    var artistImageHeight: Int? = null,
     val artistImageAttribution: String? = null,
     var background: String? = null,
     var youtube: String? = null,

@@ -36,6 +36,29 @@ class ImagesEnrichmentServiceTest {
         status = SongStatus.SHOW
     )
 
+    private val artist = Artist(
+        id = 100,
+        name = "The Beatles",
+        flickrPhotos = mutableSetOf(ArtistFlickrPhoto("1000"))
+    )
+
+    private val flickrPhotoDetail = FlickrPhotoDetail(
+        url = "classpath:images/test.png",
+        title = "flickrTitle",
+        farm = "flickrFarm",
+        server = "flickrServer",
+        id = "1000",
+        secret = "flickrSecret",
+        ownerId = "flickrOwnerId",
+        licenseId = "flickrLicenseId"
+    )
+
+    private val flickrApiOwner = FlickrApiOwner(
+        id = "flickrOwnerId",
+        username = "Some flickr owner",
+        photosUrl = "classpath:images/test.png"
+    )
+
     @BeforeEach
     fun init() {
         `when`(mockSongRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)).thenReturn(
@@ -44,38 +67,9 @@ class ImagesEnrichmentServiceTest {
         `when`(mockSongRepository.findAllByStatusAndArtistImageIsNullOrArtistImageAttributionIsNull(SongStatus.SHOW.code)).thenReturn(
             listOf(song)
         )
-        `when`(mockArtistRepository.findById(100)).thenReturn(
-            Optional.of(
-                Artist(
-                    id = 100,
-                    name = "The Beatles",
-                    flickrPhotos = mutableSetOf(ArtistFlickrPhoto("1000"))
-                )
-            )
-        )
-        `when`(mockFlickrApiClient.getPhoto("1000")).thenReturn(
-            Mono.just(
-                FlickrPhotoDetail(
-                    url = "https://flickrUrl",
-                    title = "flickrTitle",
-                    farm = "flickrFarm",
-                    server = "flickrServer",
-                    id = "1000",
-                    secret = "flickrSecret",
-                    ownerId = "flickrOwnerId",
-                    licenseId = "flickrLicenseId"
-                )
-            )
-        )
-        `when`(mockFlickrApiClient.getOwnerInformation("flickrOwnerId")).thenReturn(
-            Mono.just(
-                FlickrApiOwner(
-                    id = "flickrOwnerId",
-                    username = "Some flickr owner",
-                    photosUrl = "https://flickrUrl"
-                )
-            )
-        )
+        `when`(mockArtistRepository.findById(100)).thenReturn(Optional.of(artist))
+        `when`(mockFlickrApiClient.getPhoto("1000")).thenReturn(Mono.just(flickrPhotoDetail))
+        `when`(mockFlickrApiClient.getOwnerInformation("flickrOwnerId")).thenReturn(Mono.just(flickrApiOwner))
     }
 
     @Test
@@ -83,7 +77,12 @@ class ImagesEnrichmentServiceTest {
         imagesEnrichmentService.enrichImagesForSongs(true)
         verify(mockSongRepository).findAllByStatusOrderedByNameAndTitle("SHOW")
         verify(mockSongRepository).save(
-            song.copy(artistImage = "https://flickrUrl", artistImageAttribution = "Photo by Some flickr owner to be found at https://flickrUrl")
+            song.copy(
+                artistImage = "classpath:images/test.png",
+                artistImageWidth = 234,
+                artistImageHeight = 234,
+                artistImageAttribution = "Photo by Some flickr owner to be found at classpath:images/test.png"
+            )
         )
     }
 
@@ -91,7 +90,24 @@ class ImagesEnrichmentServiceTest {
     fun `test enrichSong`() {
         imagesEnrichmentService.enrichImagesForSongs()
         verify(mockSongRepository).save(
-            song.copy(artistImage = "https://flickrUrl", artistImageAttribution = "Photo by Some flickr owner to be found at https://flickrUrl")
+            song.copy(
+                artistImage = "classpath:images/test.png",
+                artistImageWidth = 234,
+                artistImageHeight = 234,
+                artistImageAttribution = "Photo by Some flickr owner to be found at classpath:images/test.png"
+            )
+        )
+    }
+
+    @Test
+    fun `test image not found `() {
+        `when`(mockFlickrApiClient.getPhoto("1000")).thenReturn(Mono.just(flickrPhotoDetail.copy(url = "classpath:images/notfound.png")))
+        imagesEnrichmentService.enrichImagesForSongs()
+        verify(mockSongRepository).save(
+            song.copy(
+                status = SongStatus.INCOMPLETE,
+                remarks = "Could not find file on url classpath:images/notfound.png for Michelle with error type FileNotFoundException and message class path resource [images/notfound.png] cannot be resolved to URL because it does not exist"
+            )
         )
     }
 

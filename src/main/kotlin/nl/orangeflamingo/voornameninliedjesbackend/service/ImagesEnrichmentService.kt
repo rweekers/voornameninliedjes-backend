@@ -5,9 +5,15 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
+import nl.orangeflamingo.voornameninliedjesbackend.utils.Utils
+import org.apache.commons.imaging.Imaging
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.InputStream
+
 
 @Service
 class ImagesEnrichmentService @Autowired constructor(
@@ -58,9 +64,33 @@ class ImagesEnrichmentService @Autowired constructor(
     }
 
     private fun updateArtistImage(url: String, attribution: String, song: Song) {
-        if (url != song.artistImage || attribution != song.artistImageAttribution) {
-            val updatedSong = song.copy(artistImage = url, artistImageAttribution = attribution)
-            songRepository.save(updatedSong)
+        if (url != song.artistImage || attribution != song.artistImageAttribution || song.artistImageWidth == null || song.artistImageHeight == null) {
+            try {
+                val imageUrl = Utils.resourceAsInputStream(url)
+                val inputS: InputStream = imageUrl.openStream()
+                val imageInfo = Imaging.getImageInfo(inputS, imageUrl.file)
+                log.info("Gotten width: ${imageInfo.width} and height: ${imageInfo.height}")
+
+                songRepository.save(
+                    song.copy(
+                        artistImage = url,
+                        artistImageAttribution = attribution,
+                        artistImageWidth = imageInfo.width,
+                        artistImageHeight = imageInfo.height
+                    )
+                )
+                log.info("Updated ${song.title} with attribution $attribution and url $url and width ${imageInfo.width} and height ${imageInfo.height}")
+            } catch (e: Exception) {
+                when (e) {
+                    is FileNotFoundException, is IOException -> {
+                        val errorMessage =
+                            "Could not find file on url $url for ${song.title} with error type ${e.javaClass.simpleName} and message ${e.message}"
+                        songRepository.save(song.copy(status = SongStatus.INCOMPLETE, remarks = errorMessage))
+                        log.error(errorMessage)
+                    }
+                    else -> throw e
+                }
+            }
         }
     }
 
