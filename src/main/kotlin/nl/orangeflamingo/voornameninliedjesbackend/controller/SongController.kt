@@ -116,6 +116,8 @@ class SongController(
             name = song.name,
             artistImage = song.artistImage,
             artistImageAttribution = song.artistImageAttribution,
+            artistImageWidth = song.artistImageWidth,
+            artistImageHeight = song.artistImageHeight,
             artistLastFmUrl = song.artistLastFmUrl,
             wikipediaPage = song.wikipediaPage,
             youtube = song.youtube,
