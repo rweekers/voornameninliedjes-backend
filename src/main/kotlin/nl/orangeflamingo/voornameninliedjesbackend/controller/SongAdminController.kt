@@ -20,6 +20,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRep
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistNotFoundException
 import nl.orangeflamingo.voornameninliedjesbackend.service.ImagesEnrichmentService
+import nl.orangeflamingo.voornameninliedjesbackend.service.ImagesService
 import nl.orangeflamingo.voornameninliedjesbackend.service.LastFmEnrichmentService
 import nl.orangeflamingo.voornameninliedjesbackend.service.NotFoundException
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongNotFoundException
@@ -51,7 +52,8 @@ class SongAdminController(
     private val songService: SongService,
     private val imagesEnrichmentService: ImagesEnrichmentService,
     private val wikipediaEnrichmentService: WikipediaEnrichmentService,
-    private val lastFmEnrichmentService: LastFmEnrichmentService
+    private val lastFmEnrichmentService: LastFmEnrichmentService,
+    private val imagesService: ImagesService
 ) {
 
     private val log = LoggerFactory.getLogger(SongAdminController::class.java)
@@ -100,6 +102,23 @@ class SongAdminController(
     @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun getSongById(@PathVariable("id") id: Long): AdminSongDto {
         return convertToDto(songService.findById(id))
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/songs/{id}/download")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
+    fun downloadImageForSongById(@PathVariable("id") id: Long, @RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean): String {
+        val song = songRepository.findById(id).orElseThrow { SongNotFoundException("Song with id $id not found") }
+        imagesService.downloadImageForSong(song, updateAll)
+        return "OK"
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/songs/download-all")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
+    fun downloadImagesForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean): String {
+        imagesService.downloadImages(updateAll)
+        return "OK"
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -245,6 +264,7 @@ class SongAdminController(
             title = song.title,
             name = song.name,
             artistImage = if (!song.artistImage.isNullOrEmpty()) song.artistImage else "https://ak9.picdn.net/shutterstock/videos/24149239/thumb/1.jpg",
+            localImage = song.localImage,
             artistLastFmUrl = song.artistLastFmUrl,
             background = song.background,
             wikipediaPage = song.wikipediaPage,

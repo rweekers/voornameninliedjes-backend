@@ -130,6 +130,7 @@ class SongService @Autowired constructor(
         hasDetails = song.hasDetails,
         artistImage = song.artistImage,
         artistImageAttribution = song.artistImageAttribution,
+        localImage = song.localImage,
         artistImageWidth = song.artistImageWidth,
         artistImageHeight = song.artistImageHeight,
         artistWikimediaPhotos = artist.wikimediaPhotos,
