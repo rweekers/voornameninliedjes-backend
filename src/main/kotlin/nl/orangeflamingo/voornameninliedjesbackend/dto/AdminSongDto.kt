@@ -19,6 +19,8 @@ data class AdminSongDto(
 
     val artistImage: String? = null,
 
+    val localImage: String? = null,
+
     val artistLastFmUrl: String? = null,
 
     val background: String? = null,

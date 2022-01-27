@@ -101,6 +101,7 @@ dependencies {
     implementation("com.google.guava:guava:31.0.1-jre")
     implementation("io.github.furstenheim:copy_down:1.0")
     implementation("org.apache.commons:commons-imaging:1.0-alpha2")
+    implementation("commons-io:commons-io:2.11.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mockito:mockito-core:4.2.0")
@@ -111,9 +112,9 @@ dependencies {
     testImplementation("org.junit.platform:junit-platform-suite-api:1.8.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
-    testImplementation("io.cucumber:cucumber-java:7.1.0")
-    testImplementation("io.cucumber:cucumber-spring:7.1.0")
-    testImplementation("io.cucumber:cucumber-junit-platform-engine:7.1.0")
+    testImplementation("io.cucumber:cucumber-java:7.2.3")
+    testImplementation("io.cucumber:cucumber-spring:7.2.3")
+    testImplementation("io.cucumber:cucumber-junit-platform-engine:7.2.3")
     testImplementation("com.beust:klaxon:5.5")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
