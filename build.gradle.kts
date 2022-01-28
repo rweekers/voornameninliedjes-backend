@@ -1,7 +1,7 @@
 import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
-import com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -97,14 +97,14 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.postgresql:postgresql:42.3.1")
-    implementation("org.flywaydb:flyway-core:8.4.1")
+    implementation("org.flywaydb:flyway-core:8.4.2")
     implementation("com.google.guava:guava:31.0.1-jre")
     implementation("io.github.furstenheim:copy_down:1.0")
     implementation("org.apache.commons:commons-imaging:1.0-alpha2")
     implementation("commons-io:commons-io:2.11.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.mockito:mockito-core:4.2.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
     testImplementation("org.junit.platform:junit-platform-commons:1.8.2")
     testImplementation("org.junit.platform:junit-platform-engine:1.8.2")
     testImplementation("org.junit.platform:junit-platform-launcher:1.8.2")

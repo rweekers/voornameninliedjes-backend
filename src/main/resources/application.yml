@@ -22,6 +22,8 @@ voornameninliedjes:
       pool-name: voornameninliedjes-migration-hikari-pool
   cache:
     enabled: false
+  batch:
+    interval: 3000
 
 jobs:
   enabled: true

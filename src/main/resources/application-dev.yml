@@ -2,6 +2,10 @@ spring:
   flyway:
     locations: classpath:db/migration/{vendor}/prod,classpath:db/migration/{vendor}/dev
 
+voornameninliedjes:
+  batch:
+    interval: 1000
+
 jobs:
   enabled: false
   enrichSong:
