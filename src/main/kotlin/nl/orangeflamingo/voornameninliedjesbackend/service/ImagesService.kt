@@ -4,6 +4,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
+import nl.orangeflamingo.voornameninliedjesbackend.utils.removeDiacritics
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -52,7 +53,8 @@ class ImagesService @Autowired constructor(
             log.info("[image download] Downloading image ${song.artistImage} for ${artist.name} - ${song.title}")
 
             val extension = song.artistImage.substring(song.artistImage.lastIndexOf("."))
-            val localUrl = "${imagesPath}/${artist.name}_${song.title}$extension".replace(" ", "-").lowercase()
+            val fileName = "${artist.name}_${song.title}".removeDiacritics()
+            val localUrl = "$imagesPath/$fileName$extension".replace(" ", "-").lowercase()
             if (overwrite || !fileService.fileExists(localUrl)) {
                 fileService.writeToDisk(song.artistImage, localUrl)
                 songRepository.save(song.copy(localImage = localUrl))
