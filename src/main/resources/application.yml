@@ -24,6 +24,8 @@ voornameninliedjes:
     enabled: false
   batch:
     interval: 3000
+  images:
+    path: images
 
 jobs:
   enabled: true

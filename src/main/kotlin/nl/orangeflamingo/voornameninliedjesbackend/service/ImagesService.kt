@@ -26,6 +26,9 @@ class ImagesService @Autowired constructor(
     @Value("\${voornameninliedjes.batch.interval}")
     private val interval: Long = 100
 
+    @Value("\${voornameninliedjes.images.path}")
+    private val imagesPath: String = "images"
+
     fun downloadImages(overwrite: Boolean = false) {
         log.info("[image download] Starting downloading all images with interval millis ${interval} and overwrite: $overwrite")
         val songs = songRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)
@@ -49,7 +52,7 @@ class ImagesService @Autowired constructor(
             log.info("[image download] Downloading image ${song.artistImage} for ${artist.name} - ${song.title}")
 
             val extension = song.artistImage.substring(song.artistImage.lastIndexOf("."))
-            val localUrl = "images/${artist.name}_${song.title}$extension".replace(" ", "-").lowercase()
+            val localUrl = "${imagesPath}/${artist.name}_${song.title}$extension".replace(" ", "-").lowercase()
             if (overwrite || !fileService.fileExists(localUrl)) {
                 fileService.writeToDisk(song.artistImage, localUrl)
                 songRepository.save(song.copy(localImage = localUrl))
