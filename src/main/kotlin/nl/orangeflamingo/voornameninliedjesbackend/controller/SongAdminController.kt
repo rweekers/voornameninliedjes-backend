@@ -107,18 +107,16 @@ class SongAdminController(
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/{id}/download")
     @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
-    fun downloadImageForSongById(@PathVariable("id") id: Long, @RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean): String {
+    fun downloadImageForSongById(@PathVariable("id") id: Long, @RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
         val song = songRepository.findById(id).orElseThrow { SongNotFoundException("Song with id $id not found") }
         imagesService.downloadImageForSong(song, updateAll)
-        return "OK"
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/download-all")
     @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
-    fun downloadImagesForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean): String {
+    fun downloadImagesForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
         imagesService.downloadImages(updateAll)
-        return "OK"
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

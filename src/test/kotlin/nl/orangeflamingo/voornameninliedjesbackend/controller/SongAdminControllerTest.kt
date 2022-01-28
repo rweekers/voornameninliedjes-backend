@@ -316,6 +316,34 @@ class SongAdminControllerTest(
     }
 
     @Test
+    fun downloadImagesForSongs() {
+        client.post()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/admin/songs/download-all")
+                    .queryParam("update-all", "true")
+                    .build()
+            }
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    fun downloadImagesForSong() {
+        client.post()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/admin/songs/${songMap[songTitle]}/download")
+                    .queryParam("update-all", "true")
+                    .build()
+            }
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
     fun enrichWikipediaForSongs() {
         client.post()
             .uri { uriBuilder ->
