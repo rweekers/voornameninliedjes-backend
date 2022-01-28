@@ -150,6 +150,7 @@ class SongAdminController(
         imagesEnrichmentService.enrichImagesForSongs(updateAll)
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/enrich-wikipedia")
     @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun enrichWikipediaForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
