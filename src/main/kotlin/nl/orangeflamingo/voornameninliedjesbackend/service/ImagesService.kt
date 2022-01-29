@@ -53,11 +53,11 @@ class ImagesService @Autowired constructor(
             log.info("[image download] Downloading image ${song.artistImage} for ${artist.name} - ${song.title}")
 
             val extension = song.artistImage.substring(song.artistImage.lastIndexOf("."))
-            val fileName = "${artist.name}_${song.title}".removeDiacritics()
-            val localUrl = "$imagesPath/$fileName$extension".replace(" ", "-").lowercase()
+            val fileName = "${artist.name}_${song.title}$extension".removeDiacritics().replace(" ", "-").lowercase()
+            val localUrl = "$imagesPath/$fileName"
             if (overwrite || !fileService.fileExists(localUrl)) {
                 fileService.writeToDisk(song.artistImage, localUrl)
-                songRepository.save(song.copy(localImage = localUrl))
+                songRepository.save(song.copy(localImage = fileName))
                 log.info("[image download] Written file for ${artist.name} - ${song.title}")
             } else {
                 log.info("[image download] File already exists for ${artist.name} - ${song.title}")

@@ -63,7 +63,7 @@ class ImagesServiceTest {
         verify(mockFileService, after(120)).writeToDisk("https://remote-image.jpg", "images/the-beatles_hey-jude.jpg")
         verify(mockSongRepository, after(120)).save(
             song.copy(
-                localImage = "images/the-beatles_hey-jude.jpg"
+                localImage = "the-beatles_hey-jude.jpg"
             )
         )
     }
@@ -75,7 +75,7 @@ class ImagesServiceTest {
         verify(mockFileService).writeToDisk("https://remote-image.jpg", "images/the-beatles_hey-jude.jpg")
         verify(mockSongRepository).save(
             song.copy(
-                localImage = "images/the-beatles_hey-jude.jpg"
+                localImage = "the-beatles_hey-jude.jpg"
             )
         )
     }
@@ -97,7 +97,7 @@ class ImagesServiceTest {
         verify(mockFileService).writeToDisk("https://remote-image.jpg", "images/the-beatles_hey-jude.jpg")
         verify(mockSongRepository).save(
             song.copy(
-                localImage = "images/the-beatles_hey-jude.jpg"
+                localImage = "the-beatles_hey-jude.jpg"
             )
         )
     }
