@@ -8,8 +8,8 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLastFmTag
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
-import nl.orangeflamingo.voornameninliedjesbackend.utils.Utils.cleanString
-import nl.orangeflamingo.voornameninliedjesbackend.utils.Utils.html2md
+import nl.orangeflamingo.voornameninliedjesbackend.utils.cleanForLastFm
+import nl.orangeflamingo.voornameninliedjesbackend.utils.html2md
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -46,7 +46,7 @@ class LastFmEnrichmentService @Autowired constructor(
             val lastFmTrack =
                 lastFmApiClient.getTrack(
                     artist.name.replace("'", ""),
-                    cleanString(song.title)
+                    song.title.cleanForLastFm()
                 )
 
             lastFmTrack.subscribe({
@@ -54,8 +54,8 @@ class LastFmEnrichmentService @Autowired constructor(
                     is LastFmTrack -> {
                         song.mbid = it.mbid
                         song.lastFmUrl = it.url
-                        song.wikiSummaryEn = html2md(it.wiki?.summary)
-                        song.wikiContentEn = html2md(it.wiki?.content)
+                        song.wikiSummaryEn = it.wiki?.summary.html2md()
+                        song.wikiContentEn = it.wiki?.content.html2md()
                         song.albumName = it.album?.name
                         song.albumMbid = it.album?.mbid
                         song.albumLastFmUrl = it.album?.url

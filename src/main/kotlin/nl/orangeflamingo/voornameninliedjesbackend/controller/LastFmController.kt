@@ -2,7 +2,7 @@ package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.LastFmApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmResponse
-import nl.orangeflamingo.voornameninliedjesbackend.utils.Utils
+import nl.orangeflamingo.voornameninliedjesbackend.utils.cleanForLastFm
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -28,7 +28,7 @@ class LastFmController(
         log.info("Getting last fm information for $artist - $title")
         return lastFmApiClient.getTrack(
             artist.replace("'", ""),
-            Utils.cleanString(title)
+            title.cleanForLastFm()
         )
     }
 }
