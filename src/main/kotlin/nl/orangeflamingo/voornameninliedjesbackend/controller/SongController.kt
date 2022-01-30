@@ -91,7 +91,7 @@ class SongController(
     fun getSongs(@RequestParam("first-characters") firstCharacters: Optional<List<String>>): List<SongDto> {
         return firstCharacters.map { firstCharacter ->
             songService.findAllByStatusOrderedByNameFilteredByFirstCharacter(
-                listOf(SongStatus.SHOW, SongStatus.IN_PROGRESS), firstCharacter.distinct().map { it.first() }
+                listOf(SongStatus.SHOW), firstCharacter.distinct().map { it.first() }
             )
         }.orElseGet { songService.findAllByStatusOrderedByName(SongStatus.SHOW) }
             .map { convertToDto(it, emptyList()) }
