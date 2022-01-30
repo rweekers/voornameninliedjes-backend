@@ -8,7 +8,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLastFmTag
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
-import nl.orangeflamingo.voornameninliedjesbackend.utils.cleanForLastFm
+import nl.orangeflamingo.voornameninliedjesbackend.utils.clean
 import nl.orangeflamingo.voornameninliedjesbackend.utils.html2md
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,7 +46,7 @@ class LastFmEnrichmentService @Autowired constructor(
             val lastFmTrack =
                 lastFmApiClient.getTrack(
                     artist.name.replace("'", ""),
-                    song.title.cleanForLastFm()
+                    song.title.clean()
                 )
 
             lastFmTrack.subscribe({

@@ -14,9 +14,5 @@ fun String?.html2md(): String {
     return converter.convert(this)
 }
 
-fun String.cleanForLastFm(): String {
-    return this.replace(Regex("[#\\[\\]]"), "")
-}
-
 fun String.clean() =
-    this.replace(Regex("[?/]"), "")
+    this.replace(Regex("[?/#\\[\\]]"), "")
