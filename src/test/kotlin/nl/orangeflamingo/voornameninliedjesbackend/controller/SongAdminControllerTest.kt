@@ -302,6 +302,15 @@ class SongAdminControllerTest(
     }
 
     @Test
+    fun enrichImagesForSong() {
+        client.post()
+            .uri("/admin/songs/${songMap[songTitle]}/enrich-images")
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
     fun enrichLastFmInfoForSongs() {
         client.post()
             .uri { uriBuilder ->

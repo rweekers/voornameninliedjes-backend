@@ -9,10 +9,14 @@ import nl.orangeflamingo.voornameninliedjesbackend.utils.Utils
 import org.apache.commons.imaging.Imaging
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
+import reactor.core.scheduler.Schedulers
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
+import java.time.Duration
 
 
 @Service
@@ -24,6 +28,9 @@ class ImagesEnrichmentService @Autowired constructor(
 
     private val log = LoggerFactory.getLogger(ImagesEnrichmentService::class.java)
 
+    @Value("\${voornameninliedjes.batch.interval}")
+    private val interval: Long = 100
+
     fun enrichImagesForSongs(updateAll: Boolean = false) {
         log.info("Starting images enrichment with update all: $updateAll")
 
@@ -32,10 +39,14 @@ class ImagesEnrichmentService @Autowired constructor(
             else songRepository.findAllByStatusAndArtistImageIsNullOrArtistImageAttributionIsNull(
                 SongStatus.SHOW.code
             )
-        songsToUpdate.forEach { updateArtistImageForSong(it) }
+        Flux.fromIterable(songsToUpdate)
+            .delayElements(Duration.ofMillis(interval), Schedulers.boundedElastic())
+            .subscribe({
+                updateArtistImageForSong(it)
+            }, { log.error("[image download] Gotten error", it) }, { log.info("[image download] Done...") })
     }
 
-    private fun updateArtistImageForSong(song: Song) {
+    fun updateArtistImageForSong(song: Song) {
         val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
             .orElseThrow { ArtistNotFoundException("Artist with id ${song.artists.first { it.originalArtist }} for song with title ${song.title} not found") }
         try {

@@ -13,6 +13,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepos
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.after
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import reactor.core.publisher.Mono
@@ -76,7 +77,7 @@ class ImagesEnrichmentServiceTest {
     fun `test updateSong`() {
         imagesEnrichmentService.enrichImagesForSongs(true)
         verify(mockSongRepository).findAllByStatusOrderedByNameAndTitle("SHOW")
-        verify(mockSongRepository).save(
+        verify(mockSongRepository, after(240)).save(
             song.copy(
                 artistImage = "classpath:images/test.png",
                 artistImageWidth = 234,
@@ -89,7 +90,7 @@ class ImagesEnrichmentServiceTest {
     @Test
     fun `test enrichSong`() {
         imagesEnrichmentService.enrichImagesForSongs()
-        verify(mockSongRepository).save(
+        verify(mockSongRepository, after(240)).save(
             song.copy(
                 artistImage = "classpath:images/test.png",
                 artistImageWidth = 234,
@@ -103,7 +104,7 @@ class ImagesEnrichmentServiceTest {
     fun `test image not found `() {
         `when`(mockFlickrApiClient.getPhoto("1000")).thenReturn(Mono.just(flickrPhotoDetail.copy(url = "classpath:images/notfound.png")))
         imagesEnrichmentService.enrichImagesForSongs()
-        verify(mockSongRepository).save(
+        verify(mockSongRepository, after(120)).save(
             song.copy(
                 status = SongStatus.INCOMPLETE,
                 remarks = "Could not find file on url classpath:images/notfound.png for Michelle with error type FileNotFoundException and message class path resource [images/notfound.png] cannot be resolved to URL because it does not exist"
