@@ -107,7 +107,10 @@ class SongAdminController(
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/{id}/download")
     @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
-    fun downloadImageForSongById(@PathVariable("id") id: Long, @RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
+    fun downloadImageForSongById(
+        @PathVariable("id") id: Long,
+        @RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean
+    ) {
         val song = songRepository.findById(id).orElseThrow { SongNotFoundException("Song with id $id not found") }
         imagesService.downloadImageForSong(song, updateAll)
     }
@@ -141,6 +144,14 @@ class SongAdminController(
             return convertToDto(songService.updateSong(convertToDomain(song), songFromDb.get(), user))
         }
         return convertToDto(songService.newSong(convertToDomain(song), user))
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/songs/{id}/enrich-images")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
+    fun enrichImageForSongById(@PathVariable("id") id: Long) {
+        val song = songRepository.findById(id).orElseThrow { SongNotFoundException("Song with id $id not found") }
+        imagesEnrichmentService.updateArtistImageForSong(song)
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -191,7 +202,8 @@ class SongAdminController(
     @PostMapping("/artists/{user}/{id}/{flickrId}")
     @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun addFlickrPhoto(@PathVariable user: String, @PathVariable id: Long, @PathVariable flickrId: String) {
-        val artist = artistRepository.findById(id).orElseThrow { ArtistNotFoundException("Artist with id $id not found") }
+        val artist =
+            artistRepository.findById(id).orElseThrow { ArtistNotFoundException("Artist with id $id not found") }
         addFlickrIdToArtist(user, artist, flickrId)
     }
 
