@@ -131,6 +131,7 @@ class SongService @Autowired constructor(
         artistImage = song.artistImage,
         artistImageAttribution = song.artistImageAttribution,
         localImage = song.localImage,
+        blurredImage = song.blurredImage,
         artistImageWidth = song.artistImageWidth,
         artistImageHeight = song.artistImageHeight,
         artistWikimediaPhotos = artist.wikimediaPhotos,

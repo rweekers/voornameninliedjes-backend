@@ -50,7 +50,7 @@ plugins {
     id("org.springframework.boot") version "2.6.3"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("com.bmuschko.docker-remote-api") version "7.0.0"
-    id("org.sonarqube") version "3.0"
+    id("org.sonarqube") version "3.3"
     id("com.gorylenko.gradle-git-properties") version "2.3.1"
     kotlin("jvm") version "1.6.10"
     kotlin("plugin.spring") version "1.6.10"
@@ -105,6 +105,7 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    testImplementation("commons-codec:commons-codec:1.15")
     testImplementation("org.junit.platform:junit-platform-commons:1.8.2")
     testImplementation("org.junit.platform:junit-platform-engine:1.8.2")
     testImplementation("org.junit.platform:junit-platform-launcher:1.8.2")

@@ -311,6 +311,24 @@ class SongAdminControllerTest(
     }
 
     @Test
+    fun blurImageForSong() {
+        client.post()
+            .uri("/admin/songs/${songMap[songTitle]}/blur")
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    fun blurImagesForSong() {
+        client.post()
+            .uri("/admin/songs/blur-all")
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
     fun enrichLastFmInfoForSongs() {
         client.post()
             .uri { uriBuilder ->

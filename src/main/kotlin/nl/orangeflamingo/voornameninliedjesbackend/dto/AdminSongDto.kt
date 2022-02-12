@@ -21,6 +21,8 @@ data class AdminSongDto(
 
     val localImage: String? = null,
 
+    val blurredImage: String? = null,
+
     val artistLastFmUrl: String? = null,
 
     val background: String? = null,

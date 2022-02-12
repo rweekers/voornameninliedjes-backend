@@ -116,6 +116,26 @@ class SongAdminController(
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/songs/{id}/blur")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
+    fun blurImageForSongById(
+        @PathVariable("id") id: Long,
+        @RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean
+    ) {
+        val song = songRepository.findById(id).orElseThrow { SongNotFoundException("Song with id $id not found") }
+        imagesService.blurImageForSong(song, updateAll)
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/songs/blur-all")
+    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
+    fun blurImagesForSongs(
+        @RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean
+    ) {
+        imagesService.blurImages(updateAll)
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/download-all")
     @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun downloadImagesForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
@@ -276,6 +296,7 @@ class SongAdminController(
             name = song.name,
             artistImage = if (!song.artistImage.isNullOrEmpty()) song.artistImage else "https://ak9.picdn.net/shutterstock/videos/24149239/thumb/1.jpg",
             localImage = song.localImage,
+            blurredImage = song.blurredImage,
             artistLastFmUrl = song.artistLastFmUrl,
             background = song.background,
             wikipediaPage = song.wikipediaPage,

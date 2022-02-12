@@ -6,6 +6,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
+import org.apache.commons.codec.binary.Base64
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -15,6 +16,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
 import java.io.IOException
 import java.util.Optional
 
@@ -78,6 +80,24 @@ class ImagesServiceTest {
                 localImage = "the-beatles_hey-jude.jpg"
             )
         )
+    }
+
+    @Test
+    fun `test blur image for song`() {
+        imagesService.blurImageForSong(song.copy(artistImage = "classpath:images/test.png"))
+        verify(mockSongRepository).save(
+            argThat { song -> Base64.isBase64(song.blurredImage) }
+        )
+    }
+
+    @Test
+    fun `test blur images`() {
+        `when`(mockSongRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)).thenReturn(
+            listOf(song.copy(blurredImage = "some-image-blur"))
+        )
+        imagesService.blurImages()
+        verify(mockSongRepository, after(120)).findAllByStatusOrderedByNameAndTitle("SHOW")
+        verify(mockSongRepository, never()).save(any())
     }
 
     @Test
