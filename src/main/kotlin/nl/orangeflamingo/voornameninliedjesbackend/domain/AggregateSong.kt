@@ -12,6 +12,7 @@ data class AggregateSong(
     val artistImage: String? = null,
     val artistImageAttribution: String? = null,
     val localImage: String? = null,
+    val blurredImage: String? = null,
     val artistImageWidth: Int? = null,
     val artistImageHeight: Int? = null,
     val artistMbid: String? = null,

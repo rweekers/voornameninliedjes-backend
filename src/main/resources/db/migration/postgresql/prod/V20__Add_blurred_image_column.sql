@@ -1,0 +1,2 @@
+ALTER TABLE SONGS
+    ADD COLUMN BLURRED_IMAGE           text;
