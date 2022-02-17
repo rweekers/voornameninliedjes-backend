@@ -33,6 +33,8 @@ class ImagesService @Autowired constructor(
 
     private val log = LoggerFactory.getLogger(ImagesService::class.java)
 
+    private val maxDimensionBlur = 10
+
     @Value("\${voornameninliedjes.batch.interval}")
     private val interval: Long = 100
 
@@ -105,9 +107,9 @@ class ImagesService @Autowired constructor(
                 val inputS: InputStream = imageUrl.openStream()
                 val input = ImageIO.read(inputS)
 
-                // scale image to width 20
-                val targetWidth = 20
-                val targetHeight = ((input.height.toDouble() / input.width) * 20).roundToInt()
+                // scale image to max 10x10
+                val targetWidth = if (input.width >= input.height) maxDimensionBlur else ((input.width.toDouble() / input.height) * maxDimensionBlur).roundToInt()
+                val targetHeight = if (input.height >= input.width) maxDimensionBlur else ((input.height.toDouble() / input.width) * maxDimensionBlur).roundToInt()
 
                 val output = resizeImage(input, targetWidth, targetHeight)
                 val baos = ByteArrayOutputStream()
