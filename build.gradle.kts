@@ -47,7 +47,7 @@ val stopMyPostgresAppContainer by tasks.creating(DockerStopContainer::class) {
 
 plugins {
     id("jacoco")
-    id("org.springframework.boot") version "2.6.3"
+    id("org.springframework.boot") version "2.6.5"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("com.bmuschko.docker-remote-api") version "7.0.0"
     id("org.sonarqube") version "3.3"
@@ -96,9 +96,9 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.postgresql:postgresql:42.3.1")
-    implementation("org.flywaydb:flyway-core:8.4.2")
-    implementation("com.google.guava:guava:31.0.1-jre")
+    implementation("org.postgresql:postgresql:42.3.3")
+    implementation("org.flywaydb:flyway-core:8.5.2")
+    implementation("com.google.guava:guava:31.1-jre")
     implementation("io.github.furstenheim:copy_down:1.0")
     implementation("org.apache.commons:commons-imaging:1.0-alpha2")
     implementation("commons-io:commons-io:2.11.0")
