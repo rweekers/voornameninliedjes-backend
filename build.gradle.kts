@@ -47,7 +47,7 @@ val stopMyPostgresAppContainer by tasks.creating(DockerStopContainer::class) {
 
 plugins {
     id("jacoco")
-    id("org.springframework.boot") version "2.6.5"
+    id("org.springframework.boot") version "2.6.6"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("com.bmuschko.docker-remote-api") version "7.0.0"
     id("org.sonarqube") version "3.3"
