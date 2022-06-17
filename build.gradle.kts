@@ -47,13 +47,13 @@ val stopMyPostgresAppContainer by tasks.creating(DockerStopContainer::class) {
 
 plugins {
     id("jacoco")
-    id("org.springframework.boot") version "2.6.6"
+    id("org.springframework.boot") version "2.7.0"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    id("com.bmuschko.docker-remote-api") version "7.0.0"
-    id("org.sonarqube") version "3.3"
-    id("com.gorylenko.gradle-git-properties") version "2.3.1"
-    kotlin("jvm") version "1.6.10"
-    kotlin("plugin.spring") version "1.6.10"
+    id("com.bmuschko.docker-remote-api") version "7.4.0"
+    id("org.sonarqube") version "3.4.0.2513"
+    id("com.gorylenko.gradle-git-properties") version "2.4.1"
+    kotlin("jvm") version "1.7.0"
+    kotlin("plugin.spring") version "1.7.0"
 }
 
 jacoco {
@@ -96,8 +96,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.postgresql:postgresql:42.3.3")
-    implementation("org.flywaydb:flyway-core:8.5.2")
+    implementation("org.postgresql:postgresql:42.3.6")
+    implementation("org.flywaydb:flyway-core:8.5.12")
     implementation("com.google.guava:guava:31.1-jre")
     implementation("io.github.furstenheim:copy_down:1.0")
     implementation("org.apache.commons:commons-imaging:1.0-alpha2")
@@ -113,10 +113,10 @@ dependencies {
     testImplementation("org.junit.platform:junit-platform-suite-api:1.8.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
-    testImplementation("io.cucumber:cucumber-java:7.2.3")
-    testImplementation("io.cucumber:cucumber-spring:7.2.3")
-    testImplementation("io.cucumber:cucumber-junit-platform-engine:7.2.3")
-    testImplementation("com.beust:klaxon:5.5")
+    testImplementation("io.cucumber:cucumber-java:7.3.3")
+    testImplementation("io.cucumber:cucumber-spring:7.3.3")
+    testImplementation("io.cucumber:cucumber-junit-platform-engine:7.3.3")
+    testImplementation("com.beust:klaxon:5.6")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
