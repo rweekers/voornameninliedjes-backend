@@ -9,11 +9,11 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.web.SecurityFilterChain
 
 
 @Configuration
@@ -22,23 +22,26 @@ import org.springframework.security.crypto.password.PasswordEncoder
 class SecurityConfig(
     private val userRepository: UserRepository,
     private val authenticationEntryPoint: MyBasicAuthPoint
-) : WebSecurityConfigurerAdapter() {
+) {
+    @Bean
+    fun filterChain(http: HttpSecurity): SecurityFilterChain {
+        val authenticationManagerBuilder = http.getSharedObject(
+            AuthenticationManagerBuilder::class.java
+        )
+        authenticationManagerBuilder.authenticationProvider(authenticationProvider())
 
-    override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.authenticationProvider(authenticationProvider())
-    }
-
-    override fun configure(http: HttpSecurity) {
         http
             .csrf().disable()
             .authorizeRequests()
             .antMatchers("/api/**", "/beta/**").permitAll()
             .and()
+            .authenticationManager(authenticationManagerBuilder.build())
             .httpBasic()
             .authenticationEntryPoint(authenticationEntryPoint)
+        return http.build()
     }
 
-    override fun userDetailsService(): UserDetailsService {
+    private fun userDetailsService(): UserDetailsService {
         return UserDetailsService { username ->
             val user = userRepository.findByUsername(username) ?: throw UsernameNotFoundException(username)
             MyUserPrincipal(user)
