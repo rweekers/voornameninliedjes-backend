@@ -100,6 +100,11 @@ dependencies {
     implementation("org.flywaydb:flyway-core:8.5.12")
     implementation("com.google.guava:guava:31.1-jre")
     implementation("io.github.furstenheim:copy_down:1.0")
+    constraints {
+        implementation("org.jsoup:jsoup:1.15.1") {
+            because("included version has a security vulnerability, see https://advisory.checkmarx.net/advisory/vulnerability/CVE-2021-37714/")
+        }
+    }
     implementation("org.apache.commons:commons-imaging:1.0-alpha2")
     implementation("commons-io:commons-io:2.11.0")
 
