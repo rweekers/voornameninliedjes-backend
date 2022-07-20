@@ -20,7 +20,7 @@ val buildMyPostgresAppImage by tasks.creating(DockerBuildImage::class) {
     )
     inputDir.set(file("."))
     dockerFile.set(file("DockerfilePostgres"))
-    images.add("postgres:13.1")
+    images.add("postgres:14")
 }
 
 val createMyPostgresAppContainer by tasks.creating(DockerCreateContainer::class) {
