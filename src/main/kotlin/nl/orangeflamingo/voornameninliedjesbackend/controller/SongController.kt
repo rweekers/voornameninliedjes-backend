@@ -97,6 +97,15 @@ class SongController(
             .map { convertToDto(it, emptyList()) }
     }
 
+    @GetMapping("/songs", params = ["first-character"])
+    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
+    fun getSongsWithNameStartingWith(
+        @RequestParam(name = "first-character") firstCharacter: String
+    ): List<SongDto> {
+        return songService.findByNameStartsWithAndStatusIn(firstCharacter, listOf(SongStatus.SHOW))
+            .map { convertToDto(it, emptyList()) }
+    }
+
     @GetMapping("/song-name-statistics")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     fun getSongNameStatistics(): List<SongNameStatistics> {
