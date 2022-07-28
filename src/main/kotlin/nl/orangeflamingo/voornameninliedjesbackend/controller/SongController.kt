@@ -109,13 +109,13 @@ class SongController(
     @GetMapping("/song-name-statistics")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     fun getSongNameStatistics(): List<SongNameStatistics> {
-        return songNameStatisticsRepository.findAllStatusShowGroupedByNameOrderedByCountDescending()
+        return songNameStatisticsRepository.getCountPerName()
     }
 
     @GetMapping("/artist-name-statistics")
     @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     fun getArtistNameStatistics(): List<ArtistNameStatistics> {
-        return artistNameStatisticsRepository.findAllStatusShowGroupedByArtistNameOrderedByCountDescending()
+        return artistNameStatisticsRepository.getCountPerArtistname()
     }
 
     private fun convertToDto(song: AggregateSong, photos: List<PhotoDetail>): SongDto {

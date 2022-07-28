@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository
 interface SongNameStatisticsRepository : CrudRepository<SongNameStatistics, Long> {
 
     @Query("select name, count(1) as count from songs where status = 'SHOW' group by name order by count DESC, name")
-    fun findAllStatusShowGroupedByNameOrderedByCountDescending(): List<SongNameStatistics>
+    fun getCountPerName(): List<SongNameStatistics>
 }

@@ -12,5 +12,5 @@ interface ArtistNameStatisticsRepository : CrudRepository<ArtistNameStatistics, 
             "inner join artists a on sa.artist = a.id\n" +
             "group by a.name\n" +
             "order by count DESC, a.name")
-    fun findAllStatusShowGroupedByArtistNameOrderedByCountDescending(): List<ArtistNameStatistics>
+    fun getCountPerArtistname(): List<ArtistNameStatistics>
 }
