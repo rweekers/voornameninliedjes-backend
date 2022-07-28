@@ -112,6 +112,20 @@ class SongControllerTest(
     }
 
     @Test
+    fun getAllSongsStartingCharactersWithTest() {
+        client.get()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/api/songs")
+                    .queryParam("first-character", "mi")
+                    .build()
+            }
+            .exchange()
+            .expectStatus().isOk
+            .expectBodyList<TestSongDto>().hasSize(1)
+    }
+
+    @Test
     fun getSongByArtistAndTitleTest() {
         client.get()
             .uri("/api/songs/the Beatles/MICHELLE")
