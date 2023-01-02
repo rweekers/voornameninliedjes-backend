@@ -4,6 +4,8 @@
 /images/
 !gradle/wrapper/gradle-wrapper.jar
 
+target
+
 ### STS ###
 .apt_generated
 .classpath

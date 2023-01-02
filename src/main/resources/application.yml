@@ -9,16 +9,20 @@ spring:
 voornameninliedjes:
   datasource:
     application:
-      url: jdbc:postgresql://localhost:5432/voornameninliedjes?createDatabaseIfNotExist=true
+      host: localhost
+      port: 5432
+      database: voornameninliedjes
       schema: vil
       username: vil_app
       password: secret
       pool-name: voornameninliedjes-app-hikari-pool
     migration:
-      url: jdbc:postgresql://localhost:5432/voornameninliedjes?createDatabaseIfNotExist=true
+      host: localhost
+      port: 5432
+      database: voornameninliedjes
       schema: vil
-      username: postgres
-      password: postgres
+      username: vil_app
+      password: secret
       pool-name: voornameninliedjes-migration-hikari-pool
   cache:
     enabled: false
