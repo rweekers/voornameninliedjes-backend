@@ -9,8 +9,9 @@ git:
   depth: false
 
 script:
-  - "./mvnw clean install"
+  - mvn clean install
 #  - "./gradlew --no-daemon sonarqube"
-addons:
-  sonarcloud:
-    organization: nl-orangeflamingo
+  - mvn clean verify sonar:sonar -Pcoverage -Dsonar.projectKey=nl-orangeflamingo
+#addons:
+#  sonarcloud:
+#    organization: nl-orangeflamingo
