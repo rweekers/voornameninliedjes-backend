@@ -9,8 +9,8 @@ git:
   depth: false
 
 script:
-  - "./gradlew build --scan --no-daemon -s"
-  - "./gradlew --no-daemon sonarqube"
+  - "./mvnw clean install"
+#  - "./gradlew --no-daemon sonarqube"
 addons:
   sonarcloud:
     organization: nl-orangeflamingo
