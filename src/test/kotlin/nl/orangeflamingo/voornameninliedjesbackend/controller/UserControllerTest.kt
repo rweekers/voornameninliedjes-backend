@@ -1,5 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
+import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.User
 import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
@@ -7,23 +8,20 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import org.springframework.web.reactive.function.BodyInserters
 import kotlin.random.Random
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("integration-test")
-@AutoConfigureWebTestClient
-class UserControllerTest(
-    @Autowired val client: WebTestClient,
-    @Autowired val userRepository: UserRepository,
-    @Autowired val encoder: PasswordEncoder
-) {
+class UserControllerTest : AbstractIntegrationTest() {
+
+    @Autowired
+    private lateinit var client: WebTestClient
+    @Autowired
+    private lateinit var userRepository: UserRepository
+    @Autowired
+    private lateinit var encoder: PasswordEncoder
 
     private val adminUser: String = "admin"
     private val adminPassword: String = "secret"

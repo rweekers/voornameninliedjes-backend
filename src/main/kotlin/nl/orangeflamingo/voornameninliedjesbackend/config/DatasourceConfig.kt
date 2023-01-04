@@ -34,7 +34,7 @@ class DatasourceConfig {
         val config = HikariConfig()
         config.username = properties.username
         config.password = properties.password
-        config.jdbcUrl = "jdbc:postgresql://${properties.host}:${properties.port}/${properties.database}?createDatabaseIfNotExist=true"
+        config.jdbcUrl = "jdbc:postgresql://${properties.host}:${properties.port}/${properties.database}"
         config.schema = properties.schema
         config.maximumPoolSize = 10
         config.poolName = properties.poolName

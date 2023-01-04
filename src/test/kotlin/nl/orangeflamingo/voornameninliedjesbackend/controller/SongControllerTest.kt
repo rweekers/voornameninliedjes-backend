@@ -1,5 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
+import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistRef
@@ -14,22 +15,19 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepos
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.util.ReflectionTestUtils
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("integration-test")
-@AutoConfigureWebTestClient
-class SongControllerTest(
-    @Autowired val client: WebTestClient,
-    @Autowired val songRepository: SongRepository,
-    @Autowired val artistRepository: ArtistRepository,
-    @Autowired val songController: SongController
-) {
+class SongControllerTest : AbstractIntegrationTest() {
+    @Autowired
+    private lateinit var client: WebTestClient
+    @Autowired
+    private lateinit var songRepository: SongRepository
+    @Autowired
+    private lateinit var artistRepository: ArtistRepository
+    @Autowired
+    private lateinit var songController: SongController
     private lateinit var songMap: Map<String, Long>
 
     @BeforeEach
