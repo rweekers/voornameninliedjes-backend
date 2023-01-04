@@ -1,5 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
+import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistLogEntry
@@ -15,24 +16,27 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import java.time.Instant
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("integration-test")
-@AutoConfigureWebTestClient
-class ArtistAdminControllerTest(
-    @Autowired val client: WebTestClient,
-    @Autowired val userRepository: UserRepository,
-    @Autowired val songRepository: SongRepository,
-    @Autowired val artistRepository: ArtistRepository,
-    @Autowired val encoder: PasswordEncoder
-) {
+class ArtistAdminControllerTest : AbstractIntegrationTest() {
+
+    @Autowired
+    private lateinit var client: WebTestClient
+
+    @Autowired
+    private lateinit var userRepository: UserRepository
+
+    @Autowired
+    private lateinit var songRepository: SongRepository
+
+    @Autowired
+    private lateinit var artistRepository: ArtistRepository
+
+    @Autowired
+    private lateinit var encoder: PasswordEncoder
 
     private val adminUser: String = "admin"
     private val adminPassword: String = "secret"

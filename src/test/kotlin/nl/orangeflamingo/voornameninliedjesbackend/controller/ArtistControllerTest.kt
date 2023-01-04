@@ -1,5 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
+import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
@@ -9,31 +10,17 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepos
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.util.TestPropertyValues
-import org.springframework.context.ApplicationContextInitializer
-import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
-import org.testcontainers.containers.GenericContainer
-import org.testcontainers.containers.PostgreSQLContainer
-import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
-import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
-import org.testcontainers.utility.DockerImageName
 
-@Testcontainers
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("integration-test")
-@AutoConfigureWebTestClient
-class ArtistControllerTest(
-    @Autowired val client: WebTestClient,
-    @Autowired val songRepository: SongRepository,
-    @Autowired val artistRepository: ArtistRepository,
-) {
+class ArtistControllerTest : AbstractIntegrationTest() {
     private lateinit var artistMap: Map<String, Long>
+    @Autowired
+    private lateinit var client: WebTestClient
+    @Autowired
+    private lateinit var songRepository: SongRepository
+    @Autowired
+    private lateinit var artistRepository: ArtistRepository
 
     @BeforeEach
     fun createUser() {
@@ -97,31 +84,30 @@ class ArtistControllerTest(
             .jsonPath("$.flickrPhotos[0].flickrId").isEqualTo("1")
     }
 
-    companion object {
-
-        @Container
-        @JvmStatic
-        val postgresContainer: PostgreSQLContainer<*> = PostgreSQLContainer(DockerImageName.parse("postgres:13.1"))
-            .withExposedPorts(5432)
-            .waitingFor(HttpWaitStrategy().forPort(5432))
-            .withUsername("vil_app")
-            .withPassword("secret")
-
-    }
-
-    internal class Initializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
-        override fun initialize(configurableApplicationContext: ConfigurableApplicationContext) {
-            postgresContainer.start()
-
-            TestPropertyValues.of(
-                "voornameninliedjes.datasource.application.host=${postgresContainer.host}",
-                "voornameninliedjes.datasource.application.port=${postgresContainer.firstMappedPort}",
-                "voornameninliedjes.datasource.migration.host=${postgresContainer.host}",
-                "voornameninliedjes.datasource.migration.port=${postgresContainer.firstMappedPort}",
-                "voornameninliedjes.datasource.migration.username=${postgresContainer.username}",
-                "voornameninliedjes.datasource.migration.password=${postgresContainer.password}"
-            ).applyTo(configurableApplicationContext.environment)
-        }
-    }
+//    companion object {
+//
+//        @Container
+//        @JvmStatic
+//        val postgresContainer: PostgreSQLContainer<*> = PostgreSQLContainer(DockerImageName.parse("postgres:13.1"))
+//            .withExposedPorts(5432)
+////            .waitingFor(HttpWaitStrategy().forPort(5432))
+//            .withUsername("vil_app")
+//            .withPassword("secret")
+//            .withDatabaseName("voornameninliedjes")
+//
+//        @JvmStatic
+//        @DynamicPropertySource
+//        fun registerDynamicProperties(registry: DynamicPropertyRegistry) {
+//
+//            registry.add("voornameninliedjes.datasource.application.host", postgresContainer::getHost)
+//            registry.add("voornameninliedjes.datasource.application.port", { postgresContainer.getMappedPort(5432) })
+//
+//            registry.add("voornameninliedjes.datasource.migration.host", postgresContainer::getHost)
+//            registry.add("voornameninliedjes.datasource.migration.port", { postgresContainer.getMappedPort(5432) })
+//
+//            registry.add("voornameninliedjes.datasource.migration.username", postgresContainer::getUsername)
+//            registry.add("voornameninliedjes.datasource.migration.password", postgresContainer::getPassword)
+//        }
+//    }
 }
 
