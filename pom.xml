@@ -22,6 +22,7 @@
         <java.version>17</java.version>
         <kotlin.version>1.8.0</kotlin.version>
         <kotlin.allopen.version>1.7.22</kotlin.allopen.version>
+        <jacoco.plugin.version>0.8.8</jacoco.plugin.version>
     </properties>
 
     <dependencies>
@@ -196,6 +197,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
