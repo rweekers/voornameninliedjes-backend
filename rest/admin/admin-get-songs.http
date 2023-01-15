@@ -1,0 +1,2 @@
+GET {{host}}/songs
+Authorization: Basic {{username}} {{password}}
