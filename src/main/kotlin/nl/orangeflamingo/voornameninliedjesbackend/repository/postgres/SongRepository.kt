@@ -39,8 +39,8 @@ interface SongRepository : CrudRepository<Song, Long> {
     fun updateAllSongStatus(@Param("status") status: SongStatus)
 
     @Query("select s.* from songs s\n" +
-            "inner join songs_artists sa on s.id = sa.song\n" +
-            "inner join artists a on artist = a.id\n" +
+            "inner join songs_artists sa on s.id = sa.songs\n" +
+            "inner join artists a on artists = a.id\n" +
             "where lower(replace(replace(a.name, '?', ''), '/', '')) = lower(replace(replace(:artist, '?', ''), '/', ''))\n" +
             "and lower(replace(replace(s.title, '?', ''), '#', '')) = lower(replace(replace(:title, '?', ''), '#', ''))")
     fun findByArtistAndTitle(@Param("artist") artist: String, @Param("title") title: String): Optional<Song>
