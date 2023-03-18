@@ -8,13 +8,8 @@ import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistFlickrPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistWikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import org.slf4j.LoggerFactory
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
-import java.util.Optional
+import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/api")
@@ -23,20 +18,17 @@ class ArtistController(private val artistRepository: ArtistRepository) {
     private val log = LoggerFactory.getLogger(ArtistController::class.java)
 
     @GetMapping("/artists/{id}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     fun getArtistById(@PathVariable id: Long): Optional<ArtistDto> {
         log.info("Requesting artist with id $id...")
         return artistRepository.findById(id).map { convertToDto(it) }
     }
 
     @GetMapping("/artists", params = ["name"])
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     fun getArtistsByName(@RequestParam(name = "name") name: String): List<ArtistDto> {
         return artistRepository.findByNameIgnoreCase(name).map { convertToDto(it) }
     }
 
-    @GetMapping("/artists")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
+    @GetMapping(value = ["/artists", "/artists/"])
     fun getArtists(): List<ArtistDto> {
         log.info("Requesting all artists...")
         return artistRepository.findAllOrderedByName().map { convertToDto(it) }

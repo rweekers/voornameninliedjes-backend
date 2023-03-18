@@ -30,7 +30,14 @@ voornameninliedjes:
     interval: 3000
   images:
     path: images
-
+  cors:
+    domains:
+      allowed:
+        api:
+          - https://www.voornameninliedjes.nl
+          - https://voornameninliedjes.nl
+        admin:
+          - https://beheer.voornameninliedjes.nl
 jobs:
   enabled: true
   enrichSong:
@@ -39,7 +46,7 @@ jobs:
     cron: 0 50 2 1 * *
 
 # These will be transferred to System properties, see https://docs.spring.io/spring-boot/docs/2.1.4.RELEASE/reference/html/boot-features-logging.html#boot-features-custom-log-configuration
-# These systems properties are uses in log4j2 configuration
+# These systems properties are used in log4j2 configuration
 logging:
   file:
     path: logs

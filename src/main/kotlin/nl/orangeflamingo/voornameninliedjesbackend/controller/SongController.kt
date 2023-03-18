@@ -4,20 +4,8 @@ import com.fasterxml.jackson.annotation.JsonView
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
-import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistNameStatistics
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.PhotoDetail
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongNameStatistics
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWikimediaPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrLicenseDto
-import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrOwnerDto
-import nl.orangeflamingo.voornameninliedjesbackend.dto.PhotoDto
-import nl.orangeflamingo.voornameninliedjesbackend.dto.SongDto
-import nl.orangeflamingo.voornameninliedjesbackend.dto.SourceDto
-import nl.orangeflamingo.voornameninliedjesbackend.dto.WikimediaPhotoDto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.*
+import nl.orangeflamingo.voornameninliedjesbackend.dto.*
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistNameStatisticsRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongNameStatisticsRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistNotFoundException
@@ -27,16 +15,9 @@ import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
-import java.util.Optional
+import java.util.*
 
 
 @RestController
@@ -64,7 +45,6 @@ class SongController(
     }
 
     @GetMapping("/songs/{artist}/{title}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     fun getSongByArtistAndTitle(@PathVariable artist: String, @PathVariable title: String): Mono<SongDto> {
         return if (useCache) {
             log.info("Requesting song with artist $artist and title $title from cache...")
@@ -85,8 +65,7 @@ class SongController(
             }
     }
 
-    @GetMapping("/songs")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
+    @GetMapping(value = ["/songs/", "/songs"])
     @JsonView(Views.Summary::class)
     fun getSongs(@RequestParam("first-characters") firstCharacters: Optional<List<String>>): List<SongDto> {
         return firstCharacters.map { firstCharacter ->
@@ -98,7 +77,6 @@ class SongController(
     }
 
     @GetMapping("/songs", params = ["first-character"])
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     fun getSongsWithNameStartingWith(
         @RequestParam(name = "first-character") firstCharacter: String
     ): List<SongDto> {
@@ -107,13 +85,11 @@ class SongController(
     }
 
     @GetMapping("/song-name-statistics")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     fun getSongNameStatistics(): List<SongNameStatistics> {
         return songNameStatisticsRepository.getCountPerName()
     }
 
     @GetMapping("/artist-name-statistics")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://voornameninliedjes.nl"])
     fun getArtistNameStatistics(): List<ArtistNameStatistics> {
         return artistNameStatisticsRepository.getCountPerArtistname()
     }

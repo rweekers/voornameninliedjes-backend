@@ -9,16 +9,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
-import java.util.Optional
+import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/admin")
@@ -26,15 +18,13 @@ class UserController(private val userRepository: UserRepository, private val pas
     private val log = LoggerFactory.getLogger(UserController::class.java)
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
-    @GetMapping("/users")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
+    @GetMapping(value = ["/users", "/users/"])
     fun getUsers(): List<UserDto> {
         log.info("Requesting all users")
         return userRepository.findAll().map { convertToDto(it) }
     }
 
     @PostMapping("/authenticate")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun authenticate(@RequestBody user: UserDto): ResponseEntity<UserDto> {
         log.info("Authenticating user ${user.username}")
         val dbUser = userRepository.findByUsername(username = user.username)
@@ -67,15 +57,14 @@ class UserController(private val userRepository: UserRepository, private val pas
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @GetMapping("/users/{id}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun getUserById(@PathVariable("id") id: String): UserDto {
         log.info("Requesting user with id $id")
-        return userRepository.findById(id).map { convertToDto(it) }.orElseThrow { UserNotFoundException("User with id $id not found") }
+        return userRepository.findById(id).map { convertToDto(it) }
+            .orElseThrow { UserNotFoundException("User with id $id not found") }
     }
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @PostMapping("/users")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun newUser(@RequestBody newUser: UserDto): User {
         log.info("Requesting creation of new user ${newUser.username}")
         val user = convert(newUser)
@@ -84,7 +73,6 @@ class UserController(private val userRepository: UserRepository, private val pas
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @DeleteMapping("/users/{userId}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun deleteUser(@PathVariable userId: String) {
         log.info("Deleting user with id $userId")
         userRepository.deleteById(userId)

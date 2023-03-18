@@ -1,47 +1,18 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
-import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
-import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistLogEntry
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLastFmTag
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLogEntry
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongSource
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWikimediaPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.*
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminLogEntry
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSongDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSourceDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminWikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
-import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistNotFoundException
-import nl.orangeflamingo.voornameninliedjesbackend.service.ImagesEnrichmentService
-import nl.orangeflamingo.voornameninliedjesbackend.service.ImagesService
-import nl.orangeflamingo.voornameninliedjesbackend.service.LastFmEnrichmentService
-import nl.orangeflamingo.voornameninliedjesbackend.service.NotFoundException
-import nl.orangeflamingo.voornameninliedjesbackend.service.SongNotFoundException
-import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
-import nl.orangeflamingo.voornameninliedjesbackend.service.WikipediaEnrichmentService
+import nl.orangeflamingo.voornameninliedjesbackend.service.*
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CachePut
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.time.Instant
 
 @RestController
@@ -65,9 +36,8 @@ class SongAdminController(
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/songs")
+    @GetMapping(value = ["/songs", "/songs/"])
     @CachePut(value = ["songs"])
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun getSongs(): List<AdminSongDto> {
         return songService.findAll()
             .map { convertToDto(it) }
@@ -76,7 +46,6 @@ class SongAdminController(
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/songs", params = ["name"])
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun getSongsByName(@RequestParam(name = "name") name: String): List<AdminSongDto> {
         return songService.findByName(name)
             .map { convertToDto(it) }
@@ -85,7 +54,6 @@ class SongAdminController(
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/songs", params = ["first-character"])
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun getSongsWithNameStartingWith(
         @RequestParam(name = "first-character") firstCharacter: String,
         @RequestParam(
@@ -99,14 +67,12 @@ class SongAdminController(
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/songs/{id}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun getSongById(@PathVariable("id") id: Long): AdminSongDto {
         return convertToDto(songService.findById(id))
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/{id}/download")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun downloadImageForSongById(
         @PathVariable("id") id: Long,
         @RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean
@@ -117,7 +83,6 @@ class SongAdminController(
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/{id}/blur")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun blurImageForSongById(
         @PathVariable("id") id: Long,
         @RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean
@@ -128,7 +93,6 @@ class SongAdminController(
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/blur-all")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun blurImagesForSongs(
         @RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean
     ) {
@@ -137,14 +101,12 @@ class SongAdminController(
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/download-all")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun downloadImagesForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
         imagesService.downloadImages(updateAll)
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/{user}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun newSong(@RequestBody newSong: AdminSongDto, @PathVariable user: String): AdminSongDto {
         log.info("Saving song with title ${newSong.title} and artist ${newSong.artist}")
         val savedSong = songService.newSong(convertToDomain(newSong), user)
@@ -155,7 +117,6 @@ class SongAdminController(
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/songs/{user}/{id}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun replaceSong(@RequestBody song: AdminSongDto, @PathVariable user: String, @PathVariable id: Long): AdminSongDto {
         assert(song.id?.toLong() == id)
         val songFromDb = songRepository.findById(id)
@@ -168,7 +129,6 @@ class SongAdminController(
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/{id}/enrich-images")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun enrichImageForSongById(@PathVariable("id") id: Long) {
         val song = songRepository.findById(id).orElseThrow { SongNotFoundException("Song with id $id not found") }
         imagesEnrichmentService.updateArtistImageForSong(song)
@@ -176,28 +136,24 @@ class SongAdminController(
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/enrich-images")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun enrichImagesForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
         imagesEnrichmentService.enrichImagesForSongs(updateAll)
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/enrich-wikipedia")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun enrichWikipediaForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
         wikipediaEnrichmentService.enrichWikipediaForSongs(updateAll)
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/enrich-lastfm")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun enrichLastFmInfoForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
         lastFmEnrichmentService.enrichLastFmInfoForSongs(updateAll)
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/{user}/{id}/{flickrId}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun addFlickrPhotoForSong(@PathVariable user: String, @PathVariable id: Long, @PathVariable flickrId: String) {
         val songOptional = songRepository.findById(id)
         if (songOptional.isPresent) {
@@ -220,7 +176,6 @@ class SongAdminController(
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/artists/{user}/{id}/{flickrId}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun addFlickrPhoto(@PathVariable user: String, @PathVariable id: Long, @PathVariable flickrId: String) {
         val artist =
             artistRepository.findById(id).orElseThrow { ArtistNotFoundException("Artist with id $id not found") }
@@ -240,7 +195,6 @@ class SongAdminController(
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @DeleteMapping("/songs")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun deleteSongs() {
         val count = songRepository.count()
         songRepository.updateAllSongStatus(SongStatus.TO_BE_DELETED)
@@ -249,7 +203,6 @@ class SongAdminController(
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @DeleteMapping("/songs/{id}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun deleteSongById(@PathVariable id: Long) {
         songRepository.deleteById(id)
         log.info("song $id deleted")
