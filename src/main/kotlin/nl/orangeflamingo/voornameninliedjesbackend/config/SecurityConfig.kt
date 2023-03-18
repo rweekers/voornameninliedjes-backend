@@ -31,10 +31,15 @@ class SecurityConfig(
         authenticationManagerBuilder.authenticationProvider(authenticationProvider())
 
         http
+            .cors().and()
             .csrf().disable()
             .authorizeHttpRequests { requests ->
                 requests
-                    .requestMatchers("/api/**", "/beta/**", "/admin/authenticate").permitAll()
+                    .requestMatchers(
+                        "/api/**",
+                        "/beta/**",
+                        "/admin/authenticate"
+                    ).permitAll()
                     .anyRequest().authenticated()
             }
             .httpBasic()

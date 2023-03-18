@@ -1,0 +1,22 @@
+version: '3'
+services:
+  db:
+    image: postgres:14.6-bullseye
+    restart: always
+    environment:
+      POSTGRES_USER: vil_app
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: voornameninliedjes
+    ports:
+      - "5432:5432"
+  app:
+    image: rweekers/voornameninliedjes-backend:1.2.0
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      voornameninliedjes.datasource.application.host: db
+      voornameninliedjes.datasource.migration.host: db
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db

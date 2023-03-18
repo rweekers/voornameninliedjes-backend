@@ -12,14 +12,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRep
 import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistService
 import org.slf4j.LoggerFactory
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/admin")
@@ -29,14 +22,12 @@ class ArtistAdminController(private val artistRepository: ArtistRepository, priv
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/artists", params = ["name"])
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun getArtistsByName(@RequestParam(name = "name") name: String): List<AdminArtistDto> {
         return artistService.findByName(name).map { convertToDto(it) }
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/artists/{id}", params = ["name"])
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun updateArtistName(@PathVariable id: Long, @RequestParam(name = "name") name: String) {
         val artistOptional = artistRepository.findById(id)
         if (artistOptional.isPresent) {
@@ -50,7 +41,6 @@ class ArtistAdminController(private val artistRepository: ArtistRepository, priv
 
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @DeleteMapping("/artists/{id}")
-    @CrossOrigin(origins = ["http://localhost:3000", "https://beheer.voornameninliedjes.nl"])
     fun deleteArtistById(@PathVariable id: Long) {
         artistRepository.deleteById(id)
         log.info("artist $id deleted")
