@@ -1,14 +1,15 @@
 package nl.orangeflamingo.voornameninliedjesbackend.client
 
-import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmAlbum
-import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmArtist
-import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmError
-import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmResponse
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmResponseDto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTag
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmResponse
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTrack
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmArtist
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmAlbum
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTag
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmWiki
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmError
 import nl.orangeflamingo.voornameninliedjesbackend.service.LastFmException
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
@@ -23,6 +24,7 @@ class LastFmHttpApiClient(
 
     private val lastFmKey = "fbfbf9c47ff8bcf4642ece8c7de2305a"
 
+    @RegisterReflectionForBinding(LastFmResponseDto::class)
     override fun getTrack(artist: String, title: String): Mono<LastFmResponse> {
         return lastFmWebClient.get().uri(
             "?method=track.getInfo&api_key=$lastFmKey&artist={artist}&track={title}&format=json",

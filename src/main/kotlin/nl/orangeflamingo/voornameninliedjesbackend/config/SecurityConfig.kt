@@ -4,8 +4,10 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepos
 import nl.orangeflamingo.voornameninliedjesbackend.service.MyUserPrincipal
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -47,6 +49,11 @@ class SecurityConfig(
             .and()
             .authenticationManager(authenticationManagerBuilder.build())
         return http.build()
+    }
+
+    @Bean
+    fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager {
+        return authenticationConfiguration.authenticationManager
     }
 
     private fun userDetailsService(): UserDetailsService {

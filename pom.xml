@@ -7,12 +7,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.5</version>
+        <version>3.0.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>nl.orangeflamingo</groupId>
     <artifactId>voornameninliedjes-backend</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
     <name>Voornameninliedjes Backend</name>
     <description>Backend service vor voornamen in liedjes</description>
     <url>https://voornameninliedjes.nl</url>
@@ -20,7 +20,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
+        <spring.profiles.active>jvm</spring.profiles.active>
         <kotlin.version>1.8.0</kotlin.version>
+        <kotlinx.serialization.version>1.5.0</kotlinx.serialization.version>
         <kotlin.allopen.version>1.8.0</kotlin.allopen.version>
         <jacoco.plugin.version>0.8.8</jacoco.plugin.version>
     </properties>
@@ -45,16 +47,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -102,11 +94,15 @@
             <version>1.15.3</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-serialization-json-jvm</artifactId>
+            <version>${kotlinx.serialization.version}</version>
         </dependency>
 
         <!-- Test dependencies -->
@@ -192,9 +188,13 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <image>
-                        <name>rweekers/${project.artifactId}:${project.version}</name>
+                        <name>rweekers/${project.artifactId}:${project.version}-${project.suffix}</name>
+                        <env>
+                            <BP_NATIVE_IMAGE>${bp.native.image}</BP_NATIVE_IMAGE>
+                        </env>
                     </image>
                 </configuration>
+
             </plugin>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -252,4 +252,34 @@
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
     </build>
+
+    <profiles>
+        <profile>
+            <id>native</id>
+            <properties>
+                <bp.native.image>true</bp.native.image>
+                <project.suffix>native</project.suffix>
+                <spring.profiles.active>native</spring.profiles.active>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <bp.native.image>false</bp.native.image>
+                <project.suffix>jvm</project.suffix>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>
