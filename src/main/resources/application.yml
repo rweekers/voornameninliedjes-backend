@@ -2,6 +2,8 @@ spring:
   output:
     ansi:
       enabled: always
+  profiles:
+    active: @spring.profiles.active@
   flyway:
     # Explicit configuration to easily add development data in different profile
     locations: classpath:db/migration/{vendor}/prod
@@ -45,8 +47,8 @@ jobs:
   updateSong:
     cron: 0 50 2 1 * *
 
-# These will be transferred to System properties, see https://docs.spring.io/spring-boot/docs/2.1.4.RELEASE/reference/html/boot-features-logging.html#boot-features-custom-log-configuration
-# These systems properties are used in log4j2 configuration
+# These will be transferred to System properties, see https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.logging.custom-log-configuration
+# These systems properties are used in logging configuration
 logging:
   file:
     path: logs
