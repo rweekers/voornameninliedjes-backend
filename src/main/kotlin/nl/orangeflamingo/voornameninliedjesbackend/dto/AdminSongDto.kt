@@ -1,8 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.dto
 
-import com.fasterxml.jackson.annotation.JsonFormat
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.*
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
 import java.time.Instant
 
@@ -51,15 +49,15 @@ data class AdminSongDto(
 
     val hasDetails: Boolean = false,
 
-    val artistWikimediaPhotos: Set<AdminWikimediaPhotoDto> = setOf(),
+    val artistWikimediaPhotos: List<AdminWikimediaPhotoDto> = listOf(),
 
-    val songWikimediaPhotos: Set<AdminWikimediaPhotoDto> = setOf(),
+    val songWikimediaPhotos: List<AdminWikimediaPhotoDto> = listOf(),
 
-    val flickrPhotos: Set<String> = setOf(),
+    val flickrPhotos: List<String> = listOf(),
 
-    val sources: Set<AdminSourceDto> = setOf(),
+    val sources: List<AdminSourceDto> = listOf(),
 
-    val tags: Set<LastFmTagDto> = setOf(),
+    val tags: List<LastFmTagDto> = listOf(),
 
     @JsonIgnoreProperties(allowGetters = true)
     val logs: List<AdminLogEntry> = listOf()

@@ -1,13 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
-import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistRef
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWikimediaPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.TestSong
-import nl.orangeflamingo.voornameninliedjesbackend.domain.User
-import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
+import nl.orangeflamingo.voornameninliedjesbackend.domain.*
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSongDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminWikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
@@ -194,7 +188,7 @@ class SongAdminControllerTest : AbstractIntegrationTest() {
                         artist = "newArtist",
                         title = "newTitle with newName",
                         name = "newName",
-                        songWikimediaPhotos = setOf(
+                        songWikimediaPhotos = listOf(
                             AdminWikimediaPhotoDto(
                                 url = "https://testurl.doesnotexist",
                                 attribution = "some test attribution"
@@ -233,7 +227,7 @@ class SongAdminControllerTest : AbstractIntegrationTest() {
                         artist = "newArtist",
                         title = "newTitle with newName",
                         name = "newName",
-                        songWikimediaPhotos = setOf(
+                        songWikimediaPhotos = listOf(
                             AdminWikimediaPhotoDto(
                                 url = "https://testurl.doesnotexist",
                                 attribution = "some test attribution"
