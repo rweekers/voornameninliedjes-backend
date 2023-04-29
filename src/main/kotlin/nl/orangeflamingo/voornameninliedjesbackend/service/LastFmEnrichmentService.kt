@@ -52,7 +52,6 @@ class LastFmEnrichmentService @Autowired constructor(
             lastFmTrack.subscribe({
                 when (it) {
                     is LastFmTrack -> {
-                        log.debug("Enrich ${artist.name} - ${song.title} with ${it}")
                         song.mbid = it.mbid
                         song.lastFmUrl = it.url
                         song.wikiSummaryEn = it.wiki?.summary.html2md()

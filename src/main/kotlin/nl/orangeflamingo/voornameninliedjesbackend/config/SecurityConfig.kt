@@ -40,6 +40,7 @@ class SecurityConfig(
                     .requestMatchers(
                         "/api/**",
                         "/beta/**",
+                        "/images/**",
                         "/admin/authenticate"
                     ).permitAll()
                     .anyRequest().authenticated()

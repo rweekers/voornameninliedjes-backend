@@ -1,6 +1,5 @@
 package nl.orangeflamingo.voornameninliedjesbackend.client
 
-import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.FlickrApiLicense
 import nl.orangeflamingo.voornameninliedjesbackend.domain.FlickrApiLicenses
 import nl.orangeflamingo.voornameninliedjesbackend.domain.FlickrApiOwner

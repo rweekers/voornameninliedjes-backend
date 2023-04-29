@@ -264,11 +264,11 @@ class SongAdminController(
             status = song.status.code,
             remarks = song.remarks,
             hasDetails = song.hasDetails,
-            artistWikimediaPhotos = song.artistWikimediaPhotos.map { convertToDto(it) }.toSet(),
-            songWikimediaPhotos = song.songWikimediaPhotos.map { convertToDto(it) }.toSet(),
-            flickrPhotos = song.flickrPhotos.map { it.flickrId }.toSet(),
-            sources = song.sources.map { convertToDto(it) }.toSet(),
-            tags = song.tags.map { convertToDto(it) }.toSet(),
+            artistWikimediaPhotos = song.artistWikimediaPhotos.map { convertToDto(it) },
+            songWikimediaPhotos = song.songWikimediaPhotos.map { convertToDto(it) },
+            flickrPhotos = song.flickrPhotos.map { it.flickrId },
+            sources = song.sources.map { convertToDto(it) },
+            tags = song.tags.map { convertToDto(it) },
             logs = song.logEntries.map { convertToDto(it) }
         )
     }

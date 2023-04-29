@@ -1,0 +1,47 @@
+### Get all songs
+GET {{adminHost}}/songs
+Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+### Create new song
+POST {{adminHost}}/songs/{{username}}
+Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+    "artist": "{{artist}}",
+    "title": "{{title}}",
+    "name": "{{name}}",
+    "status": "{{status}}"
+}
+
+### Update song
+PUT {{adminHost}}/songs/{{username}}/1763
+Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+  "id": "1763",
+  "artist": "Nick & Simon",
+  "title": "Rosanne",
+  "name": "Rosanne",
+  "artistImage": "https://ak9.picdn.net/shutterstock/videos/24149239/thumb/1.jpg",
+  "artistLastFmUrl": "https://www.last.fm/music/Nick+&+Simon",
+  "background": "",
+  "wikipediaPage": "",
+  "youtube": "5o0vFWBsMe0",
+  "spotify": "",
+  "status": "IN_PROGRESS",
+  "hasDetails": false,
+  "artistWikimediaPhotos": [
+    {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Nickensimon.jpg",
+      "attribution": "Foto: M.F. Naaldenberg, Attribution, via Wikimedia Commons"
+    }
+  ],
+  "songWikimediaPhotos": [],
+  "flickrPhotos": [],
+  "sources": [],
+  "tags": [],
+  "logs": []
+}
