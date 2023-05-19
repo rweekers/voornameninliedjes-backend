@@ -1,10 +1,10 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
+import nl.orangeflamingo.voornameninliedjesbackend.client.ImageApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
-import nl.orangeflamingo.voornameninliedjesbackend.utils.Utils
 import nl.orangeflamingo.voornameninliedjesbackend.utils.clean
 import nl.orangeflamingo.voornameninliedjesbackend.utils.removeDiacritics
 import org.slf4j.LoggerFactory
@@ -15,20 +15,16 @@ import reactor.core.publisher.Flux
 import reactor.core.scheduler.Schedulers
 import java.awt.Image
 import java.awt.image.BufferedImage
-import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.io.InputStream
 import java.time.Duration
-import java.util.Base64
-import javax.imageio.ImageIO
-import kotlin.math.roundToInt
 
 
 @Service
 class ImagesService @Autowired constructor(
     private val songRepository: SongRepository,
     private val artistRepository: ArtistRepository,
-    private val fileService: FileService
+    private val fileService: FileService,
+    private val imageApiClient: ImageApiClient
 ) {
 
     private val log = LoggerFactory.getLogger(ImagesService::class.java)
@@ -103,26 +99,16 @@ class ImagesService @Autowired constructor(
         try {
             log.info("[image blur] Downloading image ${song.artistImage} for ${artist.name} - ${song.title}")
             if (overwrite || song.blurredImage == null) {
-                val imageUrl = Utils.resourceAsInputStream(song.artistImage)
-                val inputS: InputStream = imageUrl.openStream()
-                val input = ImageIO.read(inputS)
-
-                // scale image to max 10x10
-                val targetWidth = if (input.width >= input.height) maxDimensionBlur else ((input.width.toDouble() / input.height) * maxDimensionBlur).roundToInt()
-                val targetHeight = if (input.height >= input.width) maxDimensionBlur else ((input.height.toDouble() / input.width) * maxDimensionBlur).roundToInt()
-
-                val output = resizeImage(input, targetWidth, targetHeight)
-                val baos = ByteArrayOutputStream()
-                ImageIO.write(output, "png", baos)
-                val bytes: ByteArray = baos.toByteArray()
-                val encodedString: String = Base64.getEncoder().encodeToString(bytes)
-                songRepository.save(song.copy(blurredImage = encodedString))
-                log.info("[image blur] Written blur string for ${artist.name} - ${song.title}")
+                imageApiClient.createBlurString(song.artistImage, maxDimensionBlur, maxDimensionBlur)
+                    .subscribeOn(Schedulers.boundedElastic())
+                    .subscribe { encodedString -> songRepository.save(song.copy(blurredImage = encodedString))
+                        log.info("[image blur] Written blur string for ${artist.name} - ${song.title}") }
             } else {
                 log.info("[image blur] Blur already known for ${artist.name} - ${song.title}")
             }
         } catch (e: IOException) {
             log.error(
+                // TODO check exception handling on Mono
                 "[image blur] Could not read or write image for ${artist.name} - ${song.title} due to error with message ${e.message}"
             )
         }

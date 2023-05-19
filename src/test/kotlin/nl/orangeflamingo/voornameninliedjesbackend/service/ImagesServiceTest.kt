@@ -1,5 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
+import nl.orangeflamingo.voornameninliedjesbackend.client.ImageApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistRef
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
@@ -10,13 +11,14 @@ import org.apache.commons.codec.binary.Base64
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.after
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
+import reactor.core.publisher.Mono
 import java.io.IOException
 import java.util.Optional
 
@@ -25,10 +27,12 @@ class ImagesServiceTest {
     private val mockSongRepository = mock(SongRepository::class.java)
     private val mockArtistRepository = mock(ArtistRepository::class.java)
     private val mockFileService = mock(FileService::class.java)
+    private val mockImageAptClient = mock(ImageApiClient::class.java)
     private val imagesService = ImagesService(
         mockSongRepository,
         mockArtistRepository,
-        mockFileService
+        mockFileService,
+        mockImageAptClient
     )
     private val songWithoutArtistImage = Song(
         id = 1,
@@ -84,7 +88,10 @@ class ImagesServiceTest {
 
     @Test
     fun `test blur image for song`() {
-        imagesService.blurImageForSong(song.copy(artistImage = "classpath:images/test.png"))
+        val imageUrl = "https://theimage"
+        val blurredImage = "blur"
+        `when`(mockImageAptClient.createBlurString(imageUrl, 10, 10)).thenReturn(Mono.just(blurredImage))
+        imagesService.blurImageForSong(song.copy(artistImage = imageUrl))
         verify(mockSongRepository).save(
             argThat { song -> Base64.isBase64(song.blurredImage) }
         )
