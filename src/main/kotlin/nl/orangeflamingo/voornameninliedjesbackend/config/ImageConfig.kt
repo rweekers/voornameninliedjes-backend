@@ -23,7 +23,7 @@ class ImageConfig {
                     HttpClient.create().followRedirect(true)
                 )
             )
-            .baseUrl("https://images.voornameninliedjes.nl")
+            .baseUrl("https://images2.voornameninliedjes.nl")
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build()
     }
