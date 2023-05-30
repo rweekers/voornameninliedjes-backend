@@ -75,7 +75,7 @@ class ImagesService @Autowired constructor(
                 "${artist.name}_${song.title}$extension".removeDiacritics().replace(" ", "-").clean().lowercase()
             val localUrl = "$imagesPath/$fileName"
             if (overwrite || !fileService.fileExists(localUrl)) {
-                imageApiClient.downloadImage(song.artistImage, localUrl)
+                imageApiClient.downloadImage(song.artistImage, fileName)
                     .subscribeOn(Schedulers.boundedElastic())
                     .subscribe { encodedString -> songRepository.save(song.copy(blurredImage = encodedString))
                         log.info("[image download] Downloaded image for ${artist.name} - ${song.title} from ${song.artistImage} as $localUrl")
