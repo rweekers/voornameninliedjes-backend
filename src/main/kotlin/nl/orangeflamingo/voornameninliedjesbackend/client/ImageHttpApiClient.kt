@@ -17,10 +17,10 @@ class ImageHttpApiClient(@Autowired val imageWebClient: WebClient) : ImageApiCli
             .bodyToMono(String::class.java)
     }
 
-    override fun downloadImage(imageUrl: String, filename: String): Mono<String> {
+    override fun downloadImage(imageUrl: String, filename: String, overwrite: Boolean): Mono<String> {
         return imageWebClient
             .post()
-            .uri("?url=$imageUrl&filename=$filename")
+            .uri("?url=$imageUrl&filename=$filename&overwrite=$overwrite")
             .retrieve()
             .bodyToMono(String::class.java)
     }

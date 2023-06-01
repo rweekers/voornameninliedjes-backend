@@ -7,7 +7,7 @@ class FakeImageApiClient: ImageApiClient {
         return Mono.just("blurredImage")
     }
 
-    override fun downloadImage(artistImage: String, localPath: String): Mono<String> {
+    override fun downloadImage(artistImage: String, localPath: String, overwrite: Boolean): Mono<String> {
         return Mono.just("downloaded image")
     }
 }
