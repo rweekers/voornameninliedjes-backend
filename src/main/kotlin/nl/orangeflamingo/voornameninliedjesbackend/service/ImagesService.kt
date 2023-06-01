@@ -73,13 +73,15 @@ class ImagesService @Autowired constructor(
             val extension = song.artistImage.substring(song.artistImage.lastIndexOf("."))
             val fileName =
                 "${artist.name}_${song.title}$extension".removeDiacritics().replace(" ", "-").clean().lowercase()
+
+            imageApiClient.downloadImage(song.artistImage, fileName, overwrite)
+                .subscribeOn(Schedulers.boundedElastic())
+                .subscribe { encodedString -> songRepository.save(song.copy(blurredImage = encodedString))
+                    log.info("[image download] Downloaded image for ${artist.name} - ${song.title} from ${song.artistImage} as $fileName")
+                }
+
             val localUrl = "$imagesPath/$fileName"
             if (overwrite || !fileService.fileExists(localUrl)) {
-                imageApiClient.downloadImage(song.artistImage, fileName)
-                    .subscribeOn(Schedulers.boundedElastic())
-                    .subscribe { encodedString -> songRepository.save(song.copy(blurredImage = encodedString))
-                        log.info("[image download] Downloaded image for ${artist.name} - ${song.title} from ${song.artistImage} as $localUrl")
-                    }
                 fileService.writeToDisk(song.artistImage, localUrl)
                 songRepository.save(song.copy(localImage = fileName))
                 log.info("[image download] Written file for ${artist.name} - ${song.title}")
