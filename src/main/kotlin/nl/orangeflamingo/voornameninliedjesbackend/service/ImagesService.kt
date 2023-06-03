@@ -16,6 +16,8 @@ import reactor.core.scheduler.Schedulers
 import java.awt.Image
 import java.awt.image.BufferedImage
 import java.io.IOException
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.time.Duration
 
 
@@ -74,7 +76,8 @@ class ImagesService @Autowired constructor(
             val fileName =
                 "${artist.name}_${song.title}$extension".removeDiacritics().replace(" ", "-").clean().lowercase()
 
-            imageApiClient.downloadImage(song.artistImage, fileName, overwrite)
+            val encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8)
+            imageApiClient.downloadImage(song.artistImage, encodedFileName, overwrite)
                 .subscribeOn(Schedulers.boundedElastic())
                 .subscribe { encodedString -> songRepository.save(song.copy(blurredImage = encodedString))
                     log.info("[image download] Downloaded image for ${artist.name} - ${song.title} from ${song.artistImage} as $fileName")

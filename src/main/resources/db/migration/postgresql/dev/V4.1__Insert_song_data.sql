@@ -55,6 +55,15 @@ insert into artist_wikimedia_photos(url, attribution, artist_id)
 values ('https://upload.wikimedia.org/wikipedia/commons/f/ff/Sting2.jpg', 'Rita Molnár, CC BY-SA 2.5 <https://creativecommons.org/licenses/by-sa/2.5>, via Wikimedia Commons', (select id from artists where name = 'The Police'));
 
 insert into artists(name)
+values ('Iggy Pop & Kate Pierson');
+insert into songs(title, name, status, background, youtube, spotify)
+values ('Candy', 'Candy', 'SHOW', 'Background on Candy', '6bLOjmY--TA', '6sFpmdsk4UDMcDWdy4T1Kc');
+insert into songs_artists(song, artist, original_artist)
+values ((select id from songs where title = 'Candy'), (select id from artists where name = 'Iggy Pop & Kate Pierson'), true);
+insert into artist_wikimedia_photos(url, attribution, artist_id)
+values ('https://upload.wikimedia.org/wikipedia/commons/9/9f/Iggy_%26_The_Stooges_%40_Bsf_2012_%287855862360%29.jpg', 'Eddy BERTHIER from Brussels, Belgium, CC BY 2.0 <https://creativecommons.org/licenses/by/2.0>, via Wikimedia Commons', (select id from artists where name = 'Iggy Pop & Kate Pierson'));
+
+insert into artists(name)
 values ('Neil Diamond');
 insert into songs(title, name, status, background, youtube, spotify)
 values ('Sweet Caroline', 'Caroline', 'SHOW', 'Background on Sweet Caroline', '1vhFnTjia_I', '62AuGbAkt8Ox2IrFFb8GKV');
