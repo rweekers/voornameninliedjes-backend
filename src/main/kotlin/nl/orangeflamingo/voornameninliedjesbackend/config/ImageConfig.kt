@@ -2,6 +2,7 @@ package nl.orangeflamingo.voornameninliedjesbackend.config
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.ImageApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.client.ImageHttpApiClient
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -15,6 +16,9 @@ import reactor.netty.http.client.HttpClient
 @Profile("!integration-test")
 class ImageConfig {
 
+    @Value("\${voornameninliedjes.images.service.path}")
+    private val imagesServicePath: String = "https://images.voornameninliedjes.nl"
+
     @Bean
     fun imageWebClient(): WebClient {
         return WebClient.builder()
@@ -23,7 +27,7 @@ class ImageConfig {
                     HttpClient.create().followRedirect(true)
                 )
             )
-            .baseUrl("https://images2.voornameninliedjes.nl")
+            .baseUrl(imagesServicePath)
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build()
     }

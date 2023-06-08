@@ -6,5 +6,7 @@ interface ImageApiClient {
 
     fun createBlurString(imageUrl: String, width: Int, height: Int): Mono<String>
 
-    fun downloadImage(artistImage: String, localPath: String, overwrite: Boolean): Mono<String>
+    fun getDimensions(imageUrl: String): Mono<Pair<Int, Int>>
+
+    fun downloadImage(imageUrl: String, localPath: String, overwrite: Boolean): Mono<String>
 }

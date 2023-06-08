@@ -1,6 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.ImageApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistRef
@@ -24,10 +25,12 @@ class ImagesEnrichmentServiceTest {
     private val mockSongRepository = mock(SongRepository::class.java)
     private val mockArtistRepository = mock(ArtistRepository::class.java)
     private val mockFlickrApiClient = mock(FlickrApiClient::class.java)
+    private val mockImageApiClient = mock(ImageApiClient::class.java)
     private val imagesEnrichmentService = ImagesEnrichmentService(
         mockSongRepository,
         mockArtistRepository,
-        mockFlickrApiClient
+        mockFlickrApiClient,
+        mockImageApiClient
     )
     private val song = Song(
         id = 1,
