@@ -32,6 +32,8 @@ voornameninliedjes:
     interval: 3000
   images:
     path: images
+    service:
+      path: https://images.voornameninliedjes.nl
   cors:
     domains:
       allowed:

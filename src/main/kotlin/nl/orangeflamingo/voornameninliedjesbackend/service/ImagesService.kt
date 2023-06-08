@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.scheduler.Schedulers
-import java.awt.Image
-import java.awt.image.BufferedImage
 import java.io.IOException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -31,7 +29,7 @@ class ImagesService @Autowired constructor(
 
     private val log = LoggerFactory.getLogger(ImagesService::class.java)
 
-    private val maxDimensionBlur = 10
+    private val maxDimensionBlur = 20
 
     @Value("\${voornameninliedjes.batch.interval}")
     private val interval: Long = 100
@@ -122,12 +120,5 @@ class ImagesService @Autowired constructor(
                 "[image blur] Could not read or write image for ${artist.name} - ${song.title} due to error with message ${e.message}"
             )
         }
-    }
-
-    private fun resizeImage(originalImage: BufferedImage, targetWidth: Int, targetHeight: Int): BufferedImage {
-        val resultingImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_DEFAULT)
-        val outputImage = BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB)
-        outputImage.graphics.drawImage(resultingImage, 0, 0, null)
-        return outputImage
     }
 }
