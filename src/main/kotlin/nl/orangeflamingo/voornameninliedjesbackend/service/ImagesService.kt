@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.scheduler.Schedulers
-import java.io.IOException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.time.Duration
@@ -23,7 +22,6 @@ import java.time.Duration
 class ImagesService @Autowired constructor(
     private val songRepository: SongRepository,
     private val artistRepository: ArtistRepository,
-    private val fileService: FileService,
     private val imageApiClient: ImageApiClient
 ) {
 
@@ -67,33 +65,23 @@ class ImagesService @Autowired constructor(
             log.info("[image download] No artist image for ${artist.name} - ${song.title}")
             return
         }
-        try {
-            log.info("[image download] Downloading image ${song.artistImage} for ${artist.name} - ${song.title}")
+        log.info("[image download] Downloading image ${song.artistImage} for ${artist.name} - ${song.title}")
 
-            val extension = song.artistImage.substring(song.artistImage.lastIndexOf("."))
-            val fileName =
-                "${artist.name}_${song.title}$extension".removeDiacritics().replace(" ", "-").clean().lowercase()
+        val extension = song.artistImage.substring(song.artistImage.lastIndexOf("."))
+        val fileName =
+            "${artist.name}_${song.title}$extension".removeDiacritics().replace(" ", "-").clean().lowercase()
 
-            val encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8)
-            imageApiClient.downloadImage(song.artistImage, encodedFileName, overwrite)
-                .subscribeOn(Schedulers.boundedElastic())
-                .subscribe { encodedString -> songRepository.save(song.copy(blurredImage = encodedString))
-                    log.info("[image download] Downloaded image for ${artist.name} - ${song.title} from ${song.artistImage} as $fileName")
-                }
-
-            val localUrl = "$imagesPath/$fileName"
-            if (overwrite || !fileService.fileExists(localUrl)) {
-                fileService.writeToDisk(song.artistImage, localUrl)
-                songRepository.save(song.copy(localImage = fileName))
-                log.info("[image download] Written file for ${artist.name} - ${song.title}")
-            } else {
-                log.info("[image download] File already exists for ${artist.name} - ${song.title}")
+        val encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8)
+        imageApiClient.downloadImage(song.artistImage, encodedFileName, overwrite)
+            .publishOn(Schedulers.boundedElastic())
+            .onErrorComplete {
+                log.error("Could not download image ${song.artistImage} because of ${it.message}")
+                true
             }
-        } catch (e: IOException) {
-            log.error(
-                "[image download] Could not read or write image for ${artist.name} - ${song.title} due to error with message ${e.message}"
-            )
-        }
+            .subscribe { encodedString ->
+                songRepository.save(song.copy(localImage = fileName))
+                log.info("[image download] Downloaded image for ${artist.name} - ${song.title} from ${song.artistImage} as $fileName")
+            }
     }
 
     fun blurImageForSong(song: Song, overwrite: Boolean = false) {
@@ -104,21 +92,18 @@ class ImagesService @Autowired constructor(
             log.info("[image blur] No artist image for ${artist.name} - ${song.title}")
             return
         }
-        try {
-            log.info("[image blur] Downloading image ${song.artistImage} for ${artist.name} - ${song.title}")
-            if (overwrite || song.blurredImage == null) {
-                imageApiClient.createBlurString(song.artistImage, maxDimensionBlur, maxDimensionBlur)
-                    .subscribeOn(Schedulers.boundedElastic())
-                    .subscribe { encodedString -> songRepository.save(song.copy(blurredImage = encodedString))
-                        log.info("[image blur] Written blur string for ${artist.name} - ${song.title}") }
-            } else {
-                log.info("[image blur] Blur already known for ${artist.name} - ${song.title}")
-            }
-        } catch (e: IOException) {
-            log.error(
-                // TODO check exception handling on Mono
-                "[image blur] Could not read or write image for ${artist.name} - ${song.title} due to error with message ${e.message}"
-            )
+        log.info("[image blur] Downloading image ${song.artistImage} for ${artist.name} - ${song.title}")
+        if (overwrite || song.blurredImage == null) {
+            imageApiClient.createBlurString(song.artistImage, maxDimensionBlur, maxDimensionBlur)
+                .publishOn(Schedulers.boundedElastic())
+                .onErrorComplete {
+                    log.info("[image blur] Could not create blur for ${artist.name} - ${song.title} because of ${it.message}")
+                    true
+                }
+                .subscribe { encodedString -> songRepository.save(song.copy(blurredImage = encodedString))
+                    log.info("[image blur] Written blur string for ${artist.name} - ${song.title}") }
+        } else {
+            log.info("[image blur] Blur already known for ${artist.name} - ${song.title}")
         }
     }
 }

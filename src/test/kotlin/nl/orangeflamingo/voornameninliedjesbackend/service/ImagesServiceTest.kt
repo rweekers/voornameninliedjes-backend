@@ -19,19 +19,16 @@ import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
 import reactor.core.publisher.Mono
-import java.io.IOException
-import java.util.Optional
+import java.util.*
 
 class ImagesServiceTest {
 
     private val mockSongRepository = mock(SongRepository::class.java)
     private val mockArtistRepository = mock(ArtistRepository::class.java)
-    private val mockFileService = mock(FileService::class.java)
     private val mockImageAptClient = mock(ImageApiClient::class.java)
     private val imagesService = ImagesService(
         mockSongRepository,
         mockArtistRepository,
-        mockFileService,
         mockImageAptClient
     )
     private val songWithoutArtistImage = Song(
@@ -58,15 +55,14 @@ class ImagesServiceTest {
             listOf(song)
         )
         `when`(mockArtistRepository.findById(100)).thenReturn(Optional.of(artist))
-        `when`(mockFileService.fileExists("the-beatles_hey-jude.jpg")).thenReturn(false)
     }
 
     @Test
     fun `test download images`() {
         imagesService.downloadImages()
         verify(mockSongRepository, after(120)).findAllByStatusOrderedByNameAndTitle("SHOW")
-        verify(mockFileService, after(120)).fileExists("images/the-beatles_hey-jude.jpg")
-        verify(mockFileService, after(120)).writeToDisk("https://remote-image.jpg", "images/the-beatles_hey-jude.jpg")
+//        verify(mockFileService, after(120)).fileExists("images/the-beatles_hey-jude.jpg")
+//        verify(mockFileService, after(120)).writeToDisk("https://remote-image.jpg", "images/the-beatles_hey-jude.jpg")
         verify(mockSongRepository, after(120)).save(
             song.copy(
                 localImage = "the-beatles_hey-jude.jpg"
@@ -77,8 +73,8 @@ class ImagesServiceTest {
     @Test
     fun `test download image for song`() {
         imagesService.downloadImageForSong(song)
-        verify(mockFileService).fileExists("images/the-beatles_hey-jude.jpg")
-        verify(mockFileService).writeToDisk("https://remote-image.jpg", "images/the-beatles_hey-jude.jpg")
+//        verify(mockFileService).fileExists("images/the-beatles_hey-jude.jpg")
+//        verify(mockFileService).writeToDisk("https://remote-image.jpg", "images/the-beatles_hey-jude.jpg")
         verify(mockSongRepository).save(
             song.copy(
                 localImage = "the-beatles_hey-jude.jpg"
@@ -109,19 +105,19 @@ class ImagesServiceTest {
 
     @Test
     fun `test image already present for song`() {
-        `when`(mockFileService.fileExists("images/the-beatles_hey-jude.jpg")).thenReturn(true)
+//        `when`(mockFileService.fileExists("images/the-beatles_hey-jude.jpg")).thenReturn(true)
         imagesService.downloadImageForSong(song)
-        verify(mockFileService).fileExists("images/the-beatles_hey-jude.jpg")
-        verify(mockFileService, never()).writeToDisk(any(), any())
+//        verify(mockFileService).fileExists("images/the-beatles_hey-jude.jpg")
+//        verify(mockFileService, never()).writeToDisk(any(), any())
         verify(mockSongRepository, never()).save(any())
     }
 
     @Test
     fun `test image already present for song with override`() {
-        `when`(mockFileService.fileExists("images/the-beatles_hey-jude.jpg")).thenReturn(true)
+//        `when`(mockFileService.fileExists("images/the-beatles_hey-jude.jpg")).thenReturn(true)
         imagesService.downloadImageForSong(song, true)
-        verify(mockFileService, never()).fileExists(any())
-        verify(mockFileService).writeToDisk("https://remote-image.jpg", "images/the-beatles_hey-jude.jpg")
+//        verify(mockFileService, never()).fileExists(any())
+//        verify(mockFileService).writeToDisk("https://remote-image.jpg", "images/the-beatles_hey-jude.jpg")
         verify(mockSongRepository).save(
             song.copy(
                 localImage = "the-beatles_hey-jude.jpg"
@@ -138,19 +134,19 @@ class ImagesServiceTest {
     @Test
     fun `test artist image not present for song`() {
         imagesService.downloadImageForSong(songWithoutArtistImage)
-        verify(mockFileService, never()).fileExists(any())
-        verify(mockFileService, never()).writeToDisk(any(), any())
+//        verify(mockFileService, never()).fileExists(any())
+//        verify(mockFileService, never()).writeToDisk(any(), any())
         verify(mockSongRepository, never()).save(any())
     }
 
     @Test
     fun `test file service throws exception `() {
-        `when`(mockFileService.writeToDisk(any(), any())).thenThrow(
-            IOException::class.java
-        )
+//        `when`(mockFileService.writeToDisk(any(), any())).thenThrow(
+//            IOException::class.java
+//        )
         imagesService.downloadImageForSong(song)
-        verify(mockFileService).fileExists("images/the-beatles_hey-jude.jpg")
-        verify(mockFileService).writeToDisk("https://remote-image.jpg", "images/the-beatles_hey-jude.jpg")
+//        verify(mockFileService).fileExists("images/the-beatles_hey-jude.jpg")
+//        verify(mockFileService).writeToDisk("https://remote-image.jpg", "images/the-beatles_hey-jude.jpg")
         verify(mockSongRepository, never()).save(any())
     }
 
