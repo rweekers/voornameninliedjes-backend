@@ -15,21 +15,22 @@ import org.mockito.Mockito.after
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
+import org.mockito.kotlin.whenever
 import reactor.core.publisher.Mono
-import java.util.*
+import java.io.IOException
+import java.util.Optional
 
 class ImagesServiceTest {
 
     private val mockSongRepository = mock(SongRepository::class.java)
     private val mockArtistRepository = mock(ArtistRepository::class.java)
-    private val mockImageAptClient = mock(ImageApiClient::class.java)
+    private val mockImageApiClient = mock(ImageApiClient::class.java)
     private val imagesService = ImagesService(
         mockSongRepository,
         mockArtistRepository,
-        mockImageAptClient
+        mockImageApiClient
     )
     private val songWithoutArtistImage = Song(
         id = 1,
@@ -51,18 +52,18 @@ class ImagesServiceTest {
 
     @BeforeEach
     fun init() {
-        `when`(mockSongRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)).thenReturn(
+        whenever(mockSongRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)).thenReturn(
             listOf(song)
         )
-        `when`(mockArtistRepository.findById(100)).thenReturn(Optional.of(artist))
+        whenever(mockArtistRepository.findById(100)).thenReturn(Optional.of(artist))
+        whenever(mockImageApiClient.downloadImage(any(), any(), any())).thenReturn(Mono.just("bla"))
+        whenever(mockImageApiClient.createBlurString(any(), any(), any())).thenReturn(Mono.just("hashString"))
     }
 
     @Test
     fun `test download images`() {
         imagesService.downloadImages()
         verify(mockSongRepository, after(120)).findAllByStatusOrderedByNameAndTitle("SHOW")
-//        verify(mockFileService, after(120)).fileExists("images/the-beatles_hey-jude.jpg")
-//        verify(mockFileService, after(120)).writeToDisk("https://remote-image.jpg", "images/the-beatles_hey-jude.jpg")
         verify(mockSongRepository, after(120)).save(
             song.copy(
                 localImage = "the-beatles_hey-jude.jpg"
@@ -73,9 +74,7 @@ class ImagesServiceTest {
     @Test
     fun `test download image for song`() {
         imagesService.downloadImageForSong(song)
-//        verify(mockFileService).fileExists("images/the-beatles_hey-jude.jpg")
-//        verify(mockFileService).writeToDisk("https://remote-image.jpg", "images/the-beatles_hey-jude.jpg")
-        verify(mockSongRepository).save(
+        verify(mockSongRepository, after(120)).save(
             song.copy(
                 localImage = "the-beatles_hey-jude.jpg"
             )
@@ -86,16 +85,16 @@ class ImagesServiceTest {
     fun `test blur image for song`() {
         val imageUrl = "https://theimage"
         val blurredImage = "blur"
-        `when`(mockImageAptClient.createBlurString(imageUrl, 10, 10)).thenReturn(Mono.just(blurredImage))
+        whenever(mockImageApiClient.createBlurString(imageUrl, 10, 10)).thenReturn(Mono.just(blurredImage))
         imagesService.blurImageForSong(song.copy(artistImage = imageUrl))
-        verify(mockSongRepository).save(
+        verify(mockSongRepository, after(120)).save(
             argThat { song -> Base64.isBase64(song.blurredImage) }
         )
     }
 
     @Test
     fun `test blur images`() {
-        `when`(mockSongRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)).thenReturn(
+        whenever(mockSongRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)).thenReturn(
             listOf(song.copy(blurredImage = "some-image-blur"))
         )
         imagesService.blurImages()
@@ -104,49 +103,21 @@ class ImagesServiceTest {
     }
 
     @Test
-    fun `test image already present for song`() {
-//        `when`(mockFileService.fileExists("images/the-beatles_hey-jude.jpg")).thenReturn(true)
-        imagesService.downloadImageForSong(song)
-//        verify(mockFileService).fileExists("images/the-beatles_hey-jude.jpg")
-//        verify(mockFileService, never()).writeToDisk(any(), any())
-        verify(mockSongRepository, never()).save(any())
-    }
-
-    @Test
-    fun `test image already present for song with override`() {
-//        `when`(mockFileService.fileExists("images/the-beatles_hey-jude.jpg")).thenReturn(true)
-        imagesService.downloadImageForSong(song, true)
-//        verify(mockFileService, never()).fileExists(any())
-//        verify(mockFileService).writeToDisk("https://remote-image.jpg", "images/the-beatles_hey-jude.jpg")
-        verify(mockSongRepository).save(
-            song.copy(
-                localImage = "the-beatles_hey-jude.jpg"
-            )
-        )
-    }
-
-    @Test
     fun `test artist not present for song`() {
-        `when`(mockArtistRepository.findById(100)).thenReturn(Optional.empty())
+        whenever(mockArtistRepository.findById(100)).thenReturn(Optional.empty())
         assertThrows<ArtistNotFoundException> { imagesService.downloadImageForSong(songWithoutArtistImage) }
     }
 
     @Test
     fun `test artist image not present for song`() {
         imagesService.downloadImageForSong(songWithoutArtistImage)
-//        verify(mockFileService, never()).fileExists(any())
-//        verify(mockFileService, never()).writeToDisk(any(), any())
         verify(mockSongRepository, never()).save(any())
     }
 
     @Test
-    fun `test file service throws exception `() {
-//        `when`(mockFileService.writeToDisk(any(), any())).thenThrow(
-//            IOException::class.java
-//        )
+    fun `test image api client throws exception `() {
+        whenever(mockImageApiClient.downloadImage(any(), any(), any())).thenReturn(Mono.error(IOException("error downloading")))
         imagesService.downloadImageForSong(song)
-//        verify(mockFileService).fileExists("images/the-beatles_hey-jude.jpg")
-//        verify(mockFileService).writeToDisk("https://remote-image.jpg", "images/the-beatles_hey-jude.jpg")
         verify(mockSongRepository, never()).save(any())
     }
 
