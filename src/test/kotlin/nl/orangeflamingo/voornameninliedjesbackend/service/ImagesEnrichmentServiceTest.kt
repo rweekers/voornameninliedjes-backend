@@ -13,10 +13,11 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRep
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.after
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
+import org.mockito.kotlin.any
+import org.mockito.kotlin.whenever
 import reactor.core.publisher.Mono
 import java.util.Optional
 
@@ -65,15 +66,16 @@ class ImagesEnrichmentServiceTest {
 
     @BeforeEach
     fun init() {
-        `when`(mockSongRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)).thenReturn(
+        whenever(mockSongRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)).thenReturn(
             listOf(song)
         )
-        `when`(mockSongRepository.findAllByStatusAndArtistImageIsNullOrArtistImageAttributionIsNull(SongStatus.SHOW.code)).thenReturn(
+        whenever(mockSongRepository.findAllByStatusAndArtistImageIsNullOrArtistImageAttributionIsNull(SongStatus.SHOW.code)).thenReturn(
             listOf(song)
         )
-        `when`(mockArtistRepository.findById(100)).thenReturn(Optional.of(artist))
-        `when`(mockFlickrApiClient.getPhoto("1000")).thenReturn(Mono.just(flickrPhotoDetail))
-        `when`(mockFlickrApiClient.getOwnerInformation("flickrOwnerId")).thenReturn(Mono.just(flickrApiOwner))
+        whenever(mockArtistRepository.findById(100)).thenReturn(Optional.of(artist))
+        whenever(mockFlickrApiClient.getPhoto("1000")).thenReturn(Mono.just(flickrPhotoDetail))
+        whenever(mockFlickrApiClient.getOwnerInformation("flickrOwnerId")).thenReturn(Mono.just(flickrApiOwner))
+        whenever(mockImageApiClient.getDimensions(any())).thenReturn(Mono.just(Pair(234, 234)))
     }
 
     @Test
@@ -105,12 +107,13 @@ class ImagesEnrichmentServiceTest {
 
     @Test
     fun `test image not found `() {
-        `when`(mockFlickrApiClient.getPhoto("1000")).thenReturn(Mono.just(flickrPhotoDetail.copy(url = "classpath:images/notfound.png")))
+        whenever(mockFlickrApiClient.getPhoto("1000")).thenReturn(Mono.just(flickrPhotoDetail.copy(url = "classpath:images/notfound.png")))
+        whenever(mockImageApiClient.getDimensions(any())).thenReturn(Mono.error(RuntimeException("Not found")))
         imagesEnrichmentService.enrichImagesForSongs()
         verify(mockSongRepository, after(120)).save(
             song.copy(
                 status = SongStatus.INCOMPLETE,
-                remarks = "Could not find file on url classpath:images/notfound.png for Michelle with error type FileNotFoundException and message class path resource [images/notfound.png] cannot be resolved to URL because it does not exist"
+                remarks = "Could not find file on url classpath:images/notfound.png for Michelle with error type RuntimeException and message Not found"
             )
         )
     }

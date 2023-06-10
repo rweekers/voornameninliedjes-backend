@@ -78,7 +78,7 @@ class ImagesService @Autowired constructor(
                 log.error("Could not download image ${song.artistImage} because of ${it.message}")
                 true
             }
-            .subscribe { encodedString ->
+            .subscribe { _ ->
                 songRepository.save(song.copy(localImage = fileName))
                 log.info("[image download] Downloaded image for ${artist.name} - ${song.title} from ${song.artistImage} as $fileName")
             }
