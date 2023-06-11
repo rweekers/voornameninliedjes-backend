@@ -32,9 +32,6 @@ class ImagesService @Autowired constructor(
     @Value("\${voornameninliedjes.batch.interval}")
     private val interval: Long = 100
 
-    @Value("\${voornameninliedjes.images.path}")
-    private val imagesPath: String = "images"
-
     fun downloadImages(overwrite: Boolean = false) {
         log.info("[image download] Starting downloading all images with interval millis ${interval} and overwrite: $overwrite")
         val songs = songRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)
