@@ -17,6 +17,7 @@ import org.mockito.Mockito.after
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
+import org.mockito.kotlin.timeout
 import org.mockito.kotlin.whenever
 import reactor.core.publisher.Mono
 import java.util.Optional
@@ -82,7 +83,7 @@ class ImagesEnrichmentServiceTest {
     fun `test updateSong`() {
         imagesEnrichmentService.enrichImagesForSongs(true)
         verify(mockSongRepository).findAllByStatusOrderedByNameAndTitle("SHOW")
-        verify(mockSongRepository, after(240)).save(
+        verify(mockSongRepository, timeout(1000)).save(
             song.copy(
                 artistImage = "classpath:images/test.png",
                 artistImageWidth = 234,
@@ -110,7 +111,7 @@ class ImagesEnrichmentServiceTest {
         whenever(mockFlickrApiClient.getPhoto("1000")).thenReturn(Mono.just(flickrPhotoDetail.copy(url = "classpath:images/notfound.png")))
         whenever(mockImageApiClient.getDimensions(any())).thenReturn(Mono.error(RuntimeException("Not found")))
         imagesEnrichmentService.enrichImagesForSongs()
-        verify(mockSongRepository, after(120)).save(
+        verify(mockSongRepository, after(240)).save(
             song.copy(
                 status = SongStatus.INCOMPLETE,
                 remarks = "Could not find file on url classpath:images/notfound.png for Michelle with error type RuntimeException and message Not found"

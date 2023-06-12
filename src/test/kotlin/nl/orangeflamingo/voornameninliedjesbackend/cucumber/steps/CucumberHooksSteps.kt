@@ -37,34 +37,4 @@ class CucumberHooksSteps: AbstractIntegrationTest() {
         songRepository.deleteAll()
         artistRepository.deleteAll()
     }
-//
-//    companion object {
-//
-//        @JvmStatic
-//        val postgresContainer: PostgreSQLContainer<*> = PostgreSQLContainer(DockerImageName.parse("postgres:13.1"))
-//            .withExposedPorts(5432)
-//            .withUsername("vil_app")
-//            .withPassword("secret")
-//            .withDatabaseName("voornameninliedjes")
-//
-//        @BeforeAll
-//        @JvmStatic
-//        fun before_or_after_all() {
-//            postgresContainer.start()
-//        }
-//
-//        @JvmStatic
-//        @DynamicPropertySource
-//        fun registerDynamicProperties(registry: DynamicPropertyRegistry) {
-//
-//            registry.add("voornameninliedjes.datasource.application.host", postgresContainer::getHost)
-//            registry.add("voornameninliedjes.datasource.application.port", { postgresContainer.getMappedPort(5432) })
-//
-//            registry.add("voornameninliedjes.datasource.migration.host", postgresContainer::getHost)
-//            registry.add("voornameninliedjes.datasource.migration.port", { postgresContainer.getMappedPort(5432) })
-//
-//            registry.add("voornameninliedjes.datasource.migration.username", postgresContainer::getUsername)
-//            registry.add("voornameninliedjes.datasource.migration.password", postgresContainer::getPassword)
-//        }
-//    }
 }

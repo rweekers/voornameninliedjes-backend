@@ -4,8 +4,20 @@ import com.fasterxml.jackson.annotation.JsonView
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
-import nl.orangeflamingo.voornameninliedjesbackend.domain.*
-import nl.orangeflamingo.voornameninliedjesbackend.dto.*
+import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
+import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistNameStatistics
+import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.PhotoDetail
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongNameStatistics
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWikimediaPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrLicenseDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrOwnerDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.PhotoDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.SongDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.SourceDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.WikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistNameStatisticsRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongNameStatisticsRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistNotFoundException
@@ -15,9 +27,15 @@ import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
-import java.util.*
+import java.util.Optional
 
 
 @RestController

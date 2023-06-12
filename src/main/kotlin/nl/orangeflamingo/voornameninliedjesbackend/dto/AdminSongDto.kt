@@ -1,6 +1,9 @@
 package nl.orangeflamingo.voornameninliedjesbackend.dto
 
-import com.fasterxml.jackson.annotation.*
+
+import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonInclude
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
 import java.time.Instant
 

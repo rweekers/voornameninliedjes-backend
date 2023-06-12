@@ -26,7 +26,7 @@ interface SongRepository : CrudRepository<Song, Long> {
     @Query("select * from songs where status = :status and last_fm_url is null order by name ASC, title ASC")
     fun findAllByStatusAndLastFmUrlIsNullOrderedByNameAndTitle(@Param("status") status: String): List<Song>
 
-    fun findAllByNameStartingWithIgnoreCaseAndStatusInOrderByNameAscTitleAsc(firstCharacter: String, status: List<String>): List<Song>
+    fun findAllByNameStartingWithIgnoreCaseAndStatusInOrderByNameAscTitleAsc(firstCharacter: String, status: Collection<SongStatus>): List<Song>
 
     fun findAllByNameIgnoreCaseOrderByNameAscTitleAsc(name: String): List<Song>
 

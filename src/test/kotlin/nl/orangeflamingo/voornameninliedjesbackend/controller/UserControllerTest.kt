@@ -47,7 +47,7 @@ class UserControllerTest : AbstractIntegrationTest() {
                     roles = mutableSetOf(UserRole(ownerRole))
                 )
             )
-        ).map { it.username to it.id!! }.toMap()
+        ).associate { it.username to it.id!! }
     }
 
     @Test

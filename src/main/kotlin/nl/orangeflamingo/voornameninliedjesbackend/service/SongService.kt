@@ -37,40 +37,20 @@ class SongService @Autowired constructor(
     }
 
     fun findAll(): List<AggregateSong> {
-        return songRepository.findAllOrderByNameAscTitleAsc()
-            .map { song ->
-                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
-                    .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
-                createAggregateSong(song, artist)
-            }
+        return mapSongs(songRepository.findAllOrderByNameAscTitleAsc())
     }
 
     fun findByName(name: String): List<AggregateSong> {
-        return songRepository.findAllByNameIgnoreCaseOrderByNameAscTitleAsc(name)
-            .map { song ->
-                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
-                    .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
-                createAggregateSong(song, artist)
-            }
+        return mapSongs(songRepository.findAllByNameIgnoreCaseOrderByNameAscTitleAsc(name))
     }
 
     fun findByNameStartsWithAndStatusIn(firstCharacter: String, statusList: List<SongStatus>): List<AggregateSong> {
-        return songRepository.findAllByNameStartingWithIgnoreCaseAndStatusInOrderByNameAscTitleAsc(firstCharacter, statusList.map { it.code })
-            .map { song ->
-                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
-                    .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
-                createAggregateSong(song, artist)
-            }
+        return mapSongs(songRepository.findAllByNameStartingWithIgnoreCaseAndStatusInOrderByNameAscTitleAsc(firstCharacter, statusList))
     }
 
     fun findAllByStatusOrderedByName(status: SongStatus): List<AggregateSong> {
         log.info("Getting all songs by status ordered by name...")
-        return songRepository.findAllByStatusOrderedByNameAndTitle(status.code)
-            .map { song ->
-                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
-                    .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
-                createAggregateSong(song, artist)
-            }
+        return mapSongs(songRepository.findAllByStatusOrderedByNameAndTitle(status.code))
     }
 
     fun findAllByStatusOrderedByNameFilteredByFirstCharacter(statuses: List<SongStatus>, firstChars: List<Char>): List<AggregateSong> {
@@ -79,13 +59,17 @@ class SongService @Autowired constructor(
             statuses.joinToString { it.code },
             firstChars.joinToString()
         )
-        return songRepository.findAllByStatusesAndNameStartingWithOrderedByNameAndTitle(
+        return mapSongs(songRepository.findAllByStatusesAndNameStartingWithOrderedByNameAndTitle(
             statuses.map { it.code },
             firstChars.map {
                 it.lowercase(
                     Locale.getDefault()
                 )
-            })
+            }))
+    }
+
+    private fun mapSongs(songs: List<Song>): List<AggregateSong> {
+        return songs
             .map { song ->
                 val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
                     .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
@@ -237,9 +221,7 @@ class SongService @Autowired constructor(
 
         if (song.flickrPhotos != artist.flickrPhotos.map { it.flickrId }) return true
 
-        if (song.artistWikimediaPhotos != artist.wikimediaPhotos) return true
-
-        return false
+        return song.artistWikimediaPhotos != artist.wikimediaPhotos
     }
 
     fun newSong(aggregateSong: AggregateSong, user: String): AggregateSong {

@@ -36,11 +36,12 @@ class LastFmHttpApiClient(
                 LastFmResponseDto::class.java
             )
             .switchIfEmpty(Mono.error { throw LastFmException("Gotten empty response from last.fm!") })
-            .map {
-                when (it.error) {
+            .handle { lastFmResponse, sink ->
+                when (lastFmResponse.error) {
                     null -> {
-                        val track = it.track ?: throw LastFmException("Track not found on last.fm response!")
-                        LastFmTrack(
+                        if (lastFmResponse.track == null) sink.error(LastFmException("Track not found on last.fm response!"))
+                        val track = lastFmResponse.track!!
+                        sink.next(LastFmTrack(
                             name = track.name,
                             mbid = track.mbid,
                             url = track.url,
@@ -64,9 +65,9 @@ class LastFmHttpApiClient(
                                 summary = track.wiki.summary,
                                 content = track.wiki.content
                             ) else null
-                        )
+                        ))
                     }
-                    else -> LastFmError(it.error, it.message)
+                    else -> sink.next(LastFmError(lastFmResponse.error, lastFmResponse.message))
                 }
             }
     }

@@ -15,9 +15,9 @@ voornameninliedjes:
         admin:
           - http://localhost:3000
           - https://beheer.voornameninliedjes.nl
-  images:
-    service:
-      path: http://localhost:8000/images
+#  images:
+#    service:
+#      path: http://localhost:8000/images
 
 jobs:
   enabled: false
