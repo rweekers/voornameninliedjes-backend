@@ -89,7 +89,7 @@ class ArtistAdminControllerTest : AbstractIntegrationTest() {
             listOf(
                 artist
             )
-        ).map { it.name to it.id!! }.toMap()
+        ).associate { it.name to it.id!! }
     }
 
     @Test

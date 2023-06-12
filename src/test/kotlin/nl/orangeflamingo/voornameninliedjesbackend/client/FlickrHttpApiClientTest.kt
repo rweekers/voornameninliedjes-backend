@@ -36,7 +36,7 @@ class FlickrHttpApiClientTest {
                 secret = "secret",
                 license = "license",
                 owner = FlickrApiOwnerIdDto(nsid = "nsid"),
-                title = FlickrApiPhotoTitleDto(_content = "content")
+                title = FlickrApiPhotoTitleDto(content = "content")
             )
         )
     )

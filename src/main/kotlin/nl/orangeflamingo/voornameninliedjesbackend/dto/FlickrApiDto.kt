@@ -1,5 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.dto
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 data class FlickrApiPhotoDto(
         val photo: FlickrApiPhotoDetailDto
 )
@@ -15,7 +17,7 @@ data class FlickrApiPhotoDetailDto(
 )
 
 data class FlickrApiPhotoTitleDto(
-        val _content: String
+        @JsonProperty("_content") val content: String
 )
 
 data class FlickrApiOwnerIdDto(
@@ -33,11 +35,11 @@ data class FlickrApiPersonDto(
 )
 
 data class FlickrApiUsernameDto(
-        val _content: String
+        @JsonProperty("_content") val content: String
 )
 
 data class FlickrApiPhotosurlDto(
-        val _content: String
+        @JsonProperty("_content")val content: String
 )
 
 data class FlickrApiLicenseDto(

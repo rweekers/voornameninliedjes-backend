@@ -33,7 +33,7 @@ class ImagesService @Autowired constructor(
     private val interval: Long = 100
 
     fun downloadImages(overwrite: Boolean = false) {
-        log.info("[image download] Starting downloading all images with interval millis ${interval} and overwrite: $overwrite")
+        log.info("[image download] Starting downloading all images with interval millis $interval and overwrite: $overwrite")
         val songs = songRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)
 
         Flux.fromIterable(songs)
@@ -44,7 +44,7 @@ class ImagesService @Autowired constructor(
     }
 
     fun blurImages(overwrite: Boolean = false) {
-        log.info("[image blur] Starting blurring all images with interval millis ${interval} and overwrite: $overwrite")
+        log.info("[image blur] Starting blurring all images with interval millis $interval and overwrite: $overwrite")
         val songs = songRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)
 
         Flux.fromIterable(songs)

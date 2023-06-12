@@ -83,7 +83,7 @@ class SongControllerTest : AbstractIntegrationTest() {
                     )
                 )
             )
-        ).map { it.title to it.id!! }.toMap()
+        ).associate { it.title to it.id!! }
     }
 
     @Test

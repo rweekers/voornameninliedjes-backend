@@ -30,7 +30,7 @@ class FlickrHttpApiClient(
             .map {
                 FlickrPhotoDetail(
                     url = "https://farm${it.photo.farm}.staticflickr.com/${it.photo.server}/${it.photo.id}_${it.photo.secret}_c.jpg",
-                    title = it.photo.title._content,
+                    title = it.photo.title.content,
                     id = it.photo.id,
                     server = it.photo.server,
                     secret = it.photo.secret,
@@ -52,8 +52,8 @@ class FlickrHttpApiClient(
             .map {
                 FlickrApiOwner(
                     id = it.person.id,
-                    username = it.person.username._content,
-                    photosUrl = it.person.photosurl._content
+                    username = it.person.username.content,
+                    photosUrl = it.person.photosurl.content
                 )
             }
 

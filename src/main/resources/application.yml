@@ -26,6 +26,9 @@ voornameninliedjes:
       username: vil_app
       password: secret
       pool-name: voornameninliedjes-migration-hikari-pool
+  images:
+    service:
+      path: https://images.voornameninliedjes.nl
   cache:
     enabled: false
   batch:

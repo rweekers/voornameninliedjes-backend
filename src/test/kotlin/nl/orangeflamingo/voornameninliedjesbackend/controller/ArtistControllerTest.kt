@@ -45,7 +45,7 @@ class ArtistControllerTest : AbstractIntegrationTest() {
                     wikimediaPhotos = mutableSetOf()
                 )
             )
-        ).map { it.name to it.id!! }.toMap()
+        ).associate { it.name to it.id!! }
     }
 
     @Test
