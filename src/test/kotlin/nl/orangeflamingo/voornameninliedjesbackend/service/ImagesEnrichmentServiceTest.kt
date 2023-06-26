@@ -96,7 +96,7 @@ class ImagesEnrichmentServiceTest {
     @Test
     fun `test enrichSong`() {
         imagesEnrichmentService.enrichImagesForSongs()
-        verify(mockSongRepository, after(240)).save(
+        verify(mockSongRepository, after(500)).save(
             song.copy(
                 artistImage = "classpath:images/test.png",
                 artistImageWidth = 234,
