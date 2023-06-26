@@ -1,0 +1,4 @@
+voornameninliedjes:
+  images:
+    service:
+      path: http://localhost:8000/images/
