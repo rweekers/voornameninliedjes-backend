@@ -1,11 +1,11 @@
 package nl.orangeflamingo.voornameninliedjesbackend
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.FakeFlickrApiClient
-import nl.orangeflamingo.voornameninliedjesbackend.client.FakeImageApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.FakeImageClient
 import nl.orangeflamingo.voornameninliedjesbackend.client.FakeLastFmApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.client.FakeWikipediaApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
-import nl.orangeflamingo.voornameninliedjesbackend.client.ImageApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.ImageClient
 import nl.orangeflamingo.voornameninliedjesbackend.client.LastFmApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClient
 import org.springframework.context.annotation.Bean
@@ -37,7 +37,7 @@ class IntegrationTestConfiguration {
 
     @Bean
     @Primary
-    fun imageApiClient(): ImageApiClient {
-        return FakeImageApiClient()
+    fun imageClient(): ImageClient {
+        return FakeImageClient()
     }
 }

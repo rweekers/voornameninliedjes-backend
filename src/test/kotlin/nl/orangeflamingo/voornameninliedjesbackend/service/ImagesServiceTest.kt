@@ -1,10 +1,11 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
-import nl.orangeflamingo.voornameninliedjesbackend.client.ImageApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.ImageClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistRef
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
+import nl.orangeflamingo.voornameninliedjesbackend.dto.ImageHashDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.apache.commons.codec.binary.Base64
@@ -26,11 +27,11 @@ class ImagesServiceTest {
 
     private val mockSongRepository = mock(SongRepository::class.java)
     private val mockArtistRepository = mock(ArtistRepository::class.java)
-    private val mockImageApiClient = mock(ImageApiClient::class.java)
+    private val mockImageClient = mock(ImageClient::class.java)
     private val imagesService = ImagesService(
         mockSongRepository,
         mockArtistRepository,
-        mockImageApiClient
+        mockImageClient
     )
     private val songWithoutArtistImage = Song(
         id = 1,
@@ -56,8 +57,15 @@ class ImagesServiceTest {
             listOf(song)
         )
         whenever(mockArtistRepository.findById(100)).thenReturn(Optional.of(artist))
-        whenever(mockImageApiClient.downloadImage(any(), any(), any())).thenReturn(Mono.just("bla"))
-        whenever(mockImageApiClient.createBlurString(any(), any(), any())).thenReturn(Mono.just("hashString"))
+        whenever(mockImageClient.downloadImage(any(), any(), any())).thenReturn(Mono.just("bla"))
+        whenever(mockImageClient.createImageBlur(any(), any(), any())).thenReturn(
+            Mono.just(
+                ImageHashDto(
+                    "imageName",
+                    "hashString"
+                )
+            )
+        )
     }
 
     @Test
@@ -84,8 +92,6 @@ class ImagesServiceTest {
     @Test
     fun `test blur image for song`() {
         val imageUrl = "https://theimage"
-        val blurredImage = "blur"
-        whenever(mockImageApiClient.createBlurString(imageUrl, 10, 10)).thenReturn(Mono.just(blurredImage))
         imagesService.blurImageForSong(song.copy(artistImage = imageUrl))
         verify(mockSongRepository, after(120)).save(
             argThat { song -> Base64.isBase64(song.blurredImage) }
@@ -116,7 +122,7 @@ class ImagesServiceTest {
 
     @Test
     fun `test image api client throws exception `() {
-        whenever(mockImageApiClient.downloadImage(any(), any(), any())).thenReturn(Mono.error(IOException("error downloading")))
+        whenever(mockImageClient.downloadImage(any(), any(), any())).thenReturn(Mono.error(IOException("error downloading")))
         imagesService.downloadImageForSong(song)
         verify(mockSongRepository, never()).save(any())
     }

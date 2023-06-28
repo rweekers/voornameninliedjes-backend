@@ -1,7 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
-import nl.orangeflamingo.voornameninliedjesbackend.client.ImageApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.ImageClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
@@ -20,7 +20,7 @@ class ImagesEnrichmentService @Autowired constructor(
     private val songRepository: SongRepository,
     private val artistRepository: ArtistRepository,
     private val flickrApiClient: FlickrApiClient,
-    private val imageApiClient: ImageApiClient
+    private val imageClient: ImageClient
 ) {
 
     private val log = LoggerFactory.getLogger(ImagesEnrichmentService::class.java)
@@ -72,7 +72,7 @@ class ImagesEnrichmentService @Autowired constructor(
     }
 
     private fun updateArtistImage(url: String, attribution: String, song: Song) {
-        imageApiClient.getDimensions(url)
+        imageClient.getDimensions(url)
             .publishOn(Schedulers.boundedElastic())
             .onErrorComplete {
                 val errorMessage =
@@ -82,16 +82,16 @@ class ImagesEnrichmentService @Autowired constructor(
                 true
             }
             .subscribe {
-                log.info("Gotten width ${it.first} and height ${it.second} for $url")
+                log.info("Gotten width ${it.width} and height ${it.height} for $url")
                 songRepository.save(
                     song.copy(
                         artistImage = url,
                         artistImageAttribution = attribution,
-                        artistImageWidth = it.first,
-                        artistImageHeight = it.second
+                        artistImageWidth = it.width,
+                        artistImageHeight = it.height
                     )
                 )
-                log.info("Updated ${song.title} with attribution $attribution and url $url and width ${it.first} and height ${it.second}")
+                log.info("Updated ${song.title} with attribution $attribution and url $url and width ${it.height} and height ${it.height}")
         }
     }
 
