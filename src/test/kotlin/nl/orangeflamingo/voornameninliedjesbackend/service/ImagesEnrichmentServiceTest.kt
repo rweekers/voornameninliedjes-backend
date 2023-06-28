@@ -1,7 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
-import nl.orangeflamingo.voornameninliedjesbackend.client.ImageApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.ImageClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistRef
@@ -9,6 +9,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.FlickrApiOwner
 import nl.orangeflamingo.voornameninliedjesbackend.domain.FlickrPhotoDetail
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
+import nl.orangeflamingo.voornameninliedjesbackend.dto.ImageDimensionsDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.junit.jupiter.api.BeforeEach
@@ -27,12 +28,12 @@ class ImagesEnrichmentServiceTest {
     private val mockSongRepository = mock(SongRepository::class.java)
     private val mockArtistRepository = mock(ArtistRepository::class.java)
     private val mockFlickrApiClient = mock(FlickrApiClient::class.java)
-    private val mockImageApiClient = mock(ImageApiClient::class.java)
+    private val mockImageClient = mock(ImageClient::class.java)
     private val imagesEnrichmentService = ImagesEnrichmentService(
         mockSongRepository,
         mockArtistRepository,
         mockFlickrApiClient,
-        mockImageApiClient
+        mockImageClient
     )
     private val song = Song(
         id = 1,
@@ -76,7 +77,7 @@ class ImagesEnrichmentServiceTest {
         whenever(mockArtistRepository.findById(100)).thenReturn(Optional.of(artist))
         whenever(mockFlickrApiClient.getPhoto("1000")).thenReturn(Mono.just(flickrPhotoDetail))
         whenever(mockFlickrApiClient.getOwnerInformation("flickrOwnerId")).thenReturn(Mono.just(flickrApiOwner))
-        whenever(mockImageApiClient.getDimensions(any())).thenReturn(Mono.just(Pair(234, 234)))
+        whenever(mockImageClient.getDimensions(any())).thenReturn(Mono.just(ImageDimensionsDto("imageName", 234, 234)))
     }
 
     @Test
@@ -109,7 +110,7 @@ class ImagesEnrichmentServiceTest {
     @Test
     fun `test image not found `() {
         whenever(mockFlickrApiClient.getPhoto("1000")).thenReturn(Mono.just(flickrPhotoDetail.copy(url = "classpath:images/notfound.png")))
-        whenever(mockImageApiClient.getDimensions(any())).thenReturn(Mono.error(RuntimeException("Not found")))
+        whenever(mockImageClient.getDimensions(any())).thenReturn(Mono.error(RuntimeException("Not found")))
         imagesEnrichmentService.enrichImagesForSongs()
         verify(mockSongRepository, after(240)).save(
             song.copy(

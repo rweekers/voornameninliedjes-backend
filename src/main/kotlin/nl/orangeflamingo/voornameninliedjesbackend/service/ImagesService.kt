@@ -1,6 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
-import nl.orangeflamingo.voornameninliedjesbackend.client.ImageApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.ImageClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
@@ -22,7 +22,7 @@ import java.time.Duration
 class ImagesService @Autowired constructor(
     private val songRepository: SongRepository,
     private val artistRepository: ArtistRepository,
-    private val imageApiClient: ImageApiClient
+    private val imageClient: ImageClient
 ) {
 
     private val log = LoggerFactory.getLogger(ImagesService::class.java)
@@ -69,7 +69,7 @@ class ImagesService @Autowired constructor(
             "${artist.name}_${song.title}$extension".removeDiacritics().replace(" ", "-").clean().lowercase()
 
         val encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8)
-        imageApiClient.downloadImage(song.artistImage, encodedFileName, overwrite)
+        imageClient.downloadImage(song.artistImage, encodedFileName, overwrite)
             .publishOn(Schedulers.boundedElastic())
             .onErrorComplete {
                 log.error("Could not download image ${song.artistImage} because of ${it.message}")
@@ -91,12 +91,13 @@ class ImagesService @Autowired constructor(
         }
         log.info("[image blur] Downloading image ${song.artistImage} for ${artist.name} - ${song.title}")
         if (overwrite || song.blurredImage == null) {
-            imageApiClient.createBlurString(song.artistImage, maxDimensionBlur, maxDimensionBlur)
+            imageClient.createImageBlur(song.artistImage, maxDimensionBlur, maxDimensionBlur)
                 .publishOn(Schedulers.boundedElastic())
                 .onErrorComplete {
                     log.info("[image blur] Could not create blur for ${artist.name} - ${song.title} because of ${it.message}")
                     true
                 }
+                .map { it.hash }
                 .subscribe { encodedString -> songRepository.save(song.copy(blurredImage = encodedString))
                     log.info("[image blur] Written blur string for ${artist.name} - ${song.title}") }
         } else {
