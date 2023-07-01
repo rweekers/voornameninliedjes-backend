@@ -39,9 +39,11 @@ voornameninliedjes:
     domains:
       allowed:
         api:
+          - http://localhost:3000
           - https://www.voornameninliedjes.nl
           - https://voornameninliedjes.nl
         admin:
+          - http://localhost:3000
           - https://beheer.voornameninliedjes.nl
 jobs:
   enabled: true
