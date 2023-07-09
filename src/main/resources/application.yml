@@ -40,6 +40,7 @@ voornameninliedjes:
       allowed:
         api:
           - http://localhost:3000
+          - https://alpha.voornameninliedjes.nl
           - https://www.voornameninliedjes.nl
           - https://voornameninliedjes.nl
         admin:
