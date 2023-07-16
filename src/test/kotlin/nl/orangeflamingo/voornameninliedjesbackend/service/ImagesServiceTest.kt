@@ -2,7 +2,6 @@ package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.ImageClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistRef
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ImageHashDto
@@ -19,6 +18,7 @@ import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.whenever
+import org.springframework.data.jdbc.core.mapping.AggregateReference
 import reactor.core.publisher.Mono
 import java.io.IOException
 import java.util.Optional
@@ -37,7 +37,7 @@ class ImagesServiceTest {
         id = 1,
         title = "Michelle",
         name = "Michelle",
-        artists = mutableSetOf(ArtistRef(100)),
+        artist = AggregateReference.to(100),
         status = SongStatus.SHOW
     )
     private val song = songWithoutArtistImage.copy(

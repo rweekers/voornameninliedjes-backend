@@ -55,8 +55,8 @@ class ImagesService @Autowired constructor(
     }
 
     fun downloadImageForSong(song: Song, overwrite: Boolean = false) {
-        val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
-            .orElseThrow { ArtistNotFoundException("Artist with id ${song.artists.first { it.originalArtist }} for song with title ${song.title} not found") }
+        val artist = artistRepository.findById(song.artist.id ?: throw IllegalStateException())
+            .orElseThrow { ArtistNotFoundException("Artist with id ${song.artist.id} for song with title ${song.title} not found") }
 
         if (song.artistImage == null) {
             log.info("[image download] No artist image for ${artist.name} - ${song.title}")
@@ -82,8 +82,8 @@ class ImagesService @Autowired constructor(
     }
 
     fun blurImageForSong(song: Song, overwrite: Boolean = false) {
-        val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
-            .orElseThrow { ArtistNotFoundException("Artist with id ${song.artists.first { it.originalArtist }} for song with title ${song.title} not found") }
+        val artist = artistRepository.findById(song.artist.id ?: throw IllegalStateException())
+            .orElseThrow { ArtistNotFoundException("Artist with id ${song.artist.id} for song with title ${song.title} not found") }
 
         if (song.artistImage == null) {
             log.info("[image blur] No artist image for ${artist.name} - ${song.title}")
@@ -98,8 +98,10 @@ class ImagesService @Autowired constructor(
                     true
                 }
                 .map { it.hash }
-                .subscribe { encodedString -> songRepository.save(song.copy(blurredImage = encodedString))
-                    log.info("[image blur] Written blur string for ${artist.name} - ${song.title}") }
+                .subscribe { encodedString ->
+                    songRepository.save(song.copy(blurredImage = encodedString))
+                    log.info("[image blur] Written blur string for ${artist.name} - ${song.title}")
+                }
         } else {
             log.info("[image blur] Blur already known for ${artist.name} - ${song.title}")
         }

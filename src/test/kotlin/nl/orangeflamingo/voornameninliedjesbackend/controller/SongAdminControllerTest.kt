@@ -2,7 +2,6 @@ package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistRef
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWikimediaPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.TestSong
@@ -71,30 +70,18 @@ class SongAdminControllerTest : AbstractIntegrationTest() {
                     attribution = "Attribution for test wikimedia photo"
                 )
             ),
-            artists = mutableSetOf(
-                ArtistRef(
-                    artist = artist.id!!
-                )
-            )
+            artist = artist.id!!
         ).toDomain()
 
         val songMadonna = TestSong(
             title = "Lady Madonna",
             name = "Madonna",
-            artists = mutableSetOf(
-                ArtistRef(
-                    artist = artist.id!!
-                )
-            ),
+            artist = artist.id!!,
             status = SongStatus.INCOMPLETE
         ).toDomain()
 
         val songLucy = TestSong(
-            artists = mutableSetOf(
-                ArtistRef(
-                    artist = artist.id!!
-                )
-            ),
+            artist = artist.id!!,
             wikimediaPhotos = mutableSetOf(SongWikimediaPhoto("some url", "some attribution"))
         ).toDomain()
 

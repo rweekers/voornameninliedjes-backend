@@ -186,7 +186,7 @@ class SongAdminController(
         val songOptional = songRepository.findById(id)
         if (songOptional.isPresent) {
             val song = songOptional.get()
-            val artist = findLeadArtistForSong(song)
+            val artist = findArtistForSong(song)
                 ?: throw IllegalStateException("There should be a lead artist for all songs")
             addFlickrIdToArtist(user, artist, flickrId)
         } else {
@@ -194,12 +194,9 @@ class SongAdminController(
         }
     }
 
-    private fun findLeadArtistForSong(song: Song): Artist? {
-        return song.artists
-            .filter { artistRef -> artistRef.originalArtist }
-            .map { artistRepository.findById(it.artist) }
-            .first()
-            .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
+    private fun findArtistForSong(song: Song): Artist? {
+        return artistRepository.findById(song.artist.id ?: throw IllegalStateException())
+            .orElseThrow { ArtistNotFoundException("Artist with artist id ${song.artist.id} for title ${song.title} not found") }
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

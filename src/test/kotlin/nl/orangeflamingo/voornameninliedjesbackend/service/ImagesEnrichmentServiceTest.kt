@@ -4,7 +4,6 @@ import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.client.ImageClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistRef
 import nl.orangeflamingo.voornameninliedjesbackend.domain.FlickrApiOwner
 import nl.orangeflamingo.voornameninliedjesbackend.domain.FlickrPhotoDetail
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
@@ -20,6 +19,7 @@ import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
 import org.mockito.kotlin.timeout
 import org.mockito.kotlin.whenever
+import org.springframework.data.jdbc.core.mapping.AggregateReference
 import reactor.core.publisher.Mono
 import java.util.Optional
 
@@ -39,7 +39,7 @@ class ImagesEnrichmentServiceTest {
         id = 1,
         title = "Michelle",
         name = "Michelle",
-        artists = mutableSetOf(ArtistRef(100)),
+        artist = AggregateReference.to(100),
         status = SongStatus.SHOW
     )
 

@@ -2,7 +2,6 @@ package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.LastFmApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistRef
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmArtist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTag
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTrack
@@ -13,9 +12,10 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRep
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
+import org.springframework.data.jdbc.core.mapping.AggregateReference
 import reactor.core.publisher.Mono
 import java.util.Optional
 
@@ -33,7 +33,7 @@ class LastFmEnrichmentServiceTest {
         id = 1,
         title = "Roxanne",
         name = "Roxanne",
-        artists = mutableSetOf(ArtistRef(100)),
+        artist = AggregateReference.to(100),
         status = SongStatus.SHOW
     )
 

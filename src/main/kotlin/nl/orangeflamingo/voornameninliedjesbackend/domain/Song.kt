@@ -1,9 +1,10 @@
 package nl.orangeflamingo.voornameninliedjesbackend.domain
 
 import org.springframework.data.annotation.Id
+import org.springframework.data.jdbc.core.mapping.AggregateReference
+import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.MappedCollection
 import org.springframework.data.relational.core.mapping.Table
-import org.springframework.util.Assert.notNull
 import java.time.Instant
 
 
@@ -44,20 +45,9 @@ data class Song(
     val logEntries: MutableList<SongLogEntry> = mutableListOf(),
     @MappedCollection(idColumn = "song_id", keyColumn = "song_key")
     val lastFmTags: MutableSet<SongLastFmTag> = mutableSetOf(),
-    val artists: MutableSet<ArtistRef> = mutableSetOf()
-) {
-    fun addArtist(artist: Artist, originalArtist: Boolean = true) {
-        artists.add(createArtistRef(artist, originalArtist))
-    }
-
-    private fun createArtistRef(artist: Artist, originalArtist: Boolean): ArtistRef {
-        notNull(artist.id, "Artist id, must not be null")
-        return ArtistRef(
-            artist = artist.id ?: throw IllegalStateException("The artist should have an id"),
-            originalArtist = originalArtist
-        )
-    }
-}
+    @Column("artist_id")
+    var artist: AggregateReference<Artist, Long>
+)
 
 @Table("song_wikimedia_photos")
 data class SongWikimediaPhoto(

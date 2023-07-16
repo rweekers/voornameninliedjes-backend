@@ -1,6 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.domain
 
 import com.beust.klaxon.Json
+import org.springframework.data.jdbc.core.mapping.AggregateReference
 
 class TestSong(
     val id: Long? = null,
@@ -17,7 +18,7 @@ class TestSong(
     val mongoId: String? = null,
     var sources: List<SongSource> = listOf(),
     @Json(ignored = true)
-    val artists: MutableSet<ArtistRef> = mutableSetOf()
+    val artist: Long? = null
 ) {
     fun toDomain(): Song {
         return Song(
@@ -34,7 +35,7 @@ class TestSong(
             status = status,
             mongoId = mongoId,
             sources = sources,
-            artists = artists
+            artist = AggregateReference.to(artist ?: throw IllegalStateException())
         )
     }
 }
