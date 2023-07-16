@@ -1,16 +1,16 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClient
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistRef
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.domain.WikipediaApi
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
+import org.springframework.data.jdbc.core.mapping.AggregateReference
 import reactor.core.publisher.Mono
 
 class WikipediaEnrichmentServiceTest {
@@ -26,7 +26,7 @@ class WikipediaEnrichmentServiceTest {
         title = "Roxanne",
         name = "Roxanne",
         wikipediaPage = "Wiki page Roxanne",
-        artists = mutableSetOf(ArtistRef(100)),
+        artist = AggregateReference.to(100),
         status = SongStatus.SHOW
     )
 

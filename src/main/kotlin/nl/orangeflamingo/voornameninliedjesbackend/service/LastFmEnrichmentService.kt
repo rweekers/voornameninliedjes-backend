@@ -37,8 +37,8 @@ class LastFmEnrichmentService @Autowired constructor(
     }
 
     private fun updateLastFmInfoForSong(song: Song) {
-        val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
-            .orElseThrow { ArtistNotFoundException("Artist with id ${song.artists.first { it.originalArtist }} for song with title ${song.title} not found") }
+        val artist = artistRepository.findById(song.artist.id ?: throw IllegalStateException())
+            .orElseThrow { ArtistNotFoundException("Artist with id ${song.artist.id} for song with title ${song.title} not found") }
 
         try {
             log.info("[last fm] Updating ${song.title} from ${artist.name}")

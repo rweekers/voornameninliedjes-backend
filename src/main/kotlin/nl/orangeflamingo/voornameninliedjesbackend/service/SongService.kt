@@ -18,6 +18,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRep
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.jdbc.core.mapping.AggregateReference
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -71,8 +72,8 @@ class SongService @Autowired constructor(
     private fun mapSongs(songs: List<Song>): List<AggregateSong> {
         return songs
             .map { song ->
-                val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
-                    .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
+                val artist = artistRepository.findById(song.artist.id?:throw IllegalStateException())
+                    .orElseThrow { ArtistNotFoundException("Artist with artist id ${song.artist.id} for title ${song.title} not found") }
                 createAggregateSong(song, artist)
             }
     }
@@ -80,8 +81,8 @@ class SongService @Autowired constructor(
     fun findById(id: Long): AggregateSong {
         log.info("Getting song with id $id")
         val song = songRepository.findById(id).orElseThrow { SongNotFoundException("Song with id $id not found") }
-        val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
-            .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
+        val artist = artistRepository.findById(song.artist.id?:throw IllegalStateException())
+            .orElseThrow { ArtistNotFoundException("Artist with artist id ${song.artist.id} for title ${song.title} not found") }
 
         return createAggregateSong(song, artist)
     }
@@ -135,8 +136,8 @@ class SongService @Autowired constructor(
     private fun getDetails(song: Song): AggregateSong {
         log.info("Getting song with id ${song.id}")
 
-        val artist = artistRepository.findById(song.artists.first { it.originalArtist }.artist)
-            .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
+        val artist = artistRepository.findById(song.artist.id?:throw IllegalArgumentException())
+            .orElseThrow { ArtistNotFoundException("Artist with artist id ${song.artist.id} for title ${song.title} not found") }
 
         val photos = Flux.mergeSequential(artist.flickrPhotos.map { flickrApiPhoto ->
             flickrApiClient.getPhoto(flickrApiPhoto.flickrId)
@@ -179,7 +180,7 @@ class SongService @Autowired constructor(
 
     fun updateSong(aggregateSong: AggregateSong, song: Song, user: String): AggregateSong {
         val artist =
-            findLeadArtistForSong(song)
+            findArtistForSong(song)
         song.title = aggregateSong.title
         song.name = aggregateSong.name
         song.status = aggregateSong.status
@@ -208,12 +209,9 @@ class SongService @Autowired constructor(
         return createAggregateSong(savedSong, artist)
     }
 
-    fun findLeadArtistForSong(song: Song): Artist {
-        return song.artists
-            .filter { artistRef -> artistRef.originalArtist }
-            .map { artistRepository.findById(it.artist) }
-            .first()
-            .orElseThrow { ArtistNotFoundException("Artist with artistRef ${song.artists.first { it.originalArtist }} for title ${song.title} not found") }
+    fun findArtistForSong(song: Song): Artist {
+        return artistRepository.findById(song.artist.id ?: throw IllegalStateException())
+            .orElseThrow { ArtistNotFoundException("Artist with artist id ${song.artist.id} for title ${song.title} not found") }
     }
 
     private fun artistUpdate(song: AggregateSong, artist: Artist): Boolean {
@@ -264,9 +262,9 @@ class SongService @Autowired constructor(
                     date = it.date,
                     username = it.username
                 )
-            }.toMutableList()
+            }.toMutableList(),
+            artist = AggregateReference.to(artist.id ?: throw IllegalStateException())
         )
-        song.addArtist(artist)
         val songDb = songRepository.save(song)
         return createAggregateSong(songDb, artist)
     }

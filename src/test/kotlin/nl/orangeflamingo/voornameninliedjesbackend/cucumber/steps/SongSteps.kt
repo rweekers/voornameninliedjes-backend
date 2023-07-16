@@ -19,6 +19,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.jdbc.core.mapping.AggregateReference
 import java.util.Optional
 
 @Suppress("SpringJavaAutowiredMembersInspection")
@@ -44,7 +45,7 @@ class SongSteps {
     fun givenSongXForArtistY(artistName: String, song: Song) {
         log.info("Song: $song")
         val artist = artistRepository.findFirstByName(artistName) ?: Artist(name = artistName)
-        song.addArtist(artist)
+        song.artist = AggregateReference.to(artist.id ?: throw IllegalStateException())
         songRepository.save(song)
     }
 

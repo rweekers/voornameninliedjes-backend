@@ -3,7 +3,6 @@ package nl.orangeflamingo.voornameninliedjesbackend.controller
 import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistRef
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongSource
@@ -15,6 +14,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepos
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.jdbc.core.mapping.AggregateReference
 import org.springframework.test.util.ReflectionTestUtils
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
@@ -59,11 +59,7 @@ class SongControllerTest : AbstractIntegrationTest() {
                     attribution = "Attribution for test wikimedia photo"
                 )
             ),
-            artists = mutableSetOf(
-                ArtistRef(
-                    artist = artist.id!!
-                )
-            ),
+            artist = AggregateReference.to(artist.id ?: throw IllegalStateException()),
             sources = listOf(
                 SongSource(
                     url = "https://nl.wikipedia.org/wiki/Michelle_(lied)",
