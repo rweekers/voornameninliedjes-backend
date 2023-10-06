@@ -16,7 +16,7 @@ abstract class AbstractIntegrationTest {
     companion object {
 
         @JvmStatic
-        val postgresContainer: PostgreSQLContainer<*> = PostgreSQLContainer(DockerImageName.parse("postgres:13.1"))
+        val postgresContainer: PostgreSQLContainer<*> = PostgreSQLContainer(DockerImageName.parse("postgres:14.6-bullseye"))
             .withExposedPorts(5432)
             .withUsername("vil_app")
             .withPassword("secret")
