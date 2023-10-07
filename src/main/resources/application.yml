@@ -7,6 +7,9 @@ spring:
   flyway:
     # Explicit configuration to easily add development data in different profile
     locations: classpath:db/migration/{vendor}/prod
+  threads:
+    virtual:
+      enabled: true
 
 voornameninliedjes:
   datasource:
