@@ -22,7 +22,6 @@
         <java.version>21</java.version>
         <spring.profiles.active>jvm</spring.profiles.active>
         <kotlin.version>1.9.20-Beta2</kotlin.version>
-        <kotlin.allopen.version>1.9.20-Beta2</kotlin.allopen.version>
         <jacoco.plugin.version>0.8.10</jacoco.plugin.version>
         <snakeyaml.version>2.2</snakeyaml.version>
     </properties>
@@ -184,6 +183,10 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <image>
+                        <buildpacks>
+                            <buildpack>gcr.io/paketo-buildpacks/graalvm</buildpack>
+                            <buildpack>gcr.io/paketo-buildpacks/java-native-image</buildpack>
+                        </buildpacks>
                         <name>rweekers/${project.artifactId}:${project.version}-${project.suffix}</name>
                         <env>
                             <BP_NATIVE_IMAGE>${bp.native.image}</BP_NATIVE_IMAGE>
@@ -195,7 +198,7 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.allopen.version}</version>
+                <version>${kotlin.version}</version>
                 <configuration>
                     <compilerPlugins>
                         <plugin>spring</plugin>
@@ -221,7 +224,7 @@
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
                         <artifactId>kotlin-maven-allopen</artifactId>
-                        <version>${kotlin.allopen.version}</version>
+                        <version>${kotlin.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
