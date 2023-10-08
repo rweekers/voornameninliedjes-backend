@@ -186,6 +186,7 @@
                         <name>rweekers/${project.artifactId}:${project.version}-${project.suffix}</name>
                         <env>
                             <BP_NATIVE_IMAGE>${bp.native.image}</BP_NATIVE_IMAGE>
+                            <BP_JVM_VERSION>21</BP_JVM_VERSION>
                         </env>
                     </image>
                 </configuration>
