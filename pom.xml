@@ -183,10 +183,6 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <image>
-                        <buildpacks>
-                            <buildpack>gcr.io/paketo-buildpacks/graalvm</buildpack>
-                            <buildpack>gcr.io/paketo-buildpacks/java-native-image</buildpack>
-                        </buildpacks>
                         <name>rweekers/${project.artifactId}:${project.version}-${project.suffix}</name>
                         <env>
                             <BP_NATIVE_IMAGE>${bp.native.image}</BP_NATIVE_IMAGE>
@@ -262,6 +258,18 @@
             </properties>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <image>
+                                <buildpacks>
+                                    <buildpack>gcr.io/paketo-buildpacks/graalvm</buildpack>
+                                    <buildpack>gcr.io/paketo-buildpacks/java-native-image</buildpack>
+                                </buildpacks>
+                            </image>
+                        </configuration>
+                    </plugin>
                     <plugin>
                         <groupId>org.graalvm.buildtools</groupId>
                         <artifactId>native-maven-plugin</artifactId>
