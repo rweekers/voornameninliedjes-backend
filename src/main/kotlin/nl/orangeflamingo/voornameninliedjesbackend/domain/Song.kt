@@ -37,38 +37,46 @@ data class Song(
     var albumMbid: String? = null,
     var albumLastFmUrl: String? = null,
     val mongoId: String? = null,
-    @MappedCollection(idColumn = "song_id")
-    var wikimediaPhotos: MutableSet<SongWikimediaPhoto> = mutableSetOf(),
-    @MappedCollection(idColumn = "song_id", keyColumn = "song_key")
+    @MappedCollection(idColumn = "song_id", keyColumn = "id")
+    var wikimediaPhotos: MutableList<SongWikimediaPhoto> = mutableListOf(),
+    @MappedCollection(idColumn = "song_id", keyColumn = "id")
     var sources: List<SongSource> = listOf(),
-    @MappedCollection(idColumn = "song_id", keyColumn = "song_key")
+    @MappedCollection(idColumn = "song_id", keyColumn = "id")
     val logEntries: MutableList<SongLogEntry> = mutableListOf(),
-    @MappedCollection(idColumn = "song_id", keyColumn = "song_key")
-    val lastFmTags: MutableSet<SongLastFmTag> = mutableSetOf(),
+    @MappedCollection(idColumn = "song_id", keyColumn = "id")
+    val lastFmTags: MutableList<SongLastFmTag> = mutableListOf(),
     @Column("artist_id")
     var artist: AggregateReference<Artist, Long>
 )
 
 @Table("song_wikimedia_photos")
 data class SongWikimediaPhoto(
+    @Id
+    var id: Long? = null,
     val url: String,
     val attribution: String
 )
 
 @Table("song_sources")
 data class SongSource(
+    @Id
+    var id: Long? = null,
     val url: String,
     val name: String
 )
 
 @Table("song_log_entries")
 data class SongLogEntry(
+    @Id
+    var id: Long? = null,
     val date: Instant,
     val username: String
 )
 
 @Table("song_last_fm_tags")
 data class SongLastFmTag(
+    @Id
+    var id: Long? = null,
     val name: String,
     val url: String
 )

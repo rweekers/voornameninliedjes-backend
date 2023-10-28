@@ -56,22 +56,22 @@ class ArtistAdminControllerTest : AbstractIntegrationTest() {
                 User(
                     username = adminUser,
                     password = encoder.encode(adminPassword),
-                    roles = mutableSetOf(UserRole(adminRole))
+                    roles = mutableListOf(UserRole(1, adminRole))
                 ),
                 User(
                     username = ownerUser,
                     password = encoder.encode(ownerPassword),
-                    roles = mutableSetOf(UserRole(ownerRole))
+                    roles = mutableListOf(UserRole(2, ownerRole))
                 )
             )
         )
         val artist = artistRepository.save(
             Artist(
                 name = "The Beatles",
-                flickrPhotos = mutableSetOf(
-                    ArtistFlickrPhoto("1"), ArtistFlickrPhoto("2")
+                flickrPhotos = mutableListOf(
+                    ArtistFlickrPhoto(1, "1"), ArtistFlickrPhoto(2, "2")
                 ),
-                wikimediaPhotos = mutableSetOf(
+                wikimediaPhotos = mutableListOf(
                     ArtistWikimediaPhoto(
                         url = "https://upload.wikimedia.org/wikipedia/commons/6/61/The_Beatles_arrive_at_JFK_Airport.jpg",
                         attribution = "United Press International, Public domain, via Wikimedia Commons"

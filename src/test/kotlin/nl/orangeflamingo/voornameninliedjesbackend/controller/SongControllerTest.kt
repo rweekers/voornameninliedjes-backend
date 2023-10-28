@@ -31,15 +31,15 @@ class SongControllerTest : AbstractIntegrationTest() {
     private lateinit var songMap: Map<String, Long>
 
     @BeforeEach
-    fun createUser() {
+    fun createSongs() {
         songRepository.deleteAll()
         artistRepository.deleteAll()
 
         val artist = artistRepository.save(
             Artist(
                 name = "The Beatles",
-                flickrPhotos = mutableSetOf(ArtistFlickrPhoto("1"), ArtistFlickrPhoto("2")),
-                wikimediaPhotos = mutableSetOf(
+                flickrPhotos = mutableListOf(ArtistFlickrPhoto(1, "1"), ArtistFlickrPhoto(2, "2")),
+                wikimediaPhotos = mutableListOf(
                     ArtistWikimediaPhoto(
                         url = "https://upload.wikimedia.org/wikipedia/commons/6/61/The_Beatles_arrive_at_JFK_Airport.jpg",
                         attribution = "United Press International, Public domain, via Wikimedia Commons"
@@ -53,8 +53,9 @@ class SongControllerTest : AbstractIntegrationTest() {
             name = "Michelle",
             status = SongStatus.SHOW,
             wikipediaPage = "wikiPageMichelle",
-            wikimediaPhotos = mutableSetOf(
+            wikimediaPhotos = mutableListOf(
                 SongWikimediaPhoto(
+                    id = 1,
                     url = "https://somefakewikimediaphotourl.doesnotexist",
                     attribution = "Attribution for test wikimedia photo"
                 )
@@ -62,6 +63,7 @@ class SongControllerTest : AbstractIntegrationTest() {
             artist = AggregateReference.to(artist.id ?: throw IllegalStateException()),
             sources = listOf(
                 SongSource(
+                    id = 1,
                     url = "https://nl.wikipedia.org/wiki/Michelle_(lied)",
                     name = "Wikipedia Pagina"
                 )
@@ -71,8 +73,15 @@ class SongControllerTest : AbstractIntegrationTest() {
         songMap = songRepository.saveAll(
             listOf(
                 songMichelle, songMichelle.copy(
-                    title = "Lucy in the Sky with Diamonds", name = "Lucy", sources = listOf(
+                    title = "Lucy in the Sky with Diamonds", name = "Lucy", wikimediaPhotos = mutableListOf(
+                        SongWikimediaPhoto(
+                            id = 2,
+                            url = "https://somefakewikimediaphotourl.doesnotexist",
+                            attribution = "Attribution for test wikimedia photo"
+                        )
+                    ), sources = listOf(
                         SongSource(
+                            id = 2,
                             url = "https://nl.wikipedia.org/wiki/Lucy_in_the_Sky_with_Diamonds",
                             name = "Wikipedia Pagina"
                         )

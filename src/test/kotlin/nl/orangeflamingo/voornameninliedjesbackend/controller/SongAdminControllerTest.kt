@@ -51,7 +51,7 @@ class SongAdminControllerTest : AbstractIntegrationTest() {
             User(
                 username = user,
                 password = encoder.encode(password),
-                roles = mutableSetOf(UserRole(adminRole))
+                roles = mutableListOf(UserRole(1, adminRole))
             )
         )
         val artist = artistRepository.save(
@@ -64,8 +64,9 @@ class SongAdminControllerTest : AbstractIntegrationTest() {
         val songMichelle = TestSong(
             title = songTitle,
             name = "Michelle",
-            wikimediaPhotos = mutableSetOf(
+            wikimediaPhotos = mutableListOf(
                 SongWikimediaPhoto(
+                    id = 1,
                     url = "https://somefakewikimediaphotourl.doesnotexist",
                     attribution = "Attribution for test wikimedia photo"
                 )
@@ -82,7 +83,7 @@ class SongAdminControllerTest : AbstractIntegrationTest() {
 
         val songLucy = TestSong(
             artist = artist.id!!,
-            wikimediaPhotos = mutableSetOf(SongWikimediaPhoto("some url", "some attribution"))
+            wikimediaPhotos = mutableListOf(SongWikimediaPhoto(id = 2, url = "some url", attribution = "some attribution"))
         ).toDomain()
 
         songMap = songRepository.saveAll(

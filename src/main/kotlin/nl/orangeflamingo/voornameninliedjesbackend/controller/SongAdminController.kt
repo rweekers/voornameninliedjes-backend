@@ -212,9 +212,9 @@ class SongAdminController(
         artist: Artist,
         flickrId: String
     ) {
-        val logEntry = ArtistLogEntry(Instant.now(), user)
+        val logEntry = ArtistLogEntry(date = Instant.now(), username = user)
         artist.logEntries.add(logEntry)
-        artist.flickrPhotos.add(ArtistFlickrPhoto(flickrId))
+        artist.flickrPhotos.add(ArtistFlickrPhoto(flickrId = flickrId))
         artistRepository.save(artist)
     }
 
@@ -252,16 +252,16 @@ class SongAdminController(
                     url = it.url.trim(),
                     attribution = it.attribution.trim()
                 )
-            }.toSet(),
+            }.toList(),
             songWikimediaPhotos = song.songWikimediaPhotos.map {
                 SongWikimediaPhoto(
                     url = it.url.trim(),
                     attribution = it.attribution.trim()
                 )
-            }.toSet(),
-            flickrPhotos = song.flickrPhotos.map { ArtistFlickrPhoto(it.trim()) }.toSet(),
-            sources = song.sources.map { SongSource(it.url.trim(), it.name.trim()) },
-            logEntries = song.logs.map { SongLogEntry(it.date, it.user.trim()) }.toMutableList()
+            }.toList(),
+            flickrPhotos = song.flickrPhotos.map { ArtistFlickrPhoto(flickrId = it.trim()) }.toList(),
+            sources = song.sources.map { SongSource(url = it.url.trim(), name = it.name.trim()) },
+            logEntries = song.logs.map { SongLogEntry(date = it.date, username = it.user.trim()) }.toMutableList()
         )
 
     }

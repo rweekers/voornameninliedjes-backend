@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.0-M3</version>
+        <version>3.2.0-RC1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>nl.orangeflamingo</groupId>
@@ -21,7 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
         <spring.profiles.active>jvm</spring.profiles.active>
-        <kotlin.version>1.9.20-Beta2</kotlin.version>
+        <kotlin.version>1.9.20-RC</kotlin.version>
         <jacoco.plugin.version>0.8.10</jacoco.plugin.version>
         <snakeyaml.version>2.2</snakeyaml.version>
     </properties>

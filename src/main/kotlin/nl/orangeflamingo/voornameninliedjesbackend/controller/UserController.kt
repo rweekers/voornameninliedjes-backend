@@ -90,7 +90,7 @@ class UserController(private val userRepository: UserRepository, private val pas
             userDto.id?.toLong(),
             userDto.username,
             passwordEncoder.encode(userDto.password),
-            userDto.roles.map { UserRole(it) }.toMutableSet()
+            userDto.roles.map { UserRole(null, it) }.toMutableList()
         )
     }
 
