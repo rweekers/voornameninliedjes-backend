@@ -39,12 +39,12 @@ class UserControllerTest : AbstractIntegrationTest() {
                 User(
                     username = adminUser,
                     password = encoder.encode(adminPassword),
-                    roles = mutableSetOf(UserRole(adminRole))
+                    roles = mutableListOf(UserRole(1, adminRole))
                 ),
                 User(
                     username = ownerUser,
                     password = encoder.encode(ownerPassword),
-                    roles = mutableSetOf(UserRole(ownerRole))
+                    roles = mutableListOf(UserRole(2, ownerRole))
                 )
             )
         ).associate { it.username to it.id!! }

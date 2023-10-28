@@ -33,11 +33,11 @@ data class AggregateSong(
     val remarks: String? = null,
     val hasDetails: Boolean,
     val mongoId: String? = null,
-    val artistWikimediaPhotos: Set<ArtistWikimediaPhoto> = mutableSetOf(),
-    val songWikimediaPhotos: Set<SongWikimediaPhoto> = mutableSetOf(),
-    val flickrPhotos: Set<ArtistFlickrPhoto> = mutableSetOf(),
+    val artistWikimediaPhotos: List<ArtistWikimediaPhoto> = mutableListOf(),
+    val songWikimediaPhotos: List<SongWikimediaPhoto> = mutableListOf(),
+    val flickrPhotos: List<ArtistFlickrPhoto> = mutableListOf(),
     val flickrPhotoDetail: Flux<PhotoDetail> = Flux.empty(),
     val sources: List<SongSource> = listOf(),
-    val tags: Set<SongLastFmTag> = setOf(),
+    val tags: List<SongLastFmTag> = listOf(),
     val logEntries: MutableList<SongLogEntry> = mutableListOf()
 )
