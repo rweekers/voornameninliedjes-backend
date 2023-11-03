@@ -19,9 +19,9 @@ class ImageConfig {
 
      @Bean
     fun imageClient(builder: WebClient.Builder): ImageClient {
-        val wca = WebClientAdapter.forClient(builder.baseUrl(imagesServicePath).build())
+        val wca = WebClientAdapter.create(builder.baseUrl(imagesServicePath).build())
         return HttpServiceProxyFactory.builder()
-            .clientAdapter(wca)
+            .exchangeAdapter(wca)
             .build()
             .createClient(ImageClient::class.java)
     }

@@ -1,7 +1,7 @@
 version: '3'
 services:
   db:
-    image: postgres:14.6-bullseye
+    image: postgres:15.4-bookworm
     restart: unless-stopped
     environment:
       POSTGRES_USER: vil_app
