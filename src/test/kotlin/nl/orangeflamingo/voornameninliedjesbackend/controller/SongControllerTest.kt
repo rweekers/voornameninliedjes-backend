@@ -15,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.jdbc.core.mapping.AggregateReference
-import org.springframework.test.util.ReflectionTestUtils
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 
@@ -149,22 +148,6 @@ class SongControllerTest : AbstractIntegrationTest() {
             .uri("/api/songs/no artist/no song")
             .exchange()
             .expectStatus().isNotFound
-    }
-
-    @Test
-    fun getSongByArtistAndTitleFromCacheTest() {
-        ReflectionTestUtils.setField(songController, "useCache", true)
-        client.get()
-            .uri("/api/songs/the Beatles/MICHELLE")
-            .exchange()
-            .expectStatus().isOk
-            .expectBody()
-            .jsonPath("$.title").isNotEmpty
-            .jsonPath("$.title").isEqualTo("Michelle")
-            .jsonPath("$.artist").isNotEmpty
-            .jsonPath("$.artist").isEqualTo("The Beatles")
-            .jsonPath("$.flickrPhotos").isNotEmpty
-            .jsonPath("$.flickrPhotos[0].url").isEqualTo("https://somefakeflickrphotourl.doesnotexist")
     }
 
     @Test

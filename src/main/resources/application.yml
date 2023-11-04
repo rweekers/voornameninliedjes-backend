@@ -32,8 +32,6 @@ voornameninliedjes:
   images:
     service:
       path: https://images.voornameninliedjes.nl
-  cache:
-    enabled: false
   batch:
     interval: 3000
     service:
