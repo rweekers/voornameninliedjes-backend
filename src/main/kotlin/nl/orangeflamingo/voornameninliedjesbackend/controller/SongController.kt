@@ -1,9 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import com.fasterxml.jackson.annotation.JsonView
-import com.google.common.cache.CacheBuilder
-import com.google.common.cache.CacheLoader
-import com.google.common.cache.LoadingCache
 import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistNameStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
@@ -25,7 +22,6 @@ import nl.orangeflamingo.voornameninliedjesbackend.service.NotFoundException
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongNotFoundException
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
@@ -48,14 +44,6 @@ class SongController(
 
     private val log = LoggerFactory.getLogger(SongController::class.java)
 
-    @Value("\${voornameninliedjes.cache.enabled}")
-    private val useCache = false
-
-    private val songCache: LoadingCache<Pair<String, String>, Mono<SongDto>> = CacheBuilder.newBuilder()
-        .build(
-            CacheLoader.from { key: Pair<String, String>? -> getSongDetails(key?.first ?: "", key?.second ?: "") }
-        )
-
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     @ExceptionHandler(SongNotFoundException::class, ArtistNotFoundException::class)
     fun notFoundHandler(ex: NotFoundException) {
@@ -64,15 +52,8 @@ class SongController(
 
     @GetMapping("/songs/{artist}/{title}")
     fun getSongByArtistAndTitle(@PathVariable artist: String, @PathVariable title: String): Mono<SongDto> {
-        return if (useCache) {
-            log.info("Requesting song with artist $artist and title $title from cache...")
-            val artistTitlePair = Pair(artist, title)
-            songCache.refresh(artistTitlePair)
-            songCache.getIfPresent(artistTitlePair) ?: Mono.empty()
-        } else {
-            log.info("Requesting song with artist $artist and title $title...")
-            getSongDetails(artist, title)
-        }
+        log.info("Requesting song with artist $artist and title $title...")
+        return getSongDetails(artist, title)
     }
 
     private fun getSongDetails(artist: String, title: String): Mono<SongDto> {

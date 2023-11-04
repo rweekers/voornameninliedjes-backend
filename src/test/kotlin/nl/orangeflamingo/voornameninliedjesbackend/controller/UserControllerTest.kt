@@ -68,7 +68,6 @@ class UserControllerTest : AbstractIntegrationTest() {
     }
 
     @Test
-    @Disabled
     fun authenticateWrongUserTest() {
         client.post()
             .uri("/admin/authenticate")
@@ -85,7 +84,6 @@ class UserControllerTest : AbstractIntegrationTest() {
     }
 
     @Test
-    @Disabled
     fun authenticateCorrectTest() {
         client.post()
             .uri("/admin/authenticate")
@@ -105,7 +103,6 @@ class UserControllerTest : AbstractIntegrationTest() {
     }
 
     @Test
-    @Disabled
     fun newUserTest() {
         client.post()
             .uri("/admin/users")
@@ -127,7 +124,6 @@ class UserControllerTest : AbstractIntegrationTest() {
     }
 
     @Test
-    @Disabled
     fun deleteUserTest() {
         client.delete()
             .uri("/admin/users/${userMap[adminUser]}")
@@ -138,17 +134,18 @@ class UserControllerTest : AbstractIntegrationTest() {
     }
 
     @Test
+    // Check Servlet.service() for servlet [dispatcherServlet] in context with path [] met java.lang.StackOverflowError: null
+    // Seems to be related to wrong password (can be validated by calling endpoint with wrong credentials
     @Disabled
     fun userWrongCredentialsTest() {
         client.get()
             .uri("/admin/users")
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth("wrongUser", "wrongPassword") }
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(adminUser, "wrongPassword") }
             .exchange()
             .expectStatus().isUnauthorized
     }
 
     @Test
-    @Disabled
     fun userUnauthorizedTest() {
         client.get()
             .uri("/admin/users")
@@ -157,7 +154,6 @@ class UserControllerTest : AbstractIntegrationTest() {
     }
 
     @Test
-    @Disabled
     fun userAuthorizationRoleTest() {
         client.get()
             .uri("/admin/users")
@@ -167,7 +163,6 @@ class UserControllerTest : AbstractIntegrationTest() {
     }
 
     @Test
-    @Disabled
     fun getUsersTest() {
         client.get()
             .uri("/admin/users")
@@ -178,7 +173,6 @@ class UserControllerTest : AbstractIntegrationTest() {
     }
 
     @Test
-    @Disabled
     fun getAdminUserTest() {
         client.get()
             .uri("/admin/users/${userMap[adminUser]}")
@@ -191,7 +185,6 @@ class UserControllerTest : AbstractIntegrationTest() {
     }
 
     @Test
-    @Disabled
     fun userNotFoundUserTest() {
         val maxId = userMap.values.maxOrNull()!!
         val notExistingId = Random.nextLong(maxId, Long.MAX_VALUE)

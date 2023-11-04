@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.0-RC1</version>
+        <version>3.2.0-RC2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>nl.orangeflamingo</groupId>
@@ -24,9 +24,14 @@
         <sonar.organization>rweekers</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
-        <kotlin.version>1.9.20-RC</kotlin.version>
-        <jacoco.plugin.version>0.8.10</jacoco.plugin.version>
+        <kotlin.version>1.9.20</kotlin.version>
+        <jacoco.plugin.version>0.8.11</jacoco.plugin.version>
         <snakeyaml.version>2.2</snakeyaml.version>
+        <copy_down.version>1.1</copy_down.version>
+        <jsoup.version>1.16.2</jsoup.version>
+        <mockito-kotlin.version>5.1.0</mockito-kotlin.version>
+        <cucumber.version>7.14.0</cucumber.version>
+        <klaxon.version>5.6</klaxon.version>
     </properties>
 
     <dependencies>
@@ -62,33 +67,21 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <version>9.22.2</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.6.0</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.14.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>32.1.2-jre</version>
         </dependency>
         <dependency>
             <groupId>io.github.furstenheim</groupId>
             <artifactId>copy_down</artifactId>
-            <version>1.1</version>
+            <version>${copy_down.version}</version>
         </dependency>
         <!-- because("included version has a security vulnerability, see https://advisory.checkmarx.net/advisory/vulnerability/CVE-2021-37714/") -->
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.16.1</version>
+            <version>${jsoup.version}</version>
         </dependency>
         <!-- Override due to CVE-2022-1471 -->
         <dependency>
@@ -103,6 +96,13 @@
             <version>${kotlin.version}</version>
         </dependency>
 
+        <!-- Temporary add, due to https://github.com/spring-projects/spring-boot/issues/38186 -->
+        <dependency>
+            <groupId>org.crac</groupId>
+            <artifactId>crac</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -113,68 +113,62 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
-            <version>1.19.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>1.19.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.19.1</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite-engine</artifactId>
-            <version>1.10.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite-api</artifactId>
-            <version>1.10.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
-            <version>7.14.0</version>
+            <version>${cucumber.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-spring</artifactId>
-            <version>7.14.0</version>
+            <version>${cucumber.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit-platform-engine</artifactId>
-            <version>7.14.0</version>
+            <version>${cucumber.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.beust</groupId>
             <artifactId>klaxon</artifactId>
-            <version>5.6</version>
+            <version>${klaxon.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito.kotlin</groupId>
             <artifactId>mockito-kotlin</artifactId>
-            <version>5.1.0</version>
+            <version>${mockito-kotlin.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.16.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
