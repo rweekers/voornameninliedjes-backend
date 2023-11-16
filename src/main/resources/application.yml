@@ -14,17 +14,13 @@ spring:
 voornameninliedjes:
   datasource:
     application:
-      host: localhost
-      port: 5432
-      database: voornameninliedjes
+      jdbc-url: jdbc:postgresql://localhost:5432/voornameninliedjes
       schema: vil
       username: vil_app
       password: secret
       pool-name: voornameninliedjes-app-hikari-pool
     migration:
-      host: localhost
-      port: 5432
-      database: voornameninliedjes
+      jdbc-url: jdbc:postgresql://localhost:5432/voornameninliedjes
       schema: vil
       username: vil_app
       password: secret

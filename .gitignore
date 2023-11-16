@@ -30,3 +30,7 @@ target
 /dist/
 /nbdist/
 /.nb-gradle/
+
+*.crt
+*.key
+*.pk8
