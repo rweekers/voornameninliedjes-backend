@@ -83,31 +83,5 @@ class ArtistControllerTest : AbstractIntegrationTest() {
             .jsonPath("$.flickrPhotos").isNotEmpty
             .jsonPath("$.flickrPhotos[0].flickrId").isEqualTo("1")
     }
-
-//    companion object {
-//
-//        @Container
-//        @JvmStatic
-//        val postgresContainer: PostgreSQLContainer<*> = PostgreSQLContainer(DockerImageName.parse("postgres:13.1"))
-//            .withExposedPorts(5432)
-////            .waitingFor(HttpWaitStrategy().forPort(5432))
-//            .withUsername("vil_app")
-//            .withPassword("secret")
-//            .withDatabaseName("voornameninliedjes")
-//
-//        @JvmStatic
-//        @DynamicPropertySource
-//        fun registerDynamicProperties(registry: DynamicPropertyRegistry) {
-//
-//            registry.add("voornameninliedjes.datasource.application.host", postgresContainer::getHost)
-//            registry.add("voornameninliedjes.datasource.application.port", { postgresContainer.getMappedPort(5432) })
-//
-//            registry.add("voornameninliedjes.datasource.migration.host", postgresContainer::getHost)
-//            registry.add("voornameninliedjes.datasource.migration.port", { postgresContainer.getMappedPort(5432) })
-//
-//            registry.add("voornameninliedjes.datasource.migration.username", postgresContainer::getUsername)
-//            registry.add("voornameninliedjes.datasource.migration.password", postgresContainer::getPassword)
-//        }
-//    }
 }
 

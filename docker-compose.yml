@@ -16,8 +16,8 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: dev
       logging.file.path: logs
-      voornameninliedjes.datasource.application.host: db
-      voornameninliedjes.datasource.migration.host: db
+      voornameninliedjes.datasource.application.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
+      voornameninliedjes.datasource.migration.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
       voornameninliedjes.images.service.path: http://localhost:8000/images/
     ports:
       - "8080:8080"
@@ -34,8 +34,8 @@ services:
       SPRING_PROFILES_ACTIVE: dev
       logging.file.path: logs
       server.port: 9090
-      voornameninliedjes.datasource.application.host: db
-      voornameninliedjes.datasource.migration.host: db
+      voornameninliedjes.datasource.application.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
+      voornameninliedjes.datasource.migration.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
       voornameninliedjes.images.service.path: http://localhost:8000/images/
     ports:
       - "9090:9090"

@@ -32,11 +32,13 @@ abstract class AbstractIntegrationTest {
         @DynamicPropertySource
         fun registerDynamicProperties(registry: DynamicPropertyRegistry) {
 
-            registry.add("voornameninliedjes.datasource.application.host", postgresContainer::getHost)
-            registry.add("voornameninliedjes.datasource.application.port") { postgresContainer.getMappedPort(5432) }
+            registry.add("voornameninliedjes.datasource.application.jdbc-url") {
+                "jdbc:postgresql://${postgresContainer.host}:${postgresContainer.getMappedPort(5432)}/${postgresContainer.databaseName}"
+            }
 
-            registry.add("voornameninliedjes.datasource.migration.host", postgresContainer::getHost)
-            registry.add("voornameninliedjes.datasource.migration.port") { postgresContainer.getMappedPort(5432) }
+            registry.add("voornameninliedjes.datasource.migration.jdbc-url") {
+                "jdbc:postgresql://${postgresContainer.host}:${postgresContainer.getMappedPort(5432)}/${postgresContainer.databaseName}"
+            }
 
             registry.add("voornameninliedjes.datasource.migration.username", postgresContainer::getUsername)
             registry.add("voornameninliedjes.datasource.migration.password", postgresContainer::getPassword)

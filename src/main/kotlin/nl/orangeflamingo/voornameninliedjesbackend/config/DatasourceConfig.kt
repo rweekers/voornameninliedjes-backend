@@ -34,7 +34,8 @@ class DatasourceConfig {
         val config = HikariConfig()
         config.username = properties.username
         config.password = properties.password
-        config.jdbcUrl = "jdbc:postgresql://${properties.host}:${properties.port}/${properties.database}"
+        config.jdbcUrl = properties.jdbcUrl
+        // config.jdbcUrl = "jdbc:postgresql://${properties.host}:${properties.port}/${properties.database}"
         config.schema = properties.schema
         config.maximumPoolSize = 10
         config.poolName = properties.poolName
@@ -55,9 +56,10 @@ class MigrationDatasourceProperties : DatasourceProperties()
 open class DatasourceProperties {
     open lateinit var username: String
     lateinit var password: String
-    lateinit var host: String
-    lateinit var port: String
-    lateinit var database: String
+    lateinit var jdbcUrl: String
+    // lateinit var host: String
+    // lateinit var port: String
+    // lateinit var database: String
     lateinit var schema: String
     lateinit var poolName: String
 }
