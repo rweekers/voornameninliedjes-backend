@@ -2,6 +2,8 @@ spring:
   output:
     ansi:
       enabled: always
+  banner:
+    location: classpath:banner.txt
   profiles:
     active: @spring.profiles.active@
   flyway:
@@ -55,3 +57,11 @@ jobs:
 logging:
   file:
     path: logs
+
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
