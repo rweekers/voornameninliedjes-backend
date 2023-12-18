@@ -1,12 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
-import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWikimediaPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.TestSong
-import nl.orangeflamingo.voornameninliedjesbackend.domain.User
-import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
+import nl.orangeflamingo.voornameninliedjesbackend.domain.*
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSongDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminWikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
@@ -51,7 +46,7 @@ class SongAdminControllerTest : AbstractIntegrationTest() {
             User(
                 username = user,
                 password = encoder.encode(password),
-                roles = mutableListOf(UserRole(1, adminRole))
+                roles = mutableSetOf(UserRole(1, adminRole))
             )
         )
         val artist = artistRepository.save(
@@ -64,9 +59,8 @@ class SongAdminControllerTest : AbstractIntegrationTest() {
         val songMichelle = TestSong(
             title = songTitle,
             name = "Michelle",
-            wikimediaPhotos = mutableListOf(
+            wikimediaPhotos = mutableSetOf(
                 SongWikimediaPhoto(
-                    id = 1,
                     url = "https://somefakewikimediaphotourl.doesnotexist",
                     attribution = "Attribution for test wikimedia photo"
                 )
@@ -83,7 +77,7 @@ class SongAdminControllerTest : AbstractIntegrationTest() {
 
         val songLucy = TestSong(
             artist = artist.id!!,
-            wikimediaPhotos = mutableListOf(SongWikimediaPhoto(id = 2, url = "some url", attribution = "some attribution"))
+            wikimediaPhotos = mutableSetOf(SongWikimediaPhoto(url = "some url", attribution = "some attribution"))
         ).toDomain()
 
         songMap = songRepository.saveAll(

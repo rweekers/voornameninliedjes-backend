@@ -16,12 +16,12 @@ data class TestAggregateSong(
     val status: SongStatus = SongStatus.SHOW,
     val hasDetails: Boolean = false,
     val mongoId: String? = null,
-    val wikimediaPhotos: List<ArtistWikimediaPhoto> = mutableListOf(),
-    val flickrPhotos: List<ArtistFlickrPhoto> = mutableListOf(),
+    val wikimediaPhotos: Set<ArtistWikimediaPhoto> = mutableSetOf(),
+    val flickrPhotos: Set<ArtistFlickrPhoto> = mutableSetOf(),
     @Json(ignored = true)
     val flickrPhotoDetail: Flux<PhotoDetail> = Flux.empty(),
-    val sources: List<SongSource> = listOf(),
-    val logEntries: MutableList<SongLogEntry> = mutableListOf()
+    val sources: Set<SongSource> = setOf(),
+    val logEntries: MutableSet<SongLogEntry> = mutableSetOf()
 ) {
     fun toDomain():AggregateSong {
         return AggregateSong(

@@ -11,8 +11,8 @@ data class User(
     var id: Long? = null,
     val username: String,
     val password: String,
-    @MappedCollection(idColumn = "user_id", keyColumn = "id")
-    val roles: MutableList<UserRole>
+    @MappedCollection(idColumn = "user_id")
+    val roles: MutableSet<UserRole>
 )
 
 @Table("user_roles")

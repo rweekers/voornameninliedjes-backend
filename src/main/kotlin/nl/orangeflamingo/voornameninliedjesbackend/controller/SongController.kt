@@ -152,8 +152,8 @@ class SongController(
     }
 
     private fun mergeAndConvertWikimediaPhotos(
-        artistWikimediaPhoto: List<ArtistWikimediaPhoto>,
-        songWikimediaPhotos: List<SongWikimediaPhoto>
+        artistWikimediaPhoto: Set<ArtistWikimediaPhoto>,
+        songWikimediaPhotos: Set<SongWikimediaPhoto>
     ): Set<WikimediaPhotoDto> {
         val mergedPhotos = mutableSetOf<WikimediaPhotoDto>()
         mergedPhotos.addAll(songWikimediaPhotos.map { convertSongWikimediaPhotoToDto(it) })

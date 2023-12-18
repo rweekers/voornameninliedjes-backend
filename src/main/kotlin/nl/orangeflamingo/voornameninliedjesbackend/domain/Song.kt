@@ -37,14 +37,14 @@ data class Song(
     var albumMbid: String? = null,
     var albumLastFmUrl: String? = null,
     val mongoId: String? = null,
-    @MappedCollection(idColumn = "song_id", keyColumn = "id")
-    var wikimediaPhotos: MutableList<SongWikimediaPhoto> = mutableListOf(),
-    @MappedCollection(idColumn = "song_id", keyColumn = "id")
-    var sources: List<SongSource> = listOf(),
-    @MappedCollection(idColumn = "song_id", keyColumn = "id")
-    val logEntries: MutableList<SongLogEntry> = mutableListOf(),
-    @MappedCollection(idColumn = "song_id", keyColumn = "id")
-    val lastFmTags: MutableList<SongLastFmTag> = mutableListOf(),
+    @MappedCollection(idColumn = "song_id")
+    var wikimediaPhotos: MutableSet<SongWikimediaPhoto> = mutableSetOf(),
+    @MappedCollection(idColumn = "song_id")
+    var sources: Set<SongSource> = setOf(),
+    @MappedCollection(idColumn = "song_id")
+    val logEntries: MutableSet<SongLogEntry> = mutableSetOf(),
+    @MappedCollection(idColumn = "song_id")
+    val lastFmTags: MutableSet<SongLastFmTag> = mutableSetOf(),
     @Column("artist_id")
     var artist: AggregateReference<Artist, Long>
 )

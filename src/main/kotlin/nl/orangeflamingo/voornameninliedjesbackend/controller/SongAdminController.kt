@@ -252,16 +252,16 @@ class SongAdminController(
                     url = it.url.trim(),
                     attribution = it.attribution.trim()
                 )
-            }.toList(),
+            }.toSet(),
             songWikimediaPhotos = song.songWikimediaPhotos.map {
                 SongWikimediaPhoto(
                     url = it.url.trim(),
                     attribution = it.attribution.trim()
                 )
-            }.toList(),
-            flickrPhotos = song.flickrPhotos.map { ArtistFlickrPhoto(flickrId = it.trim()) }.toList(),
-            sources = song.sources.map { SongSource(url = it.url.trim(), name = it.name.trim()) },
-            logEntries = song.logs.map { SongLogEntry(date = it.date, username = it.user.trim()) }.toMutableList()
+            }.toSet(),
+            flickrPhotos = song.flickrPhotos.map { ArtistFlickrPhoto(flickrId = it.trim()) }.toSet(),
+            sources = song.sources.map { SongSource(url = it.url.trim(), name = it.name.trim()) }.toSet(),
+            logEntries = song.logs.map { SongLogEntry(date = it.date, username = it.user.trim()) }.toMutableSet()
         )
 
     }

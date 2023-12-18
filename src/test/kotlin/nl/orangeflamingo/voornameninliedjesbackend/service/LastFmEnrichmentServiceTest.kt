@@ -88,7 +88,7 @@ class LastFmEnrichmentServiceTest {
         verify(mockSongRepository).findAllByStatusAndLastFmUrlIsNullOrderedByNameAndTitle("SHOW")
         verify(mockSongRepository).save(
             song.copy(
-                lastFmTags = mutableListOf(
+                lastFmTags = mutableSetOf(
                     SongLastFmTag(
                         name = "rock",
                         url = "https://www.last.fm/tag/rock"
