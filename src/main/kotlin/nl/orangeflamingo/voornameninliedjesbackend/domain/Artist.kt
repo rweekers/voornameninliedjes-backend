@@ -14,12 +14,12 @@ data class Artist(
     var mbid: String? = null,
     var lastFmUrl: String? = null,
     val background: String? = null,
-    @MappedCollection(idColumn = "artist_id", keyColumn = "id")
-    var wikimediaPhotos: MutableList<ArtistWikimediaPhoto> = mutableListOf(),
-    @MappedCollection(idColumn = "artist_id", keyColumn = "id")
-    var flickrPhotos: MutableList<ArtistFlickrPhoto> = mutableListOf(),
-    @MappedCollection(idColumn = "artist_id", keyColumn = "id")
-    val logEntries: MutableList<ArtistLogEntry> = mutableListOf()
+    @MappedCollection(idColumn = "artist_id")
+    var wikimediaPhotos: MutableSet<ArtistWikimediaPhoto> = mutableSetOf(),
+    @MappedCollection(idColumn = "artist_id")
+    var flickrPhotos: MutableSet<ArtistFlickrPhoto> = mutableSetOf(),
+    @MappedCollection(idColumn = "artist_id")
+    val logEntries: MutableSet<ArtistLogEntry> = mutableSetOf()
 )
 
 @Table("artist_wikimedia_photos")
@@ -38,7 +38,7 @@ data class ArtistFlickrPhoto(
 )
 
 @Table("artist_log_entries")
-class ArtistLogEntry(
+data class ArtistLogEntry(
     @Id
     var id: Long? = null,
     val date: Instant,
