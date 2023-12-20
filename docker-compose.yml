@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
   app-native:
-    image: rweekers/voornameninliedjes-backend:2.0.0-native
+    image: rweekers/voornameninliedjes-backend:2.0.1-native
     user: ${MY_UID}:${MY_GID}
     restart: unless-stopped
     environment:
@@ -27,7 +27,7 @@ services:
     depends_on:
       - db
   app-jvm:
-    image: rweekers/voornameninliedjes-backend:2.0.0-jvm
+    image: rweekers/voornameninliedjes-backend:2.0.1-jvm
     user: ${MY_UID}:${MY_GID}
     restart: unless-stopped
     environment:

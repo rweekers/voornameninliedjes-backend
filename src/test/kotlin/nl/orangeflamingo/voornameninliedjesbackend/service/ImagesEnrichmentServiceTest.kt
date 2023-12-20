@@ -46,7 +46,7 @@ class ImagesEnrichmentServiceTest {
     private val artist = Artist(
         id = 100,
         name = "The Beatles",
-        flickrPhotos = mutableListOf(ArtistFlickrPhoto(1000, "1000"))
+        flickrPhotos = mutableSetOf(ArtistFlickrPhoto(1000, "1000"))
     )
 
     private val flickrPhotoDetail = FlickrPhotoDetail(

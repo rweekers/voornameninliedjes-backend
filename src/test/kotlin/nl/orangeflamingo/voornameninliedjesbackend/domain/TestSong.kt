@@ -13,10 +13,10 @@ class TestSong(
     var youtube: String? = "",
     var spotify: String? = "",
     val wikipediaPage: String? = "",
-    val wikimediaPhotos: MutableList<SongWikimediaPhoto> = mutableListOf(),
+    val wikimediaPhotos: MutableSet<SongWikimediaPhoto> = mutableSetOf(),
     var status: SongStatus = SongStatus.SHOW,
     val mongoId: String? = null,
-    var sources: List<SongSource> = listOf(),
+    var sources: Set<SongSource> = setOf(),
     @Json(ignored = true)
     val artist: Long? = null
 ) {

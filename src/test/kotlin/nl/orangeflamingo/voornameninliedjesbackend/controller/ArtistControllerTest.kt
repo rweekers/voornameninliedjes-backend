@@ -28,8 +28,8 @@ class ArtistControllerTest : AbstractIntegrationTest() {
         artistRepository.deleteAll()
         val artist = Artist(
             name = "The Beatles",
-            flickrPhotos = mutableListOf(ArtistFlickrPhoto(1, "1"), ArtistFlickrPhoto(2, "2")),
-            wikimediaPhotos = mutableListOf(
+            flickrPhotos = mutableSetOf(ArtistFlickrPhoto(1, "1"), ArtistFlickrPhoto(2, "2")),
+            wikimediaPhotos = mutableSetOf(
                 ArtistWikimediaPhoto(
                     url = "https://upload.wikimedia.org/wikipedia/commons/6/61/The_Beatles_arrive_at_JFK_Airport.jpg",
                     attribution = "United Press International, Public domain, via Wikimedia Commons"
@@ -41,8 +41,8 @@ class ArtistControllerTest : AbstractIntegrationTest() {
                 artist,
                 artist.copy(
                     name = "The Rolling Stones",
-                    flickrPhotos = mutableListOf(),
-                    wikimediaPhotos = mutableListOf()
+                    flickrPhotos = mutableSetOf(),
+                    wikimediaPhotos = mutableSetOf()
                 )
             )
         ).associate { it.name to it.id!! }
