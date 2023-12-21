@@ -35,7 +35,7 @@ class TestSong(
             status = status,
             mongoId = mongoId,
             sources = sources,
-            artist = AggregateReference.to(artist ?: throw IllegalStateException())
+            artist = AggregateReference.to(artist ?: 0)
         )
     }
 }

@@ -41,7 +41,8 @@ class SecurityConfig(
             .authorizeHttpRequests { requests ->
                 requests
                     .requestMatchers(
-                        "/actuator/**",
+                        "/actuator/info",
+                        "/actuator/health",
                         "/api/**",
                         "/beta/**",
                         "/images/**",

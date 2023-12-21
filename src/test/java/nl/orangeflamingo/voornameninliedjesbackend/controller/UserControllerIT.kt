@@ -15,7 +15,7 @@ import org.springframework.test.web.reactive.server.expectBodyList
 import org.springframework.web.reactive.function.BodyInserters
 import kotlin.random.Random
 
-class UserControllerTest : AbstractIntegrationTest() {
+class UserControllerIT : AbstractIntegrationTest() {
 
     @Autowired
     private lateinit var client: WebTestClient
