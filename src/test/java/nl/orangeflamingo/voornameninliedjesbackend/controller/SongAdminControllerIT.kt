@@ -16,7 +16,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import org.springframework.web.reactive.function.BodyInserters
 
-class SongAdminControllerTest : AbstractIntegrationTest() {
+class SongAdminControllerIT : AbstractIntegrationTest() {
 
     @Autowired
     private lateinit var client: WebTestClient

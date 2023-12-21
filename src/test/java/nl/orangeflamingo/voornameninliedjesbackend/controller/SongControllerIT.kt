@@ -18,7 +18,7 @@ import org.springframework.data.jdbc.core.mapping.AggregateReference
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 
-class SongControllerTest : AbstractIntegrationTest() {
+class SongControllerIT : AbstractIntegrationTest() {
     @Autowired
     private lateinit var client: WebTestClient
     @Autowired

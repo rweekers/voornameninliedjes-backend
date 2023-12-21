@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 
-class ArtistControllerTest : AbstractIntegrationTest() {
+class ArtistControllerIT : AbstractIntegrationTest() {
     private lateinit var artistMap: Map<String, Long>
     @Autowired
     private lateinit var client: WebTestClient

@@ -59,9 +59,24 @@ logging:
     path: logs
 
 management:
-  server:
-    port: 8081
+  endpoint:
+    enabled-by-default: false
+    info:
+      enabled: true
+    health:
+      enabled: true
+    metrics:
+      enabled: true
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: health,env,info,metrics
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    version: @project.version@
+    name: Voornamen in liedjes backend
+    description: Backend service voor voornamen in liedjes

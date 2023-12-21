@@ -21,7 +21,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import java.time.Instant
 
-class ArtistAdminControllerTest : AbstractIntegrationTest() {
+class ArtistAdminControllerIT : AbstractIntegrationTest() {
 
     @Autowired
     private lateinit var client: WebTestClient
