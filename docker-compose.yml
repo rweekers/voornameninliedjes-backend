@@ -9,8 +9,8 @@ services:
       POSTGRES_DB: voornameninliedjes
     ports:
       - "5432:5432"
-  app-native:
-    image: rweekers/voornameninliedjes-backend:2.1.0-native
+  app-jvm:
+    image: rweekers/voornameninliedjes-backend:2.1.0-jvm
     user: ${MY_UID}:${MY_GID}
     restart: unless-stopped
     environment:
@@ -26,21 +26,34 @@ services:
       - "./images:/workspace/images"
     depends_on:
       - db
-  app-jvm:
-    image: rweekers/voornameninliedjes-backend:2.1.0-jvm
+  app-native:
+    image: rweekers/voornameninliedjes-backend:2.1.0-native
     user: ${MY_UID}:${MY_GID}
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: dev
       logging.file.path: logs
-      server.port: 9090
+      server.port: 9000
       voornameninliedjes.datasource.application.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
       voornameninliedjes.datasource.migration.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
       voornameninliedjes.images.service.path: http://localhost:8000/images/
     ports:
-      - "9090:9090"
+      - "9000:9000"
     volumes:
       - "./logs:/workspace/logs"
       - "./images:/workspace/images"
     depends_on:
       - db
+
+  prometheus:
+    image: 'prom/prometheus:v2.14.0'
+    ports:
+      - '9090:9090'
+    command: '--config.file=/etc/prometheus/config.yml'
+    volumes:
+      - './prometheus.yml:/etc/prometheus/config.yml'
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+
