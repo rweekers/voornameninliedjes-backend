@@ -8,3 +8,6 @@ scrape_configs:
       - targets: ['app-jvm:8080', 'app-native:9000']
         labels:
           application: 'Native Compilation Application'
+    basic_auth:
+      username: test
+      password: secret
