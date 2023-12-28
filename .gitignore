@@ -4,6 +4,7 @@
 /logs-docker/
 /images/
 /grafana-storage/
+/logstash/
 http-client.private.env.json
 !gradle/wrapper/gradle-wrapper.jar
 

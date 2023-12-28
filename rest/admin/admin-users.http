@@ -1,0 +1,12 @@
+### Create new user
+POST {{adminHost}}/users
+Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+    "username": "system",
+    "password": "testje",
+    "roles": [
+    "ADMIN"
+    ]
+}

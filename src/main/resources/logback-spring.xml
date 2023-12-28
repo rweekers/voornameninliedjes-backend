@@ -29,10 +29,16 @@
         </rollingPolicy>
     </appender>
 
+    <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>localhost:5000</destination>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+    </appender>
+
     <!-- LOG everything at INFO level -->
     <root level="info">
         <appender-ref ref="RollingFile"/>
         <appender-ref ref="Console"/>
+        <appender-ref ref="logstash" />
     </root>
 
 </configuration>
