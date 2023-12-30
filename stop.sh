@@ -11,5 +11,7 @@ docker rm kibana
 docker stop logstash
 docker rm logstash
 
+docker network rm dockernetwork
+
 echo 'containers stopped...'
 
