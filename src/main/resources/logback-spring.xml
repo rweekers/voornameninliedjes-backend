@@ -29,10 +29,20 @@
         </rollingPolicy>
     </appender>
 
+    <appender name="logstash" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>elk/filebeat_ingest_data/voornameninliedjes.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logback/voornameninliedjes.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>
+
     <!-- LOG everything at INFO level -->
     <root level="info">
         <appender-ref ref="RollingFile"/>
         <appender-ref ref="Console"/>
+        <appender-ref ref="logstash" />
     </root>
 
 </configuration>
