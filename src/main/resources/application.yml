@@ -76,6 +76,8 @@ management:
   info:
     env:
       enabled: true
+    git:
+      mode: full
 
 info:
   app:
