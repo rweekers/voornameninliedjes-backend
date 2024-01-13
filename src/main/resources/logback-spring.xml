@@ -32,7 +32,7 @@
     <appender name="logstash" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>elk/filebeat_ingest_data/voornameninliedjes.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logback/voornameninliedjes.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>elk/filebeat_ingest_data/voornameninliedjes.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>7</maxHistory>
         </rollingPolicy>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>

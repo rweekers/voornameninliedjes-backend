@@ -4,7 +4,7 @@
 /logs-docker/
 /images/
 /grafana-storage/
-/filebeat_ingest_data/
+/elk/filebeat_ingest_data/
 http-client.private.env.json
 !gradle/wrapper/gradle-wrapper.jar
 
