@@ -33,7 +33,7 @@ public class CucumberHooksSteps {
     private SongRepository songRepository;
 
     static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>(
-            "postgres:15.4-bookworm"
+            "postgres:16.4-bookworm"
     ).withExposedPorts(5432)
             .withUsername("vil_app")
             .withPassword("secret")
