@@ -7,6 +7,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.PhotoDetail
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongNameStatistics
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWikimediaPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrLicenseDto
@@ -92,6 +93,10 @@ class SongController(
     fun getArtistNameStatistics(): List<ArtistNameStatistics> {
         return artistNameStatisticsRepository.getCountPerArtistname()
     }
+
+    @GetMapping("/songs/count")
+    fun getSongCount(): SongStatistics =
+        SongStatistics(songService.countSongs())
 
     private fun convertToDto(song: AggregateSong, photos: List<PhotoDetail>): SongDto {
         return SongDto(

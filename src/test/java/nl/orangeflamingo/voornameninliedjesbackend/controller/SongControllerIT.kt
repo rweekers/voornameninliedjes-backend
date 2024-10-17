@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.jdbc.core.mapping.AggregateReference
+import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 
@@ -172,6 +173,18 @@ class SongControllerIT : AbstractIntegrationTest() {
             .jsonPath("$[0].name").isNotEmpty
             .jsonPath("$[0].name").isEqualTo("The Beatles")
             .jsonPath("$[0].count").isEqualTo("2")
+    }
+
+    @Test
+    fun getSongCount() {
+        client.get()
+            .uri("/api/songs/count")
+            .exchange()
+            .expectStatus().isOk
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$.count").isEqualTo(2)
     }
 }
 
