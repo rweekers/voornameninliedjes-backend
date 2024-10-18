@@ -9,7 +9,6 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.PhotoDetail
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongNameStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatusStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWikimediaPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrLicenseDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrOwnerDto
