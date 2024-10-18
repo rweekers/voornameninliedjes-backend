@@ -186,5 +186,16 @@ class SongControllerIT : AbstractIntegrationTest() {
             .expectBody()
             .jsonPath("$.count").isEqualTo(2)
     }
+
+    @Test
+    fun getSongStatistics() {
+        client.get()
+            .uri("/api/songs/statistics")
+            .exchange()
+            .expectStatus().isOk
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBodyList<TestSongDto>().hasSize(1)
+    }
 }
 

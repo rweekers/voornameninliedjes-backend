@@ -1,6 +1,8 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrHttpApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatusStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.TestSong
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
@@ -27,6 +29,17 @@ class SongServiceTest {
     fun countSongsTest() {
         `when`(songRepository.count()).thenReturn(1)
         assertEquals(1, songService.countSongs())
+    }
+
+    @Test
+    fun songStatisticsTest() {
+        `when`(songRepository.getCountPerStatus()).thenReturn(listOf(
+            SongStatusStatistics(SongStatus.SHOW, 8),
+            SongStatusStatistics(SongStatus.IN_PROGRESS, 3),
+            SongStatusStatistics(SongStatus.INCOMPLETE, 1),
+            SongStatusStatistics(SongStatus.TO_BE_DELETED, 2)
+        ))
+        assertEquals(4, songService.countSongsByStatus().size)
     }
 
     @Test
