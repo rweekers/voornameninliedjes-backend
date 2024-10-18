@@ -13,6 +13,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLogEntry
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongSource
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatusStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWikimediaPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
@@ -36,6 +37,12 @@ class SongService @Autowired constructor(
     fun countSongs(): Long {
         return songRepository.count()
     }
+
+    fun countSongsForStatus(status: SongStatus): Long =
+        songRepository.countAllByStatusIs(status)
+
+    fun countSongsByStatus(): List<SongStatusStatistics> =
+        songRepository.getCountPerStatus()
 
     fun findAll(): List<AggregateSong> {
         return mapSongs(songRepository.findAllOrderByNameAscTitleAsc())

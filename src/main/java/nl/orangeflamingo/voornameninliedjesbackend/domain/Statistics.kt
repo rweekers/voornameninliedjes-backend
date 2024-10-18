@@ -13,3 +13,8 @@ data class ArtistNameStatistics(
 data class SongStatistics(
     val count: Long
 )
+
+data class SongStatusStatistics(
+    val status: SongStatus,
+    val count: Long,
+)

@@ -9,11 +9,13 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.PhotoDetail
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongNameStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatusStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWikimediaPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrLicenseDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrOwnerDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.PhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.SongDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.SongStatisticsDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.SourceDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.WikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistNameStatisticsRepository
@@ -95,8 +97,22 @@ class SongController(
     }
 
     @GetMapping("/songs/count")
-    fun getSongCount(): SongStatistics =
-        SongStatistics(songService.countSongs())
+    fun getSongCount(@RequestParam("status") status: Optional<String>): SongStatistics {
+        if (!status.isPresent) {
+            return SongStatistics(songService.countSongs())
+        }
+        return SongStatistics(songService.countSongsForStatus(SongStatus.valueOf(status.get().uppercase())))
+    }
+
+    @GetMapping("/songs/statistics")
+    fun getSongCountPerStatus(): List<SongStatisticsDto> {
+        return songService.countSongsByStatus().map {
+            SongStatisticsDto(
+                it.status.code,
+                it.count
+            )
+        }
+    }
 
     private fun convertToDto(song: AggregateSong, photos: List<PhotoDetail>): SongDto {
         return SongDto(
