@@ -2,11 +2,12 @@ package nl.orangeflamingo.voornameninliedjesbackend.repository.postgres
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatusStatistics
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
-import java.util.Optional
+import java.util.*
 
 @Repository
 interface SongRepository : CrudRepository<Song, Long> {
@@ -43,5 +44,10 @@ interface SongRepository : CrudRepository<Song, Long> {
             "where lower(replace(replace(a.name, '?', ''), '/', '')) = lower(replace(replace(:artist, '?', ''), '/', ''))\n" +
             "and lower(replace(replace(s.title, '?', ''), '#', '')) = lower(replace(replace(:title, '?', ''), '#', ''))")
     fun findByArtistAndTitle(@Param("artist") artist: String, @Param("title") title: String): Optional<Song>
+
+    fun countAllByStatusIs(status: SongStatus): Long
+
+    @Query("select status, count(1) as count from songs group by status order by count DESC, status")
+    fun getCountPerStatus(): List<SongStatusStatistics>
 
 }
