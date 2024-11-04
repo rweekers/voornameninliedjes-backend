@@ -94,7 +94,7 @@ class ImagesService @Autowired constructor(
             imageClient.createImageBlur(song.artistImage, maxDimensionBlur, maxDimensionBlur)
                 .publishOn(Schedulers.boundedElastic())
                 .onErrorComplete {
-                    log.info("[image blur] Could not create blur for ${artist.name} - ${song.title} because of ${it.message}")
+                    log.error("[image blur] Could not create blur for ${artist.name} - ${song.title} because of ${it.message}")
                     true
                 }
                 .map { it.hash }
