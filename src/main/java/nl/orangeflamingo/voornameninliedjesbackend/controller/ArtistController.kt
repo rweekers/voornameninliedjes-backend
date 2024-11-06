@@ -11,12 +11,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.Optional
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api", produces = ["application/vnd.voornameninliedjes.artists.v1+json"])
 class ArtistController(private val artistRepository: ArtistRepository) {
 
     private val log = LoggerFactory.getLogger(ArtistController::class.java)
@@ -25,11 +24,6 @@ class ArtistController(private val artistRepository: ArtistRepository) {
     fun getArtistById(@PathVariable id: Long): Optional<ArtistDto> {
         log.info("Requesting artist with id $id...")
         return artistRepository.findById(id).map { convertToDto(it) }
-    }
-
-    @GetMapping("/artists", params = ["name"])
-    fun getArtistsByName(@RequestParam(name = "name") name: String): List<ArtistDto> {
-        return artistRepository.findByNameIgnoreCase(name).map { convertToDto(it) }
     }
 
     @GetMapping(value = ["/artists", "/artists/"])

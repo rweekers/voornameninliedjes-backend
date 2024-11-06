@@ -39,7 +39,7 @@ class ArtistSteps {
 
     @Then("there are {int} artists with name {string}")
     fun thereAreXArtistsWithNameY(numberOfArtists: Int, artistName: String) {
-        val artistsCount = artistController.getArtistsByName(artistName).size
+        val artistsCount = artistRepository.findByNameIgnoreCase(artistName).size
         assertEquals(numberOfArtists, artistsCount)
     }
 }
