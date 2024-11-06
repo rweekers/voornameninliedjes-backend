@@ -40,15 +40,9 @@ class SecurityConfig(
             .csrf { it.disable() }
             .authorizeHttpRequests { requests ->
                 requests
-                    .requestMatchers(
-                        "/actuator/info",
-                        "/actuator/health",
-                        "/api/**",
-                        "/beta/**",
-                        "/images/**",
-                        "/admin/authenticate"
-                    ).permitAll()
-                    .anyRequest().authenticated()
+                    .requestMatchers("/admin/authenticate").permitAll()
+                    .requestMatchers("/admin/**").authenticated()
+                    .anyRequest().permitAll()
             }
             .httpBasic(withDefaults())
             .authenticationManager(authenticationManagerBuilder.build())

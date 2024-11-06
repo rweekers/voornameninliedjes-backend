@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
+import org.testcontainers.shaded.com.google.common.net.HttpHeaders
 
 class ArtistControllerIT : AbstractIntegrationTest() {
     private lateinit var artistMap: Map<String, Long>
@@ -58,17 +59,13 @@ class ArtistControllerIT : AbstractIntegrationTest() {
     }
 
     @Test
-    fun getArtistsByNameTest() {
+    fun getAllArtistsV2() {
         client.get()
-            .uri { uriBuilder ->
-                uriBuilder
-                    .path("/api/artists")
-                    .queryParam("name", "The Rolling Stones")
-                    .build()
-            }
+            .uri("/api/artists")
+            .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
             .exchange()
             .expectStatus().isOk
-            .expectBodyList<ArtistDto>().hasSize(1)
+            .expectBodyList<ArtistDto>().hasSize(2)
     }
 
     @Test

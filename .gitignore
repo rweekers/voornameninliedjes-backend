@@ -35,3 +35,5 @@ target
 *.crt
 *.key
 *.pk8
+
+/src/main/resources/static/*.yaml

@@ -1,0 +1,10 @@
+### Get all artists default
+GET {{host}}/artists
+
+### Get all artists V1
+GET {{host}}/artists
+Accept: application/vnd.voornameninliedjes.artists.v1+json
+
+### Get all artists V2
+GET {{host}}/artists
+Accept: application/vnd.voornameninliedjes.artists.v2+json

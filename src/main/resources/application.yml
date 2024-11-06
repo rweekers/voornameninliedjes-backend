@@ -82,3 +82,7 @@ info:
     version: @project.version@
     name: Voornamen in liedjes backend
     description: Backend service voor voornamen in liedjes
+
+springdoc:
+  swagger-ui:
+    url: /openapi.yaml
