@@ -1,0 +1,6 @@
+### Get all songs default
+GET {{host}}/songs?name-starts-with=Caroline
+
+### Get all songs V2
+GET {{host}}/songs?name-starts-with=
+Accept: application/vnd.voornameninliedjes.songs.v2+json
