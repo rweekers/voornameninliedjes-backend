@@ -29,6 +29,50 @@ paths:
                   $ref: '#/components/schemas/Artist'
         '500':
           description: Server error
+  /api/songs:
+    get:
+      tags:
+        - Songs
+      summary: Get list of songs
+      description: Returns a list of songs
+      operationId: getApiSongs
+      parameters:
+        - in: query
+          name: name-starts-with
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 50
+          required: false
+          description: first characters of the name in the title of the song
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          required: false
+          description: The number of items to skip before starting to collect the result set.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          required: false
+          description: The number of items to return.
+      responses:
+        '200':
+          description: A list of songs.
+          content:
+            application/vnd.voornameninliedjes.songs.v2+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Song'
+        '500':
+          description: Server error
 
 components:
   schemas:
@@ -38,9 +82,50 @@ components:
         name:
           type: string
           description: Name of the artist
-          example: "John Doe"
+          example: "The Police"
         imageUrl:
           type: string
           description: URL to an image of the artist
           format: uri
           example: "https://example.com/images/john_doe.jpg"
+    Song:
+      type: object
+      properties:
+        artist:
+          type: string
+          description: Name of the artist
+          example: "Paul Simon"
+        title:
+          type: string
+          description: Title of the track
+          example: "You Can Call Me Al"
+        name:
+          type: string
+          description: Name in title of the track
+          example: "Al"
+        hasDetails:
+          type: boolean
+          description: If there are details known about a song
+          example: true
+        artistImage:
+          type: string
+          description: Online reference to the image for the song
+          example: "the-police-roxanne"
+        artistImageAttribution:
+          type: string
+          description: Attribution for the photo
+          example: "Photo by x, to be found at y"
+        localImage:
+          type: string
+          description: Local reference to the image for the song
+          example: "the-police-roxanne"
+        artistImageWidth:
+          type: integer
+          minimum: 0
+          description: Width of the image
+          example: 800
+        artistImageHeight:
+          type: integer
+          minimum: 0
+          description: Height of the image
+          example: 500

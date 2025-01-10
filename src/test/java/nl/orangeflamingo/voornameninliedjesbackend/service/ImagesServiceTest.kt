@@ -1,5 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
+import java.io.IOException
+import java.util.Optional
 import nl.orangeflamingo.voornameninliedjesbackend.client.ImageClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
@@ -20,8 +22,6 @@ import org.mockito.kotlin.argThat
 import org.mockito.kotlin.whenever
 import org.springframework.data.jdbc.core.mapping.AggregateReference
 import reactor.core.publisher.Mono
-import java.io.IOException
-import java.util.Optional
 
 class ImagesServiceTest {
 
@@ -112,6 +112,20 @@ class ImagesServiceTest {
     fun `test artist not present for song`() {
         whenever(mockArtistRepository.findById(100)).thenReturn(Optional.empty())
         assertThrows<ArtistNotFoundException> { imagesService.downloadImageForSong(songWithoutArtistImage) }
+    }
+
+    @Test
+    fun `test artistId not present`() {
+        val aggregateReference: AggregateReference<Artist, Long> = mock(AggregateReference::class.java) as AggregateReference<Artist, Long>
+        val songWithoutArtistId = Song(
+            id = 10,
+            title = "Gloria",
+            name = "Gloria",
+            artist = aggregateReference,
+            status = SongStatus.SHOW
+        )
+        whenever(aggregateReference.id).thenReturn(null)
+        assertThrows<IllegalStateException> { imagesService.downloadImageForSong(songWithoutArtistId) }
     }
 
     @Test
