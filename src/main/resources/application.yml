@@ -32,8 +32,6 @@ voornameninliedjes:
       path: https://images.voornameninliedjes.nl
   batch:
     interval: 3000
-    service:
-      path: https://images.voornameninliedjes.nl
   cors:
     domains:
       allowed:
@@ -46,7 +44,6 @@ voornameninliedjes:
           - http://localhost:3000
           - https://beheer.voornameninliedjes.nl
 jobs:
-  enabled: true
   enrichSong:
     rate: 3600000
   updateSong:
@@ -60,15 +57,14 @@ logging:
 
 management:
   endpoint:
-    enabled-by-default: false
     info:
-      enabled: true
+      access: read_only
     health:
-      enabled: true
+      access: read_only
     metrics:
-      enabled: true
+      access: read_only
     prometheus:
-      enabled: true
+      access: read_only
   endpoints:
     web:
       exposure:
@@ -82,7 +78,3 @@ info:
     version: @project.version@
     name: Voornamen in liedjes backend
     description: Backend service voor voornamen in liedjes
-
-springdoc:
-  swagger-ui:
-    url: /openapi.yaml
