@@ -49,11 +49,9 @@ jobs:
   updateSong:
     cron: 0 50 2 1 * *
 
-# These will be transferred to System properties, see https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.logging.custom-log-configuration
-# These systems properties are used in logging configuration
-logging:
-  file:
-    path: logs
+# Add any properties to be transferred to System properties
+# See https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.logging.custom-log-configuration
+# example logging.file.path for LOG_PATH
 
 management:
   endpoint:

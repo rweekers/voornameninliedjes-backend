@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <appender name="Console"
-              class="ch.qos.logback.core.ConsoleAppender">
+    <!-- Definieer het logpad, met een fallback naar een standaardwaarde -->
+    <property name="LOG_PATH" value="${LOG_PATH:-./logs}"/>
+
+    <!-- Algemene fallback-configuratie -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <pattern>
                 %yellow(%d{ISO8601}) %highlight(%-5level) [%green(%t)] %cyan(%C{1}): %msg%n%throwable
@@ -10,23 +13,31 @@
         </layout>
     </appender>
 
-    <appender name="RollingFile"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/voornameninliedjes.log</file>
-        <encoder
-                class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d %p %C{1} [%t] %m%n</pattern>
-        </encoder>
-
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>access.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
-        </rollingPolicy>
-    </appender>
-
-    <!-- LOG everything at INFO level -->
     <root level="info">
-        <appender-ref ref="RollingFile"/>
         <appender-ref ref="Console"/>
     </root>
+
+    <springProfile name="debug">
+        <root level="debug">
+            <appender-ref ref="Console"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="prod">
+        <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/voornameninliedjes.log</file>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <pattern>%d %p %C{1} [%t] %m%n</pattern>
+            </encoder>
+
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_PATH}/access.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            </rollingPolicy>
+        </appender>
+
+        <root level="info">
+            <appender-ref ref="RollingFile"/>
+        </root>
+    </springProfile>
 
 </configuration>

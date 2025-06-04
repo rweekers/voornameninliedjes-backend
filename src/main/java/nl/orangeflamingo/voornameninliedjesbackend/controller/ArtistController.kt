@@ -2,7 +2,7 @@ package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistFlickrPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistWikimediaPhotoDto
@@ -37,12 +37,12 @@ class ArtistController(private val artistRepository: ArtistRepository) {
             id = artist.id,
             name = artist.name,
             background = artist.background,
-            wikimediaPhotos = artist.wikimediaPhotos.map { convertToDto(it) }.toSet(),
+            wikimediaPhotos = artist.photos.map { convertToDto(it) }.toSet(),
             flickrPhotos = artist.flickrPhotos.map { convertToDto(it) }.toSet(),
         )
     }
 
-    private fun convertToDto(wikimediaPhoto: ArtistWikimediaPhoto): ArtistWikimediaPhotoDto {
+    private fun convertToDto(wikimediaPhoto: ArtistPhoto): ArtistWikimediaPhotoDto {
         return ArtistWikimediaPhotoDto(
             url = wikimediaPhoto.url,
             attribution = wikimediaPhoto.attribution

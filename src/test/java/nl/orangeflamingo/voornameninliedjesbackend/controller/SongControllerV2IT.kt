@@ -3,11 +3,11 @@ package nl.orangeflamingo.voornameninliedjesbackend.controller
 import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongSource
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWikimediaPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.TestSongDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
@@ -39,8 +39,8 @@ class SongControllerV2IT: AbstractIntegrationTest() {
             Artist(
                 name = "The Beatles",
                 flickrPhotos = mutableSetOf(ArtistFlickrPhoto(1, "1"), ArtistFlickrPhoto(2, "2")),
-                wikimediaPhotos = mutableSetOf(
-                    ArtistWikimediaPhoto(
+                photos = mutableSetOf(
+                    ArtistPhoto(
                         url = "https://upload.wikimedia.org/wikipedia/commons/6/61/The_Beatles_arrive_at_JFK_Airport.jpg",
                         attribution = "United Press International, Public domain, via Wikimedia Commons"
                     )
@@ -53,8 +53,8 @@ class SongControllerV2IT: AbstractIntegrationTest() {
             name = "Michelle",
             status = SongStatus.SHOW,
             wikipediaPage = "wikiPageMichelle",
-            wikimediaPhotos = mutableSetOf(
-                SongWikimediaPhoto(
+            photos = mutableSetOf(
+                SongPhoto(
                     id = 1,
                     url = "https://somefakewikimediaphotourl.doesnotexist",
                     attribution = "Attribution for test wikimedia photo"
@@ -73,8 +73,8 @@ class SongControllerV2IT: AbstractIntegrationTest() {
         songMap = songRepository.saveAll(
             listOf(
                 songMichelle, songMichelle.copy(
-                    title = "Lucy in the Sky with Diamonds", name = "Lucy", wikimediaPhotos = mutableSetOf(
-                        SongWikimediaPhoto(
+                    title = "Lucy in the Sky with Diamonds", name = "Lucy", photos = mutableSetOf(
+                        SongPhoto(
                             id = 2,
                             url = "https://somefakewikimediaphotourl.doesnotexist",
                             attribution = "Attribution for test wikimedia photo"

@@ -15,15 +15,15 @@ data class Artist(
     var lastFmUrl: String? = null,
     val background: String? = null,
     @MappedCollection(idColumn = "artist_id")
-    var wikimediaPhotos: MutableSet<ArtistWikimediaPhoto> = mutableSetOf(),
+    var photos: MutableSet<ArtistPhoto> = mutableSetOf(),
     @MappedCollection(idColumn = "artist_id")
     var flickrPhotos: MutableSet<ArtistFlickrPhoto> = mutableSetOf(),
     @MappedCollection(idColumn = "artist_id")
     val logEntries: MutableSet<ArtistLogEntry> = mutableSetOf()
 )
 
-@Table("artist_wikimedia_photos")
-data class ArtistWikimediaPhoto(
+@Table("artist_photos")
+data class ArtistPhoto(
     @Id
     var id: Long? = null,
     val url: String,

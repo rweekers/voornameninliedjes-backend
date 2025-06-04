@@ -3,7 +3,7 @@ package nl.orangeflamingo.voornameninliedjesbackend.controller
 import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
@@ -30,8 +30,8 @@ class ArtistControllerIT : AbstractIntegrationTest() {
         val artist = Artist(
             name = "The Beatles",
             flickrPhotos = mutableSetOf(ArtistFlickrPhoto(1, "1"), ArtistFlickrPhoto(2, "2")),
-            wikimediaPhotos = mutableSetOf(
-                ArtistWikimediaPhoto(
+            photos = mutableSetOf(
+                ArtistPhoto(
                     url = "https://upload.wikimedia.org/wikipedia/commons/6/61/The_Beatles_arrive_at_JFK_Airport.jpg",
                     attribution = "United Press International, Public domain, via Wikimedia Commons"
                 )
@@ -43,7 +43,7 @@ class ArtistControllerIT : AbstractIntegrationTest() {
                 artist.copy(
                     name = "The Rolling Stones",
                     flickrPhotos = mutableSetOf(),
-                    wikimediaPhotos = mutableSetOf()
+                    photos = mutableSetOf()
                 )
             )
         ).associate { it.name to it.id!! }

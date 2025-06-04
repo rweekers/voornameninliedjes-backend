@@ -3,13 +3,13 @@ package nl.orangeflamingo.voornameninliedjesbackend.controller
 import com.fasterxml.jackson.annotation.JsonView
 import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistNameStatistics
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.PhotoDetail
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongNameStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWikimediaPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrLicenseDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrOwnerDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.PhotoDto
@@ -135,7 +135,7 @@ class SongController(
             wikipediaNl = song.wikipediaContentNl,
             wikipediaEn = song.wikipediaContentEn,
             wikipediaSummaryEn = song.wikipediaSummaryEn,
-            wikimediaPhotos = mergeAndConvertWikimediaPhotos(song.artistWikimediaPhotos, song.songWikimediaPhotos),
+            wikimediaPhotos = mergeAndConvertWikimediaPhotos(song.artistPhotos, song.songPhotos),
             flickrPhotos = photos.map {
                 PhotoDto(
                     id = it.id,
@@ -172,20 +172,20 @@ class SongController(
     }
 
     private fun mergeAndConvertWikimediaPhotos(
-        artistWikimediaPhoto: Set<ArtistWikimediaPhoto>,
-        songWikimediaPhotos: Set<SongWikimediaPhoto>
+        artistPhoto: Set<ArtistPhoto>,
+        songPhotos: Set<SongPhoto>
     ): Set<WikimediaPhotoDto> {
         val mergedPhotos = mutableSetOf<WikimediaPhotoDto>()
-        mergedPhotos.addAll(songWikimediaPhotos.map { convertSongWikimediaPhotoToDto(it) })
-        mergedPhotos.addAll(artistWikimediaPhoto.map { convertArtistWikimediaPhotoToDto(it) })
+        mergedPhotos.addAll(songPhotos.map { convertSongWikimediaPhotoToDto(it) })
+        mergedPhotos.addAll(artistPhoto.map { convertArtistWikimediaPhotoToDto(it) })
         return mergedPhotos
     }
 
-    private fun convertArtistWikimediaPhotoToDto(wikimediaPhoto: ArtistWikimediaPhoto): WikimediaPhotoDto {
+    private fun convertArtistWikimediaPhotoToDto(wikimediaPhoto: ArtistPhoto): WikimediaPhotoDto {
         return WikimediaPhotoDto(wikimediaPhoto.url, wikimediaPhoto.attribution)
     }
 
-    private fun convertSongWikimediaPhotoToDto(wikimediaPhoto: SongWikimediaPhoto): WikimediaPhotoDto {
+    private fun convertSongWikimediaPhotoToDto(wikimediaPhoto: SongPhoto): WikimediaPhotoDto {
         return WikimediaPhotoDto(wikimediaPhoto.url, wikimediaPhoto.attribution)
     }
 }

@@ -4,3 +4,11 @@ GET {{host}}/songs?name-starts-with=Caroline
 ### Get all songs V2
 GET {{host}}/songs?name-starts-with=
 Accept: application/vnd.voornameninliedjes.songs.v2+json
+
+### Get songdetails default
+GET {{host}}/songs/the police/roxanne
+Accept: application/json
+
+### Get songdetails V2
+GET {{host}}/songs/the police/roxanne
+Accept: application/vnd.voornameninliedjes.songs.v2+json

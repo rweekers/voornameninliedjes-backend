@@ -5,12 +5,11 @@ import nl.orangeflamingo.voornameninliedjesbackend.service.LastFmEnrichmentServi
 import nl.orangeflamingo.voornameninliedjesbackend.service.WikipediaEnrichmentService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
 @Component
-@ConditionalOnProperty(prefix = "jobs", name = ["enabled"], havingValue = "true")
 class SongEnrichmentJob @Autowired constructor(
     private val imagesEnrichmentService: ImagesEnrichmentService,
     private val wikipediaEnrichmentService: WikipediaEnrichmentService,
@@ -18,6 +17,9 @@ class SongEnrichmentJob @Autowired constructor(
 ) {
 
     private val log = LoggerFactory.getLogger(SongEnrichmentJob::class.java)
+
+    @Value("\${jobs.enrichSong.enabled:true}")
+    private var enrichSongsEnabled: Boolean = true
 
     @Scheduled(cron = "\${jobs.updateSong.cron}")
     fun updateSongImages() {
@@ -29,6 +31,9 @@ class SongEnrichmentJob @Autowired constructor(
 
     @Scheduled(fixedRateString = "\${jobs.enrichSong.rate}")
     fun enrichSongImages() {
+        if (!enrichSongsEnabled) {
+            return;
+        }
         log.info("Starting enrichment job")
         imagesEnrichmentService.enrichImagesForSongs()
         wikipediaEnrichmentService.enrichWikipediaForSongs()
