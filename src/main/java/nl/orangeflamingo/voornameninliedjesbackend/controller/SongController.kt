@@ -54,7 +54,14 @@ class SongController(
 
     @GetMapping("/songs/{artist}/{title}")
     fun getSongByArtistAndTitle(@PathVariable artist: String, @PathVariable title: String): Mono<SongDto> {
-        log.info("Requesting song with artist $artist and title $title...")
+        log.info(
+            "Requesting song with artist ${
+                artist.replace(
+                    "[\n\r]".toRegex(),
+                    "_"
+                )
+            } and title ${title.replace("[\n\r]".toRegex(), "_")}..."
+        )
         return getSongDetails(artist, title)
     }
 
