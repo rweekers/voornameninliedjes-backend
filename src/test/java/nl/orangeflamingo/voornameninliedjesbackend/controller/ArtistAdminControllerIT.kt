@@ -4,7 +4,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistLogEntry
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.User
 import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistDto
@@ -71,8 +71,8 @@ class ArtistAdminControllerIT : AbstractIntegrationTest() {
                 flickrPhotos = mutableSetOf(
                     ArtistFlickrPhoto(1, "1"), ArtistFlickrPhoto(2, "2")
                 ),
-                wikimediaPhotos = mutableSetOf(
-                    ArtistWikimediaPhoto(
+                photos = mutableSetOf(
+                    ArtistPhoto(
                         url = "https://upload.wikimedia.org/wikipedia/commons/6/61/The_Beatles_arrive_at_JFK_Airport.jpg",
                         attribution = "United Press International, Public domain, via Wikimedia Commons"
                     )

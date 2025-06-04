@@ -51,8 +51,8 @@ class ImagesEnrichmentService @Autowired constructor(
             log.info("[images] Updating ${song.title} from ${artist.name}")
 
             val urlToAttribution =
-                if (song.wikimediaPhotos.isNotEmpty()) song.wikimediaPhotos.map { it.url to it.attribution }
-                    .firstOrNull() else artist.wikimediaPhotos.map { it.url to it.attribution }
+                if (song.photos.isNotEmpty()) song.photos.map { it.url to it.attribution }
+                    .firstOrNull() else artist.photos.map { it.url to it.attribution }
                     .firstOrNull()
             if (urlToAttribution != null) {
                 val (url, attribution) = urlToAttribution

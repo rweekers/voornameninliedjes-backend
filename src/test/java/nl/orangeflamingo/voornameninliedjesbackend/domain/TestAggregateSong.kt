@@ -16,7 +16,7 @@ data class TestAggregateSong(
     val status: SongStatus = SongStatus.SHOW,
     val hasDetails: Boolean = false,
     val mongoId: String? = null,
-    val wikimediaPhotos: Set<ArtistWikimediaPhoto> = mutableSetOf(),
+    val wikimediaPhotos: Set<ArtistPhoto> = mutableSetOf(),
     val flickrPhotos: Set<ArtistFlickrPhoto> = mutableSetOf(),
     @Json(ignored = true)
     val flickrPhotoDetail: Flux<PhotoDetail> = Flux.empty(),
@@ -37,7 +37,7 @@ data class TestAggregateSong(
             status = status,
             hasDetails = hasDetails,
             mongoId = mongoId,
-            artistWikimediaPhotos = wikimediaPhotos,
+            artistPhotos = wikimediaPhotos,
             flickrPhotos = flickrPhotos,
             flickrPhotoDetail = flickrPhotoDetail,
             sources = sources,

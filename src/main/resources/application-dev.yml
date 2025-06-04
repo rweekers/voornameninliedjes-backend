@@ -7,7 +7,6 @@ voornameninliedjes:
     interval: 1000
 
 jobs:
-  enabled: false
   enrichSong:
     rate: 60000
   updateSong:

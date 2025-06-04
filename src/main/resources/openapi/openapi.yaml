@@ -73,6 +73,34 @@ paths:
                   $ref: '#/components/schemas/Song'
         '500':
           description: Server error
+  /api/songs/{artist}/{title}:
+    get:
+      tags:
+        - Songs
+      summary: Get details of a song
+      operationId: getApiSongDetail
+      parameters:
+        - name: artist
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: title
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detailed song information
+          content:
+            application/vnd.voornameninliedjes.songs.v2+json:
+              schema:
+                $ref: "#/components/schemas/SongDetail"
+        '404':
+          description: Song not found
+        '500':
+          description: Server error
 
 components:
   schemas:
@@ -88,6 +116,8 @@ components:
           description: URL to an image of the artist
           format: uri
           example: "https://example.com/images/john_doe.jpg"
+      required:
+        - name
     Song:
       type: object
       properties:
@@ -110,11 +140,59 @@ components:
         artistImage:
           type: string
           description: Online reference to the image for the song
+          format: uri
           example: "the-police-roxanne"
         artistImageAttribution:
           type: string
           description: Attribution for the photo
           example: "Photo by x, to be found at y"
+        localImage:
+          type: string
+          description: Local reference to the image for the song
+          example: "the-police_roxanne"
+        artistImageWidth:
+          type: integer
+          minimum: 0
+          description: Width of the image
+          example: 800
+        artistImageHeight:
+          type: integer
+          minimum: 0
+          description: Height of the image
+          example: 500
+      required:
+        - artist
+        - title
+        - name
+        - hasDetails
+    SongDetail:
+      type: object
+      properties:
+        artist:
+          type: string
+          description: Name of the artist
+          example: "Paul Simon"
+        title:
+          type: string
+          description: Title of the track
+          example: "You Can Call Me Al"
+        name:
+          type: string
+          description: Name in title of the track
+          example: "Al"
+        hasDetails:
+          type: boolean
+          description: If there are details known about a song
+          example: true
+        youtube:
+          type: string
+          description: Link to YouTube video of the song
+        spotify:
+          type: string
+          description: Link to Spotify video of the song
+        background:
+          type: string
+          description: Background of the song
         localImage:
           type: string
           description: Local reference to the image for the song
@@ -129,3 +207,27 @@ components:
           minimum: 0
           description: Height of the image
           example: 500
+        wikimediaPhotos:
+          type: array
+          items:
+            $ref: '#/components/schemas/WikimediaPhoto'
+        sources:
+          type: array
+          items:
+            type: string
+      required:
+        - artist
+        - title
+        - name
+        - hasDetails
+    WikimediaPhoto:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+        attribution:
+          type: string
+      required:
+        - url
+        - attribution

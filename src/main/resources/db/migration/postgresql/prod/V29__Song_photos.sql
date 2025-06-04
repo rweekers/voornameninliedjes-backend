@@ -1,0 +1,10 @@
+CREATE TABLE SONG_PHOTOS AS
+SELECT * FROM SONG_WIKIMEDIA_PHOTOS;
+
+ALTER TABLE SONG_PHOTOS ADD PRIMARY KEY (id);
+ALTER TABLE SONG_PHOTOS ADD CONSTRAINT song_photos_song_id_fkey FOREIGN KEY (song_id) REFERENCES songs(id) ON DELETE CASCADE;
+ALTER TABLE SONG_PHOTOS ADD CONSTRAINT song_photos_url_song_id_key UNIQUE (url, song_id);
+
+CREATE SEQUENCE song_photos_id_seq;
+ALTER TABLE SONG_PHOTOS ALTER COLUMN id SET DEFAULT nextval('song_photos_id_seq');
+SELECT setval('song_photos_id_seq', COALESCE((SELECT MAX(id) FROM song_photos), 1), true);

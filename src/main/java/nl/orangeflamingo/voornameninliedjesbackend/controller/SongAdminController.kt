@@ -5,14 +5,14 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistLogEntry
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistWikimediaPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLastFmTag
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLogEntry
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongSource
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWikimediaPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminLogEntry
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSongDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSourceDto
@@ -245,14 +245,14 @@ class SongAdminController(
             status = SongStatus.valueOf(song.status.trim()),
             remarks = song.remarks?.trim(),
             hasDetails = song.hasDetails,
-            artistWikimediaPhotos = song.artistWikimediaPhotos.map {
-                ArtistWikimediaPhoto(
+            artistPhotos = song.artistWikimediaPhotos.map {
+                ArtistPhoto(
                     url = it.url.trim(),
                     attribution = it.attribution.trim()
                 )
             }.toSet(),
-            songWikimediaPhotos = song.songWikimediaPhotos.map {
-                SongWikimediaPhoto(
+            songPhotos = song.songWikimediaPhotos.map {
+                SongPhoto(
                     url = it.url.trim(),
                     attribution = it.attribution.trim()
                 )
@@ -287,8 +287,8 @@ class SongAdminController(
             status = song.status.code,
             remarks = song.remarks,
             hasDetails = song.hasDetails,
-            artistWikimediaPhotos = song.artistWikimediaPhotos.map { convertToDto(it) },
-            songWikimediaPhotos = song.songWikimediaPhotos.map { convertToDto(it) },
+            artistWikimediaPhotos = song.artistPhotos.map { convertToDto(it) },
+            songWikimediaPhotos = song.songPhotos.map { convertToDto(it) },
             flickrPhotos = song.flickrPhotos.map { it.flickrId },
             sources = song.sources.map { convertToDto(it) },
             tags = song.tags.map { convertToDto(it) },
@@ -303,14 +303,14 @@ class SongAdminController(
         )
     }
 
-    private fun convertToDto(wikimediaPhoto: ArtistWikimediaPhoto): AdminWikimediaPhotoDto {
+    private fun convertToDto(wikimediaPhoto: ArtistPhoto): AdminWikimediaPhotoDto {
         return AdminWikimediaPhotoDto(
             url = wikimediaPhoto.url,
             attribution = wikimediaPhoto.attribution
         )
     }
 
-    private fun convertToDto(wikimediaPhoto: SongWikimediaPhoto): AdminWikimediaPhotoDto {
+    private fun convertToDto(wikimediaPhoto: SongPhoto): AdminWikimediaPhotoDto {
         return AdminWikimediaPhotoDto(
             url = wikimediaPhoto.url,
             attribution = wikimediaPhoto.attribution

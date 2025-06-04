@@ -21,7 +21,7 @@ class ArtistsControllerV2(private val artistRepository: ArtistRepository) : Arti
     private fun toArtistMessage(artist: nl.orangeflamingo.voornameninliedjesbackend.domain.Artist): Artist {
         return Artist.builder()
             .name(artist.name)
-            .imageUrl(URI.create(artist.wikimediaPhotos.firstOrNull()?.url ?: ""))
+            .imageUrl(URI.create(artist.photos.firstOrNull()?.url ?: ""))
             .build()
     }
 

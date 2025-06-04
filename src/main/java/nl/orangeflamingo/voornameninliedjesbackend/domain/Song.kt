@@ -38,7 +38,7 @@ data class Song(
     var albumLastFmUrl: String? = null,
     val mongoId: String? = null,
     @MappedCollection(idColumn = "song_id")
-    var wikimediaPhotos: MutableSet<SongWikimediaPhoto> = mutableSetOf(),
+    var photos: MutableSet<SongPhoto> = mutableSetOf(),
     @MappedCollection(idColumn = "song_id")
     var sources: Set<SongSource> = setOf(),
     @MappedCollection(idColumn = "song_id")
@@ -49,8 +49,8 @@ data class Song(
     var artist: AggregateReference<Artist, Long>
 )
 
-@Table("song_wikimedia_photos")
-data class SongWikimediaPhoto(
+@Table("song_photos")
+data class SongPhoto(
     @Id
     var id: Long? = null,
     val url: String,

@@ -60,7 +60,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
             title = songTitle,
             name = "Michelle",
             wikimediaPhotos = mutableSetOf(
-                SongWikimediaPhoto(
+                SongPhoto(
                     url = "https://somefakewikimediaphotourl.doesnotexist",
                     attribution = "Attribution for test wikimedia photo"
                 )
@@ -77,7 +77,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
 
         val songLucy = TestSong(
             artist = artist.id!!,
-            wikimediaPhotos = mutableSetOf(SongWikimediaPhoto(url = "some url", attribution = "some attribution"))
+            wikimediaPhotos = mutableSetOf(SongPhoto(url = "some url", attribution = "some attribution"))
         ).toDomain()
 
         songMap = songRepository.saveAll(

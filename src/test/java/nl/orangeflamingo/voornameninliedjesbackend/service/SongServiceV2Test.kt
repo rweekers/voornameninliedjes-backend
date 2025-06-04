@@ -2,6 +2,8 @@ package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWithArtist
+import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
+import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongDetailRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepositoryV2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -13,9 +15,13 @@ import org.springframework.data.domain.Pageable
 class SongServiceV2Test {
 
     private val songRepositoryV2 = mock(SongRepositoryV2::class.java)
+    private val songDetailRepository = mock(SongDetailRepository::class.java)
+    private val artistRepository = mock(ArtistRepository::class.java)
 
     private val songServiceV2: SongServiceV2 = SongServiceV2(
-        songRepositoryV2
+        songRepositoryV2,
+        songDetailRepository,
+        artistRepository
     )
 
     @Test
