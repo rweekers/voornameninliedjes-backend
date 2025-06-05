@@ -8,3 +8,7 @@ Accept: application/vnd.voornameninliedjes.artists.v1+json
 ### Get all artists V2
 GET {{host}}/artists
 Accept: application/vnd.voornameninliedjes.artists.v2+json
+
+### Get artists by id V2
+GET {{host}}/artists/4
+Accept: application/vnd.voornameninliedjes.artists.v2+json
