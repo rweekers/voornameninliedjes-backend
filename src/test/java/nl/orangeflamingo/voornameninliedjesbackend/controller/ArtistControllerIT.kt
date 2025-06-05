@@ -5,13 +5,16 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistDto
+import nl.orangeflamingo.voornameninliedjesbackend.model.NewArtist
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
+import org.springframework.web.reactive.function.BodyInserters
 import org.testcontainers.shaded.com.google.common.net.HttpHeaders
 
 class ArtistControllerIT : AbstractIntegrationTest() {
@@ -53,6 +56,7 @@ class ArtistControllerIT : AbstractIntegrationTest() {
     fun getAllArtistsTest() {
         client.get()
             .uri("/api/artists")
+            .header("Accept", "application/vnd.voornameninliedjes.artists.v1+json")
             .exchange()
             .expectStatus().isOk
             .expectBodyList<ArtistDto>().hasSize(2)
@@ -72,6 +76,7 @@ class ArtistControllerIT : AbstractIntegrationTest() {
     fun getArtistByIdTest() {
         client.get()
             .uri("/api/artists/${artistMap["The Beatles"]}")
+            .header("Accept", "application/vnd.voornameninliedjes.artists.v1+json")
             .exchange()
             .expectStatus().isOk
             .expectBody()
@@ -79,6 +84,58 @@ class ArtistControllerIT : AbstractIntegrationTest() {
             .jsonPath("$.name").isEqualTo("The Beatles")
             .jsonPath("$.flickrPhotos").isNotEmpty
             .jsonPath("$.flickrPhotos[0].flickrId").isEqualTo("1")
+    }
+
+    @Test
+    fun getArtistByIdTestV2() {
+        client.get()
+            .uri("/api/artists/${artistMap["The Beatles"]}")
+            .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.name").isNotEmpty
+            .jsonPath("$.name").isEqualTo("The Beatles")
+    }
+
+    @Test
+    fun deleteArtistByIdTestV2() {
+        client.delete()
+            .uri("/api/artists/${artistMap["The Beatles"]}")
+            .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
+            .exchange()
+            .expectStatus().isEqualTo(HttpStatus.NO_CONTENT)
+    }
+
+    @Test
+    fun createArtistTestV2() {
+        client.post()
+            .uri("/api/artists")
+            .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
+            .body(
+                BodyInserters.fromValue(
+                    NewArtist("newArtist")
+                )
+            )
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    fun updateArtistTestV2() {
+        client.put()
+            .uri("/api/artists/${artistMap["The Beatles"]}")
+            .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
+            .body(
+                BodyInserters.fromValue(
+                    NewArtist("Updated name")
+                )
+            )
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.name").isNotEmpty
+            .jsonPath("$.name").isEqualTo("Updated name")
     }
 }
 
