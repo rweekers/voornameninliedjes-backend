@@ -29,6 +29,106 @@ paths:
                   $ref: '#/components/schemas/Artist'
         '500':
           description: Server error
+    post:
+      tags:
+        - Artists
+      summary: Create a new artist
+      description: Adds a new artist to the system.
+      operationId: createArtist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewArtist'
+      responses:
+        '201':
+          description: Artist created
+          content:
+            application/vnd.voornameninliedjes.artists.v2+json:
+              schema:
+                $ref: '#/components/schemas/Artist'
+        '400':
+          description: Invalid input
+        '500':
+          description: Server error
+  /api/artists/{artistId}:
+    get:
+      tags:
+        - Artists
+      summary: Get a single artist
+      description: Returns a single artist by ID.
+      operationId: getArtistById
+      parameters:
+        - name: artistId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: A single artist
+          content:
+            application/vnd.voornameninliedjes.artists.v2+json:
+              schema:
+                $ref: '#/components/schemas/Artist'
+        '404':
+          description: Artist not found
+          content: {}
+        '500':
+          description: Server error
+    put:
+      tags:
+        - Artists
+      summary: Update an artist
+      description: Updates the data of an existing artist.
+      operationId: updateArtist
+      parameters:
+        - name: artistId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewArtist'
+      responses:
+        '200':
+          description: Artist updated
+          content:
+            application/vnd.voornameninliedjes.artists.v2+json:
+              schema:
+                $ref: '#/components/schemas/Artist'
+        '404':
+          description: Artist not found
+        '500':
+          description: Server error
+
+    delete:
+      tags:
+        - Artists
+      summary: Delete an artist
+      description: Removes an artist from the system.
+      operationId: deleteArtist
+      parameters:
+        - name: artistId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Artist deleted
+          content:
+            application/vnd.voornameninliedjes.artists.v2+json: {}
+        '500':
+          description: Server error
   /api/songs:
     get:
       tags:
@@ -105,6 +205,24 @@ paths:
 components:
   schemas:
     Artist:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          description: Name of the artist
+          example: "The Police"
+        imageUrl:
+          type: string
+          description: URL to an image of the artist
+          format: uri
+          example: "https://example.com/images/john_doe.jpg"
+      required:
+        - id
+        - name
+    NewArtist:
       type: object
       properties:
         name:
