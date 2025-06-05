@@ -12,3 +12,25 @@ Accept: application/vnd.voornameninliedjes.artists.v2+json
 ### Get artists by id V2
 GET {{host}}/artists/4
 Accept: application/vnd.voornameninliedjes.artists.v2+json
+
+### Create artist
+POST {{host}}/artists
+Accept: application/vnd.voornameninliedjes.artists.v2+json
+Content-Type: application/json
+
+{
+    "name": "{{artist}}"
+}
+
+### Update artist
+PUT {{host}}/artists/9
+Accept: application/vnd.voornameninliedjes.artists.v2+json
+Content-Type: application/json
+
+{
+    "name": "Nieuwe naam"
+}
+
+### Delete artist
+DELETE {{host}}/artists/9
+Accept: application/vnd.voornameninliedjes.artists.v2+json
