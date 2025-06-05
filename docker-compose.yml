@@ -1,7 +1,7 @@
 version: '3'
 services:
   db:
-    image: postgres:16.4-bookworm
+    image: postgres:17.5-bookworm
     restart: unless-stopped
     environment:
       POSTGRES_USER: vil_app
