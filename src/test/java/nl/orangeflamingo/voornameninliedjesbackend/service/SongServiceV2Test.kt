@@ -1,6 +1,12 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
-import nl.orangeflamingo.voornameninliedjesbackend.domain.*
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Photo
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongDetail
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWithArtist
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongDetailRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepositoryV2
@@ -11,7 +17,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jdbc.core.mapping.AggregateReference
-import java.util.*
+import java.util.Optional
 
 class SongServiceV2Test {
 

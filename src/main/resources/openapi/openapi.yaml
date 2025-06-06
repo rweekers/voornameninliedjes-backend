@@ -26,7 +26,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Artist'
+                  $ref: '#/components/schemas/ArtistDto'
         '500':
           description: Server error
     post:
@@ -40,14 +40,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewArtist'
+              $ref: '#/components/schemas/NewArtistDto'
       responses:
         '201':
           description: Artist created
           content:
             application/vnd.voornameninliedjes.artists.v2+json:
               schema:
-                $ref: '#/components/schemas/Artist'
+                $ref: '#/components/schemas/ArtistDto'
         '400':
           description: Invalid input
         '500':
@@ -72,7 +72,7 @@ paths:
           content:
             application/vnd.voornameninliedjes.artists.v2+json:
               schema:
-                $ref: '#/components/schemas/Artist'
+                $ref: '#/components/schemas/ArtistDto'
         '404':
           description: Artist not found
           content: {}
@@ -96,14 +96,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewArtist'
+              $ref: '#/components/schemas/NewArtistDto'
       responses:
         '200':
           description: Artist updated
           content:
             application/vnd.voornameninliedjes.artists.v2+json:
               schema:
-                $ref: '#/components/schemas/Artist'
+                $ref: '#/components/schemas/ArtistDto'
         '404':
           description: Artist not found
         '500':
@@ -204,7 +204,7 @@ paths:
 
 components:
   schemas:
-    Artist:
+    ArtistDto:
       type: object
       properties:
         id:
@@ -222,7 +222,7 @@ components:
       required:
         - id
         - name
-    NewArtist:
+    NewArtistDto:
       type: object
       properties:
         name:

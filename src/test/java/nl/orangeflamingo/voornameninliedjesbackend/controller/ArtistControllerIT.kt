@@ -5,7 +5,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistDto
-import nl.orangeflamingo.voornameninliedjesbackend.model.NewArtist
+import nl.orangeflamingo.voornameninliedjesbackend.model.NewArtistDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.junit.jupiter.api.BeforeEach
@@ -114,7 +114,7 @@ class ArtistControllerIT : AbstractIntegrationTest() {
             .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
             .body(
                 BodyInserters.fromValue(
-                    NewArtist("newArtist")
+                    NewArtistDto("newArtist")
                 )
             )
             .exchange()
@@ -128,7 +128,7 @@ class ArtistControllerIT : AbstractIntegrationTest() {
             .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
             .body(
                 BodyInserters.fromValue(
-                    NewArtist("Updated name")
+                    NewArtistDto("Updated name")
                 )
             )
             .exchange()

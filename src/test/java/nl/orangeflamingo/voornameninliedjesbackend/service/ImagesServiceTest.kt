@@ -116,7 +116,7 @@ class ImagesServiceTest {
 
     @Test
     fun `test artistId not present`() {
-        val aggregateReference: AggregateReference<Artist, Long> = mock(AggregateReference::class.java) as AggregateReference<Artist, Long>
+        val aggregateReference: AggregateReference<Artist, Long> = mock()
         val songWithoutArtistId = Song(
             id = 10,
             title = "Gloria",
