@@ -50,6 +50,12 @@ paths:
                 $ref: '#/components/schemas/ArtistDto'
         '400':
           description: Invalid input
+        '409':
+          description: Artist with the same name already exists
+          content:
+            application/vnd.voornameninliedjes.artists.v2+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Server error
   /api/artists/{artistId}:
@@ -349,3 +355,26 @@ components:
       required:
         - url
         - attribution
+
+    ErrorResponse:
+      type: object
+      required:
+        - timestamp
+        - status
+        - error
+        - message
+        - path
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-06-05T14:23:45.123Z"
+        status:
+          type: integer
+          example: 409
+        error:
+          type: string
+          example: "Conflict"
+        message:
+          type: string
+          example: "Artist with name 'The Beatles' already exists"
