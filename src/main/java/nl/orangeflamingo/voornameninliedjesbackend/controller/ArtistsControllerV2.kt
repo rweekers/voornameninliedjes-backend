@@ -4,7 +4,7 @@ import jakarta.validation.Valid
 import nl.orangeflamingo.voornameninliedjesbackend.api.ArtistsApi
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.model.ArtistDto
-import nl.orangeflamingo.voornameninliedjesbackend.model.NewArtistDto
+import nl.orangeflamingo.voornameninliedjesbackend.model.ArtistInputDto
 import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistService
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
@@ -21,7 +21,7 @@ class ArtistsControllerV2(private val artistService: ArtistService) : ArtistsApi
         return ResponseEntity.ok(artistService.findAllOrderedByName().map { toArtistMessage(it) })
     }
 
-    override fun createArtist(newArtist: @Valid NewArtistDto): ResponseEntity<ArtistDto> {
+    override fun createArtist(newArtist: @Valid ArtistInputDto): ResponseEntity<ArtistDto> {
         return ResponseEntity.ok(toArtistMessage(artistService.create(toDomain(newArtist))))
     }
 
@@ -39,14 +39,14 @@ class ArtistsControllerV2(private val artistService: ArtistService) : ArtistsApi
 
     override fun updateArtist(
         artistId: Long,
-        updateArtistDto: @Valid NewArtistDto
+        updateArtistDto: @Valid ArtistInputDto
     ): ResponseEntity<ArtistDto?>? {
         val updatedArtist = Artist(name = updateArtistDto.name)
         val artist = artistService.update(artistId, updatedArtist)
         return ResponseEntity.ok(toArtistMessage(artist))
     }
 
-    private fun toDomain(artistMessage: NewArtistDto): Artist {
+    private fun toDomain(artistMessage: ArtistInputDto): Artist {
         return Artist(
             name = artistMessage.name
         )

@@ -40,7 +40,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewArtistDto'
+              $ref: '#/components/schemas/ArtistInputDto'
       responses:
         '201':
           description: Artist created
@@ -102,7 +102,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewArtistDto'
+              $ref: '#/components/schemas/ArtistInputDto'
       responses:
         '200':
           description: Artist updated
@@ -220,15 +220,25 @@ components:
           type: string
           description: Name of the artist
           example: "The Police"
+        mbid:
+          type: string
+          format: uuid
+          description: The musicbrainz id for the artist
+          example: "9e0e2b01-41db-4008-bd8b-988977d6019a"
+        lastFmUrl:
+          type: string
+          format: uri
+          description: The LastFM url for the artist
+          example: "https://www.last.fm/music/The+Police"
         imageUrl:
           type: string
-          description: URL to an image of the artist
           format: uri
+          description: URL to an image of the artist
           example: "https://example.com/images/john_doe.jpg"
       required:
         - id
         - name
-    NewArtistDto:
+    ArtistInputDto:
       type: object
       properties:
         name:
