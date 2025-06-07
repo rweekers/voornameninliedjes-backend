@@ -5,7 +5,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistDto
-import nl.orangeflamingo.voornameninliedjesbackend.model.NewArtistDto
+import nl.orangeflamingo.voornameninliedjesbackend.model.ArtistInputDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.junit.jupiter.api.BeforeEach
@@ -114,11 +114,25 @@ class ArtistControllerIT : AbstractIntegrationTest() {
             .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
             .body(
                 BodyInserters.fromValue(
-                    NewArtistDto("newArtist")
+                    ArtistInputDto("newArtist")
                 )
             )
             .exchange()
             .expectStatus().isOk
+    }
+
+    @Test
+    fun createArtistWithExistingNameTestV2() {
+        client.post()
+            .uri("/api/artists")
+            .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
+            .body(
+                BodyInserters.fromValue(
+                    ArtistInputDto("The Beatles")
+                )
+            )
+            .exchange()
+            .expectStatus().isEqualTo(HttpStatus.CONFLICT)
     }
 
     @Test
@@ -128,7 +142,7 @@ class ArtistControllerIT : AbstractIntegrationTest() {
             .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
             .body(
                 BodyInserters.fromValue(
-                    NewArtistDto("Updated name")
+                    ArtistInputDto("Updated name")
                 )
             )
             .exchange()
