@@ -1,5 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
+import java.util.Optional
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.util.Optional
 
 @RestController
 @RequestMapping("/api", produces = ["application/vnd.voornameninliedjes.artists.v1+json"])

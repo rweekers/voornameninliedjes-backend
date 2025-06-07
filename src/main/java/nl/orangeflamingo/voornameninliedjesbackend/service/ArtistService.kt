@@ -24,7 +24,7 @@ class ArtistService(private val repository: ArtistRepository) {
     }
 
     fun update(id: Long, updated: Artist): Artist {
-        repository.findById(id)
+        val existing = repository.findById(id)
             .orElseThrow { ArtistNotFoundException(id) }
 
         val artistWithSameName = repository.findFirstByName(updated.name)
@@ -32,7 +32,9 @@ class ArtistService(private val repository: ArtistRepository) {
             throw DuplicateArtistNameException(updated.name)
         }
 
-        return repository.save(updated)
+        val updatedEntity = existing.copy(name = updated.name)
+
+        return repository.save(updatedEntity)
     }
 
     fun delete(id: Long) {
