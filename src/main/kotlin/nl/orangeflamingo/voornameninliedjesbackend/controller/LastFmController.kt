@@ -23,7 +23,14 @@ class LastFmController(
 
     @GetMapping("/lastfm/{artist}/{title}")
     fun getLastFmInfoByArtistAndTitle(@PathVariable artist: String, @PathVariable title: String): Mono<LastFmResponse> {
-        log.info("Getting last fm information for $artist - $title")
+        log.info(
+            "Getting last fm information for ${
+                artist.replace(
+                    "[\n\r]".toRegex(),
+                    "_"
+                )
+            } - ${title.replace("[\n\r]".toRegex(), "_")}"
+        )
         return lastFmApiClient.getTrack(
             artist.replace("'", ""),
             title.clean()

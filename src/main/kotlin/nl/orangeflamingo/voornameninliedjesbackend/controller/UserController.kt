@@ -65,7 +65,7 @@ class UserController(private val userRepository: UserRepository, private val pas
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @GetMapping("/users/{id}")
     fun getUserById(@PathVariable("id") id: String): UserDto {
-        log.info("Requesting user with id $id")
+        log.info("Requesting user with id ${id.replace("[\n\r]".toRegex(), "_")}")
         return userRepository.findById(id).map { convertToDto(it) }
             .orElseThrow { UserNotFoundException("User with id $id not found") }
     }
@@ -81,7 +81,7 @@ class UserController(private val userRepository: UserRepository, private val pas
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @DeleteMapping("/users/{userId}")
     fun deleteUser(@PathVariable userId: String) {
-        log.info("Deleting user with id $userId")
+        log.info("Deleting user with id ${userId.replace("[\n\r]".toRegex(), "_")}")
         userRepository.deleteById(userId)
     }
 
