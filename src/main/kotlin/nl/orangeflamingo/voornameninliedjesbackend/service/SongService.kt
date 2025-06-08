@@ -165,17 +165,16 @@ class SongService @Autowired constructor(
                     server = photo.server,
                     secret = photo.secret,
                     title = photo.title,
-                    licenseDetail = if (license == null) null else License(
+                    licenseDetail = License(
                         id = license.id,
                         name = license.name,
                         url = license.url
                     ),
-                    ownerDetail = if (owner == null) null else Owner(
+                    ownerDetail = Owner(
                         id = owner.id,
                         username = owner.username,
                         photosUrl = owner.photosUrl
                     )
-
                 )
             }
         })
