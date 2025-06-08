@@ -1,6 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import jakarta.validation.Valid
+import java.net.URI
 import nl.orangeflamingo.voornameninliedjesbackend.api.ArtistsApi
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.model.ArtistDto
@@ -9,7 +10,6 @@ import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistService
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
-import java.net.URI
 
 @RestController
 class ArtistsControllerV2(private val artistService: ArtistService) : ArtistsApi {
@@ -25,8 +25,7 @@ class ArtistsControllerV2(private val artistService: ArtistService) : ArtistsApi
         return ResponseEntity.ok(toArtistMessage(artistService.create(toDomain(newArtist))))
     }
 
-    @Suppress("kotlin:S6508") // Implement Java interface generated from OpenAPI definition
-    override fun deleteArtist(artistId: Long): ResponseEntity<Void> {
+    override fun deleteArtist(artistId: Long): ResponseEntity<Unit> {
         artistService.delete(artistId)
         return ResponseEntity.noContent().build()
     }
@@ -40,7 +39,7 @@ class ArtistsControllerV2(private val artistService: ArtistService) : ArtistsApi
     override fun updateArtist(
         artistId: Long,
         updateArtistDto: @Valid ArtistInputDto
-    ): ResponseEntity<ArtistDto?>? {
+    ): ResponseEntity<ArtistDto> {
         val updatedArtist = Artist(name = updateArtistDto.name)
         val artist = artistService.update(artistId, updatedArtist)
         return ResponseEntity.ok(toArtistMessage(artist))
@@ -53,11 +52,11 @@ class ArtistsControllerV2(private val artistService: ArtistService) : ArtistsApi
     }
 
     private fun toArtistMessage(artist: Artist): ArtistDto {
-        return ArtistDto.builder()
-            .id(artist.id)
-            .name(artist.name)
-            .imageUrl(URI.create(artist.photos.firstOrNull()?.url ?: ""))
-            .build()
+        return ArtistDto(
+            id = artist.id ?: throw IllegalStateException("Artist id is null"),
+            name = artist.name,
+            imageUrl = URI.create(artist.photos.firstOrNull()?.url ?: "")
+        )
     }
 
 }
