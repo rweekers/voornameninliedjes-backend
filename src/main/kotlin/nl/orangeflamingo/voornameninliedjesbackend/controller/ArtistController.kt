@@ -1,11 +1,8 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
-import java.util.Optional
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistDto
-import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistFlickrPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistWikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import org.slf4j.LoggerFactory
@@ -13,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.util.Optional
 
 @RestController
 @RequestMapping("/api", produces = ["application/vnd.voornameninliedjes.artists.v1+json"])
@@ -38,7 +36,7 @@ class ArtistController(private val artistRepository: ArtistRepository) {
             name = artist.name,
             background = artist.background,
             wikimediaPhotos = artist.photos.map { convertToDto(it) }.toSet(),
-            flickrPhotos = artist.flickrPhotos.map { convertToDto(it) }.toSet(),
+            flickrPhotos = emptySet(),
         )
     }
 
@@ -46,12 +44,6 @@ class ArtistController(private val artistRepository: ArtistRepository) {
         return ArtistWikimediaPhotoDto(
             url = wikimediaPhoto.url,
             attribution = wikimediaPhoto.attribution
-        )
-    }
-
-    private fun convertToDto(flickrPhoto: ArtistFlickrPhoto): ArtistFlickrPhotoDto {
-        return ArtistFlickrPhotoDto(
-            flickrId = flickrPhoto.flickrId
         )
     }
 }

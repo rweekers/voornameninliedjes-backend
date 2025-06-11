@@ -3,18 +3,15 @@ package nl.orangeflamingo.voornameninliedjesbackend.service
 import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistLogEntry
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.License
-import nl.orangeflamingo.voornameninliedjesbackend.domain.Owner
 import nl.orangeflamingo.voornameninliedjesbackend.domain.PhotoDetail
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLogEntry
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongSource
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatusStatistics
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.slf4j.LoggerFactory
@@ -22,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.jdbc.core.mapping.AggregateReference
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 import java.time.Instant
 import java.util.Locale
 
@@ -128,7 +124,6 @@ class SongService @Autowired constructor(
         artistImageHeight = song.artistImageHeight,
         artistPhotos = artist.photos,
         songPhotos = song.photos,
-        flickrPhotos = artist.flickrPhotos,
         flickrPhotoDetail = photoDetails,
         sources = song.sources,
         tags = song.lastFmTags.toList(),
@@ -146,41 +141,8 @@ class SongService @Autowired constructor(
         val artist = artistRepository.findById(song.artist.id?:throw IllegalArgumentException())
             .orElseThrow { ArtistNotFoundException("Artist with artist id ${song.artist.id} for title ${song.title} not found") }
 
-        val photos = Flux.mergeSequential(artist.flickrPhotos.map { flickrApiPhoto ->
-            flickrApiClient.getPhoto(flickrApiPhoto.flickrId)
-        })
-        val owners = Flux.mergeSequential(photos.map { flickrApiClient.getOwnerInformation(it.ownerId) })
-            .sort { o1, o2 -> o1.username.compareTo(o2.username) }
-        val licences2 = Flux.mergeSequential(flickrApiClient.getLicenses().map { Flux.fromIterable(it.license) })
-
-        val photoDetails = Flux.mergeSequential(photos.map { photo ->
-            val licenseMono = licences2.filter { it.id == photo.licenseId }.last()
-            val ownerMono = owners.filter { it.id == photo.ownerId }.last()
-
-            Mono.zip(licenseMono, ownerMono) { license, owner ->
-                PhotoDetail(
-                    id = photo.id,
-                    url = photo.url,
-                    farm = photo.farm,
-                    server = photo.server,
-                    secret = photo.secret,
-                    title = photo.title,
-                    licenseDetail = License(
-                        id = license.id,
-                        name = license.name,
-                        url = license.url
-                    ),
-                    ownerDetail = Owner(
-                        id = owner.id,
-                        username = owner.username,
-                        photosUrl = owner.photosUrl
-                    )
-                )
-            }
-        })
-
         return createAggregateSong(
-            song, artist, photoDetails
+            song, artist
         )
     }
 
@@ -205,7 +167,6 @@ class SongService @Autowired constructor(
         if (artistUpdate(aggregateSong, artist)) {
             artist.photos =
                 aggregateSong.artistPhotos.map { ArtistPhoto(url = it.url, attribution = it.attribution) }.toMutableSet()
-            artist.flickrPhotos = aggregateSong.flickrPhotos.map { ArtistFlickrPhoto(flickrId = it.flickrId) }.toMutableSet()
             artist.name = aggregateSong.artistName
             val artistLogEntry = ArtistLogEntry(date = Instant.now(), username = user)
             artist.logEntries.add(artistLogEntry)
@@ -223,8 +184,6 @@ class SongService @Autowired constructor(
     private fun artistUpdate(song: AggregateSong, artist: Artist): Boolean {
         if (song.artistName != artist.name) return true
 
-        if (song.flickrPhotos != artist.flickrPhotos.map { it.flickrId }) return true
-
         return song.artistPhotos != artist.photos
     }
 
@@ -234,7 +193,6 @@ class SongService @Autowired constructor(
                 name = aggregateSong.artistName,
                 background = aggregateSong.artistBackground,
                 photos = aggregateSong.artistPhotos.toMutableSet(),
-                flickrPhotos = aggregateSong.flickrPhotos.toMutableSet(),
                 logEntries = mutableSetOf(
                     ArtistLogEntry(
                         date = Instant.now(),

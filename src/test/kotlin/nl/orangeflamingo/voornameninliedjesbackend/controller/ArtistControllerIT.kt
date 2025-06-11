@@ -2,7 +2,6 @@ package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistDto
 import nl.orangeflamingo.voornameninliedjesbackend.model.ArtistInputDto
@@ -32,7 +31,6 @@ class ArtistControllerIT : AbstractIntegrationTest() {
         artistRepository.deleteAll()
         val artist = Artist(
             name = "The Beatles",
-            flickrPhotos = mutableSetOf(ArtistFlickrPhoto(1, "1"), ArtistFlickrPhoto(2, "2")),
             photos = mutableSetOf(
                 ArtistPhoto(
                     url = "https://upload.wikimedia.org/wikipedia/commons/6/61/The_Beatles_arrive_at_JFK_Airport.jpg",
@@ -45,7 +43,6 @@ class ArtistControllerIT : AbstractIntegrationTest() {
                 artist,
                 artist.copy(
                     name = "The Rolling Stones",
-                    flickrPhotos = mutableSetOf(),
                     photos = mutableSetOf()
                 )
             )
@@ -82,8 +79,6 @@ class ArtistControllerIT : AbstractIntegrationTest() {
             .expectBody()
             .jsonPath("$.name").isNotEmpty
             .jsonPath("$.name").isEqualTo("The Beatles")
-            .jsonPath("$.flickrPhotos").isNotEmpty
-            .jsonPath("$.flickrPhotos[0].flickrId").isEqualTo("1")
     }
 
     @Test

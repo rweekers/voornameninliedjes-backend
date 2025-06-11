@@ -12,7 +12,6 @@ import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminWikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -248,30 +247,6 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
             .jsonPath("$.status").isEqualTo("INCOMPLETE")
             .jsonPath("$.remarks").isNotEmpty
             .jsonPath("$.remarks").isEqualTo("Geen spotify link gevonden...")
-    }
-
-    @Test
-    fun addFlickrPhotoForSong() {
-        val id = songMap[songTitle]!!
-        val newFlickrId = "15"
-
-        client.post()
-            .uri("/admin/songs/temp/$id/$newFlickrId")
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
-            .exchange()
-        assertEquals(1, artistRepository.findById(artistMap[artistName]!!).orElseThrow().flickrPhotos.size)
-    }
-
-    @Test
-    fun addFlickrPhotoForArtist() {
-        val id = artistMap[artistName]!!
-        val newFlickrId = "15"
-
-        client.post()
-            .uri("/admin/artists/temp/$id/$newFlickrId")
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
-            .exchange()
-        assertEquals(1, artistRepository.findById(id).orElseThrow().flickrPhotos.size)
     }
 
     @Test

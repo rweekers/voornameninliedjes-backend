@@ -2,12 +2,11 @@ package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongSource
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.TestSongDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
@@ -26,8 +25,6 @@ class SongControllerV2IT: AbstractIntegrationTest() {
     private lateinit var songRepository: SongRepository
     @Autowired
     private lateinit var artistRepository: ArtistRepository
-    @Autowired
-    private lateinit var songController: SongsControllerV2
     private lateinit var songMap: Map<String, Long>
 
     @BeforeEach
@@ -38,7 +35,6 @@ class SongControllerV2IT: AbstractIntegrationTest() {
         val artist = artistRepository.save(
             Artist(
                 name = "The Beatles",
-                flickrPhotos = mutableSetOf(ArtistFlickrPhoto(1, "1"), ArtistFlickrPhoto(2, "2")),
                 photos = mutableSetOf(
                     ArtistPhoto(
                         url = "https://upload.wikimedia.org/wikipedia/commons/6/61/The_Beatles_arrive_at_JFK_Airport.jpg",
