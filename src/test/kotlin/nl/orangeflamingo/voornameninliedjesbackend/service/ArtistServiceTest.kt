@@ -33,14 +33,14 @@ class ArtistControllerV2Test {
     companion object {
         @JvmStatic
         fun artistsProvider(): Stream<Arguments> {
-            val artist = Artist(1L, "The Beatles", UUID.randomUUID().toString())
+            val artist = Artist(1L, "The Beatles", UUID.randomUUID())
             return Stream.of(Arguments.of(Optional.ofNullable(null), null), Arguments.of(Optional.of(artist), artist))
         }
     }
 
     @Test
     fun `get artist by name`() {
-        val artist = Artist(1L, "The Beatles", UUID.randomUUID().toString())
+        val artist = Artist(1L, "The Beatles", UUID.randomUUID())
         whenever(repository.findByNameIgnoreCase(artist.name)).thenReturn(listOf(artist))
         val artistFound = artistService.findByName(artist.name)
         assertThat(artistFound).isEqualTo(listOf(artist))
@@ -49,7 +49,7 @@ class ArtistControllerV2Test {
     @Test
     fun `create artist`() {
         val artistName = "Rolling Stones"
-        val artist = Artist(name = artistName, mbid = UUID.randomUUID().toString())
+        val artist = Artist(name = artistName, mbid = UUID.randomUUID())
         val id = 1L
         val savedArtist = artist.copy(id = id)
 
@@ -63,7 +63,7 @@ class ArtistControllerV2Test {
 
     @Test
     fun `create existing artist`() {
-        val artist = Artist(1L, "The Beatles", UUID.randomUUID().toString())
+        val artist = Artist(1L, "The Beatles", UUID.randomUUID())
         val updatedArtist = artist.copy()
         whenever(repository.findFirstByName(updatedArtist.name)).thenReturn(artist)
         assertThatThrownBy { artistService.create(updatedArtist) }
@@ -73,7 +73,7 @@ class ArtistControllerV2Test {
 
     @Test
     fun `update existing artist`() {
-        val artist = Artist(1L, "The Beatles", UUID.randomUUID().toString())
+        val artist = Artist(1L, "The Beatles", UUID.randomUUID())
         val updatedArtist = artist.copy(name = "Beatles")
         whenever(repository.findById(1L)).thenReturn(Optional.of(artist))
         whenever(repository.save(updatedArtist)).thenReturn(updatedArtist)

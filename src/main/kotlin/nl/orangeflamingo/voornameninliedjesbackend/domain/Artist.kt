@@ -3,7 +3,9 @@ package nl.orangeflamingo.voornameninliedjesbackend.domain
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.MappedCollection
 import org.springframework.data.relational.core.mapping.Table
+import java.net.URI
 import java.time.Instant
+import java.util.UUID
 
 @Table("artists")
 data class Artist(
@@ -11,8 +13,8 @@ data class Artist(
     @Id
     var id: Long? = null,
     var name: String,
-    var mbid: String? = null,
-    var lastFmUrl: String? = null,
+    var mbid: UUID? = null,
+    var lastFmUrl: URI? = null,
     val background: String? = null,
     @MappedCollection(idColumn = "artist_id")
     var photos: MutableSet<ArtistPhoto> = mutableSetOf(),

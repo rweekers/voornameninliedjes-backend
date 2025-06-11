@@ -13,6 +13,8 @@ import nl.orangeflamingo.voornameninliedjesbackend.utils.html2md
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.net.URI
+import java.util.UUID
 
 
 @Service
@@ -59,8 +61,8 @@ class LastFmEnrichmentService @Autowired constructor(
                         song.albumName = it.album?.name
                         song.albumMbid = it.album?.mbid
                         song.albumLastFmUrl = it.album?.url
-                        artist.mbid = it.artist.mbid
-                        artist.lastFmUrl = it.artist.url
+                        artist.mbid = UUID.fromString(it.artist.mbid)
+                        artist.lastFmUrl = URI.create(it.artist.url)
                         it.tags.forEach { tag ->
                             song.lastFmTags.add(
                                 SongLastFmTag(
