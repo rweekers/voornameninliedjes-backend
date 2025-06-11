@@ -235,9 +235,14 @@ components:
           format: uri
           description: URL to an image of the artist
           example: "https://example.com/images/john_doe.jpg"
+        photos:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhotoDto'
       required:
         - id
         - name
+        - photos
     ArtistInputDto:
       type: object
       properties:
@@ -245,13 +250,13 @@ components:
           type: string
           description: Name of the artist
           example: "The Police"
-        imageUrl:
-          type: string
-          description: URL to an image of the artist
-          format: uri
-          example: "https://example.com/images/john_doe.jpg"
+        photos:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhotoDto'
       required:
         - name
+        - photos
     Song:
       type: object
       properties:
@@ -341,10 +346,10 @@ components:
           minimum: 0
           description: Height of the image
           example: 500
-        wikimediaPhotos:
+        photos:
           type: array
           items:
-            $ref: '#/components/schemas/WikimediaPhoto'
+            $ref: '#/components/schemas/PhotoDto'
         sources:
           type: array
           items:
@@ -354,7 +359,7 @@ components:
         - title
         - name
         - hasDetails
-    WikimediaPhoto:
+    PhotoDto:
       type: object
       properties:
         url:

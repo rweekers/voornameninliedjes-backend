@@ -18,6 +18,7 @@ import org.mockito.kotlin.timeout
 import org.mockito.kotlin.whenever
 import org.springframework.data.jdbc.core.mapping.AggregateReference
 import reactor.core.publisher.Mono
+import java.net.URI
 import java.util.Optional
 
 class ImagesEnrichmentServiceTest {
@@ -41,7 +42,7 @@ class ImagesEnrichmentServiceTest {
     private val artist = Artist(
         id = 100,
         name = "The Beatles",
-        photos = mutableSetOf(ArtistPhoto(url = "https://somephoto.com", attribution = "Some attribution"))
+        photos = mutableSetOf(ArtistPhoto(url = URI.create("https://somephoto.com"), attribution = "Some attribution"))
     )
 
     @BeforeEach

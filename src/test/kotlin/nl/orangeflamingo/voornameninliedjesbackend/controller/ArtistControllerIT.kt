@@ -15,6 +15,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import org.springframework.web.reactive.function.BodyInserters
 import org.testcontainers.shaded.com.google.common.net.HttpHeaders
+import java.net.URI
 
 class ArtistControllerIT : AbstractIntegrationTest() {
     private lateinit var artistMap: Map<String, Long>
@@ -33,7 +34,7 @@ class ArtistControllerIT : AbstractIntegrationTest() {
             name = "The Beatles",
             photos = mutableSetOf(
                 ArtistPhoto(
-                    url = "https://upload.wikimedia.org/wikipedia/commons/6/61/The_Beatles_arrive_at_JFK_Airport.jpg",
+                    url = URI.create("https://upload.wikimedia.org/wikipedia/commons/6/61/The_Beatles_arrive_at_JFK_Airport.jpg"),
                     attribution = "United Press International, Public domain, via Wikimedia Commons"
                 )
             )
@@ -109,7 +110,7 @@ class ArtistControllerIT : AbstractIntegrationTest() {
             .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
             .body(
                 BodyInserters.fromValue(
-                    ArtistInputDto("newArtist")
+                    ArtistInputDto("newArtist", emptyList())
                 )
             )
             .exchange()
@@ -123,7 +124,7 @@ class ArtistControllerIT : AbstractIntegrationTest() {
             .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
             .body(
                 BodyInserters.fromValue(
-                    ArtistInputDto("The Beatles")
+                    ArtistInputDto("The Beatles", emptyList())
                 )
             )
             .exchange()
@@ -137,7 +138,7 @@ class ArtistControllerIT : AbstractIntegrationTest() {
             .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
             .body(
                 BodyInserters.fromValue(
-                    ArtistInputDto("Updated name")
+                    ArtistInputDto("Updated name", emptyList())
                 )
             )
             .exchange()

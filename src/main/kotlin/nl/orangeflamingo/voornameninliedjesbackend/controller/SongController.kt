@@ -189,7 +189,7 @@ class SongController(
     }
 
     private fun convertArtistWikimediaPhotoToDto(wikimediaPhoto: ArtistPhoto): WikimediaPhotoDto {
-        return WikimediaPhotoDto(wikimediaPhoto.url, wikimediaPhoto.attribution)
+        return WikimediaPhotoDto(wikimediaPhoto.url.toString(), wikimediaPhoto.attribution)
     }
 
     private fun convertSongWikimediaPhotoToDto(wikimediaPhoto: SongPhoto): WikimediaPhotoDto {

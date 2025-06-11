@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import java.net.URI
 
 @RestController
 @RequestMapping("/admin")
@@ -202,7 +203,7 @@ class SongAdminController(
             hasDetails = song.hasDetails,
             artistPhotos = song.artistWikimediaPhotos.map {
                 ArtistPhoto(
-                    url = it.url.trim(),
+                    url = URI.create(it.url.trim()),
                     attribution = it.attribution.trim()
                 )
             }.toSet(),
@@ -258,7 +259,7 @@ class SongAdminController(
 
     private fun convertToDto(wikimediaPhoto: ArtistPhoto): AdminWikimediaPhotoDto {
         return AdminWikimediaPhotoDto(
-            url = wikimediaPhoto.url,
+            url = wikimediaPhoto.url.toString(),
             attribution = wikimediaPhoto.attribution
         )
     }

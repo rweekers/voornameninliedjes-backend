@@ -54,7 +54,7 @@ class ImagesEnrichmentService @Autowired constructor(
                     .firstOrNull()
             if (urlToAttribution != null) {
                 val (url, attribution) = urlToAttribution
-                updateArtistImage(url, attribution, song)
+                updateArtistImage(url.toString(), attribution, song)
             }
         } catch (e: Exception) {
             log.error("Could not update images information for ${artist.name} - ${song.title} due to error", e)
