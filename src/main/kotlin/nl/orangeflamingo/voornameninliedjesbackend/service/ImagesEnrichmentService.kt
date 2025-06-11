@@ -1,6 +1,5 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
-import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.client.ImageClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
@@ -19,7 +18,6 @@ import java.time.Duration
 class ImagesEnrichmentService @Autowired constructor(
     private val songRepository: SongRepository,
     private val artistRepository: ArtistRepository,
-    private val flickrApiClient: FlickrApiClient,
     private val imageClient: ImageClient
 ) {
 
@@ -57,14 +55,6 @@ class ImagesEnrichmentService @Autowired constructor(
             if (urlToAttribution != null) {
                 val (url, attribution) = urlToAttribution
                 updateArtistImage(url, attribution, song)
-            } else {
-                val photo = flickrApiClient.getPhoto(artist.flickrPhotos.first().flickrId)
-                photo.subscribe { p ->
-                    flickrApiClient.getOwnerInformation(p.ownerId).subscribe { o ->
-                        val attribution = "Photo by ${o.username} to be found at ${p.url}"
-                        updateArtistImage(p.url, attribution, song)
-                    }
-                }
             }
         } catch (e: Exception) {
             log.error("Could not update images information for ${artist.name} - ${song.title} due to error", e)

@@ -19,8 +19,6 @@ data class Artist(
     @MappedCollection(idColumn = "artist_id")
     var photos: MutableSet<ArtistPhoto> = mutableSetOf(),
     @MappedCollection(idColumn = "artist_id")
-    var flickrPhotos: MutableSet<ArtistFlickrPhoto> = mutableSetOf(),
-    @MappedCollection(idColumn = "artist_id")
     val logEntries: MutableSet<ArtistLogEntry> = mutableSetOf()
 )
 
@@ -30,13 +28,6 @@ data class ArtistPhoto(
     var id: Long? = null,
     val url: String,
     val attribution: String
-)
-
-@Table("artist_flickr_photos")
-data class ArtistFlickrPhoto(
-    @Id
-    var id: Long? = null,
-    val flickrId: String
 )
 
 @Table("artist_log_entries")

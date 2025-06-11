@@ -1,8 +1,5 @@
 package nl.orangeflamingo.voornameninliedjesbackend.domain
 
-import com.beust.klaxon.Json
-import reactor.core.publisher.Flux
-
 data class TestAggregateSong(
     val id: Long? = 1,
     val title: String = "Michelle",
@@ -17,9 +14,6 @@ data class TestAggregateSong(
     val hasDetails: Boolean = false,
     val mongoId: String? = null,
     val wikimediaPhotos: Set<ArtistPhoto> = mutableSetOf(),
-    val flickrPhotos: Set<ArtistFlickrPhoto> = mutableSetOf(),
-    @Json(ignored = true)
-    val flickrPhotoDetail: Flux<PhotoDetail> = Flux.empty(),
     val sources: Set<SongSource> = setOf(),
     val logEntries: MutableSet<SongLogEntry> = mutableSetOf()
 ) {
@@ -38,8 +32,6 @@ data class TestAggregateSong(
             hasDetails = hasDetails,
             mongoId = mongoId,
             artistPhotos = wikimediaPhotos,
-            flickrPhotos = flickrPhotos,
-            flickrPhotoDetail = flickrPhotoDetail,
             sources = sources,
             logEntries = logEntries
         )

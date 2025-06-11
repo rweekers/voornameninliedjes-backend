@@ -1,11 +1,9 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistLogEntry
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistDto
-import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistFlickrPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistLogEntryDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistWikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
@@ -58,19 +56,13 @@ class ArtistAdminController(private val artistRepository: ArtistRepository, priv
             name = artist.name,
             background = artist.background,
             wikimediaPhotos = artist.photos.map { convertToDto(it) }.toSet(),
-            flickrPhotos = artist.flickrPhotos.map { convertToDto(it) }.toSet(),
+            flickrPhotos = emptySet(),
             logEntries = artist.logEntries.map { convertToDto(it) })
     }
 
     private fun convertToDto(wikimediaPhoto: ArtistPhoto): AdminArtistWikimediaPhotoDto {
         return AdminArtistWikimediaPhotoDto(
             url = wikimediaPhoto.url, attribution = wikimediaPhoto.attribution
-        )
-    }
-
-    private fun convertToDto(flickrPhoto: ArtistFlickrPhoto): AdminArtistFlickrPhotoDto {
-        return AdminArtistFlickrPhotoDto(
-            flickrId = flickrPhoto.flickrId
         )
     }
 

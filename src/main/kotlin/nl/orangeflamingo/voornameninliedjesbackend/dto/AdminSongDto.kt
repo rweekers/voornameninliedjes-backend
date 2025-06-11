@@ -56,8 +56,6 @@ data class AdminSongDto(
 
     val songWikimediaPhotos: List<AdminWikimediaPhotoDto> = listOf(),
 
-    val flickrPhotos: List<String> = listOf(),
-
     val sources: List<AdminSourceDto> = listOf(),
 
     val tags: List<LastFmTagDto> = listOf(),

@@ -1,23 +1,17 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
-import java.time.Instant
 import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
-import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistFlickrPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistLogEntry
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLastFmTag
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLogEntry
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongSource
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminLogEntry
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSongDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSourceDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminWikimediaPhotoDto
-import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistNotFoundException
 import nl.orangeflamingo.voornameninliedjesbackend.service.ImagesEnrichmentService
@@ -46,7 +40,6 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/admin")
 class SongAdminController(
     private val songRepository: SongRepository,
-    private val artistRepository: ArtistRepository,
     private val songService: SongService,
     private val imagesEnrichmentService: ImagesEnrichmentService,
     private val wikipediaEnrichmentService: WikipediaEnrichmentService,
@@ -178,44 +171,6 @@ class SongAdminController(
         lastFmEnrichmentService.enrichLastFmInfoForSongs(updateAll)
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/songs/{user}/{id}/{flickrId}")
-    fun addFlickrPhotoForSong(@PathVariable user: String, @PathVariable id: Long, @PathVariable flickrId: String) {
-        val songOptional = songRepository.findById(id)
-        if (songOptional.isPresent) {
-            val song = songOptional.get()
-            val artist = findArtistForSong(song)
-                ?: throw IllegalStateException("There should be a lead artist for all songs")
-            addFlickrIdToArtist(user, artist, flickrId)
-        } else {
-            log.warn("Song with id $id not found")
-        }
-    }
-
-    private fun findArtistForSong(song: Song): Artist? {
-        return artistRepository.findById(song.artist.id ?: throw IllegalStateException())
-            .orElseThrow { ArtistNotFoundException("Artist with artist id ${song.artist.id} for title ${song.title} not found") }
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/artists/{user}/{id}/{flickrId}")
-    fun addFlickrPhoto(@PathVariable user: String, @PathVariable id: Long, @PathVariable flickrId: String) {
-        val artist =
-            artistRepository.findById(id).orElseThrow { ArtistNotFoundException("Artist with id $id not found") }
-        addFlickrIdToArtist(user, artist, flickrId)
-    }
-
-    private fun addFlickrIdToArtist(
-        user: String,
-        artist: Artist,
-        flickrId: String
-    ) {
-        val logEntry = ArtistLogEntry(date = Instant.now(), username = user)
-        artist.logEntries.add(logEntry)
-        artist.flickrPhotos.add(ArtistFlickrPhoto(flickrId = flickrId))
-        artistRepository.save(artist)
-    }
-
     @PreAuthorize("hasRole('ROLE_OWNER')")
     @DeleteMapping("/songs")
     fun deleteSongs() {
@@ -257,7 +212,6 @@ class SongAdminController(
                     attribution = it.attribution.trim()
                 )
             }.toSet(),
-            flickrPhotos = song.flickrPhotos.map { ArtistFlickrPhoto(flickrId = it.trim()) }.toSet(),
             sources = song.sources.map { SongSource(url = it.url.trim(), name = it.name.trim()) }.toSet(),
             logEntries = song.logs.map { SongLogEntry(date = it.date, username = it.user.trim()) }.toMutableSet()
         )
@@ -289,7 +243,6 @@ class SongAdminController(
             hasDetails = song.hasDetails,
             artistWikimediaPhotos = song.artistPhotos.map { convertToDto(it) },
             songWikimediaPhotos = song.songPhotos.map { convertToDto(it) },
-            flickrPhotos = song.flickrPhotos.map { it.flickrId },
             sources = song.sources.map { convertToDto(it) },
             tags = song.tags.map { convertToDto(it) },
             logs = song.logEntries.map { convertToDto(it) }
