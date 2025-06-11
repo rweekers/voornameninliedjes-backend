@@ -3,13 +3,14 @@ package nl.orangeflamingo.voornameninliedjesbackend.controller
 import jakarta.validation.Valid
 import nl.orangeflamingo.voornameninliedjesbackend.api.ArtistsApi
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
+import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.model.ArtistDto
 import nl.orangeflamingo.voornameninliedjesbackend.model.ArtistInputDto
+import nl.orangeflamingo.voornameninliedjesbackend.model.PhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistService
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
-import java.net.URI
 
 @RestController
 class ArtistsControllerV2(private val artistService: ArtistService) : ArtistsApi {
@@ -55,8 +56,13 @@ class ArtistsControllerV2(private val artistService: ArtistService) : ArtistsApi
         return ArtistDto(
             id = artist.id ?: throw IllegalStateException("Artist id is null"),
             name = artist.name,
-            imageUrl = URI.create(artist.photos.firstOrNull()?.url ?: "")
+            imageUrl = artist.photos.firstOrNull()?.url,
+            photos = artist.photos.map { toPhoto(it) }
         )
+    }
+
+    private fun toPhoto(photo: ArtistPhoto): PhotoDto {
+        return PhotoDto(photo.url, photo.attribution)
     }
 
 }

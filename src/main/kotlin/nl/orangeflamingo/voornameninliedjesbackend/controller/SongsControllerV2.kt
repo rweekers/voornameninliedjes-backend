@@ -64,13 +64,13 @@ class SongsControllerV2(private val songServiceV2: SongServiceV2) : SongsApi {
             localImage = songDetail.localImage,
             artistImageWidth = songDetail.artistImageWidth,
             artistImageHeight = songDetail.artistImageHeight,
-            wikimediaPhotos = songDetail.photos.map { convert(it) },
+            photos = songDetail.photos.map { convert(it) },
             sources = emptyList()
         )
     }
 
-    private fun convert(photo: Photo): nl.orangeflamingo.voornameninliedjesbackend.model.WikimediaPhoto {
-        return nl.orangeflamingo.voornameninliedjesbackend.model.WikimediaPhoto(
+    private fun convert(photo: Photo): nl.orangeflamingo.voornameninliedjesbackend.model.PhotoDto {
+        return nl.orangeflamingo.voornameninliedjesbackend.model.PhotoDto(
             url = URI.create(photo.url),
             attribution = photo.attribution,
         )

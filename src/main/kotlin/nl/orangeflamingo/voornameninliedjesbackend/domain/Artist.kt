@@ -26,7 +26,7 @@ data class Artist(
 data class ArtistPhoto(
     @Id
     var id: Long? = null,
-    val url: String,
+    val url: URI,
     val attribution: String
 )
 

@@ -15,7 +15,7 @@ import java.util.Optional
 import java.util.UUID
 import java.util.stream.Stream
 
-class ArtistControllerV2Test {
+class ArtistServiceTest {
 
     private val repository = mock(ArtistRepository::class.java)
 

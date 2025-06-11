@@ -42,7 +42,7 @@ class ArtistController(private val artistRepository: ArtistRepository) {
 
     private fun convertToDto(wikimediaPhoto: ArtistPhoto): ArtistWikimediaPhotoDto {
         return ArtistWikimediaPhotoDto(
-            url = wikimediaPhoto.url,
+            url = wikimediaPhoto.url.toString(),
             attribution = wikimediaPhoto.attribution
         )
     }

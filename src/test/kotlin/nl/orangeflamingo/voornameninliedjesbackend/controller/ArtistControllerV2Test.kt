@@ -24,7 +24,12 @@ class ArtistControllerV2Test {
         val artists = artistControllerV2.getApiArtists()
         assertThat(artists.body).isEqualTo(
                 listOf(
-                    ArtistDto(id = artist.id ?: throw IllegalStateException(), name = artist.name, imageUrl = URI.create(""))
+                    ArtistDto(
+                        id = artist.id ?: throw IllegalStateException(),
+                        name = artist.name,
+                        imageUrl = null,
+                        photos = emptyList()
+                    ),
                 )
             )
     }
@@ -34,7 +39,12 @@ class ArtistControllerV2Test {
         whenever(artistService.findById(1L)).thenReturn(artist)
         val artistResponse = artistControllerV2.getArtistById(1)
         assertThat(artistResponse.body).isEqualTo(
-            ArtistDto(id = artist.id ?: throw IllegalStateException(), name = artist.name, imageUrl = URI.create(""))
+            ArtistDto(
+                id = artist.id ?: throw IllegalStateException(),
+                name = artist.name,
+                imageUrl = null,
+                photos = emptyList()
+            )
         )
     }
 }

@@ -17,6 +17,7 @@ import org.springframework.data.jdbc.core.mapping.AggregateReference
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
+import java.net.URI
 
 class SongControllerIT : AbstractIntegrationTest() {
     @Autowired
@@ -39,7 +40,7 @@ class SongControllerIT : AbstractIntegrationTest() {
                 name = "The Beatles",
                 photos = mutableSetOf(
                     ArtistPhoto(
-                        url = "https://upload.wikimedia.org/wikipedia/commons/6/61/The_Beatles_arrive_at_JFK_Airport.jpg",
+                        url = URI.create("https://upload.wikimedia.org/wikipedia/commons/6/61/The_Beatles_arrive_at_JFK_Airport.jpg"),
                         attribution = "United Press International, Public domain, via Wikimedia Commons"
                     )
                 )
