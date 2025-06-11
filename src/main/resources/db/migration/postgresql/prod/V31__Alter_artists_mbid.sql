@@ -1,0 +1,2 @@
+ALTER TABLE artists
+ALTER COLUMN mbid TYPE UUID USING mbid::uuid;

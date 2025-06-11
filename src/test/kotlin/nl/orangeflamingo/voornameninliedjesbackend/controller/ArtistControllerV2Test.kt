@@ -15,7 +15,7 @@ class ArtistControllerV2Test {
     private val artistService = mock(ArtistService::class.java)
 
     private val artistControllerV2 = ArtistsControllerV2(artistService)
-    private val artist = Artist(1, "Test", UUID.randomUUID().toString())
+    private val artist = Artist(1, "Test", UUID.randomUUID())
 
     @Test
     fun `get all artists`() {
