@@ -75,25 +75,26 @@
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>6.1.0</version>
             <scope>provided</scope>
         </dependency>
         <!-- javax.validation for Bean Validation -->
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
-            <version>3.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
         </dependency>
         <!-- javax.annotation for Java annotations -->
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
-            <version>2.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
-            <version>0.2.6</version> <!-- Check for the latest version -->
+            <version>0.2.6</version>
         </dependency>
 
         <dependency>
@@ -366,7 +367,6 @@
                                 <modelPackage>nl.orangeflamingo.voornameninliedjesbackend.model</modelPackage>
                                 <interfaceOnly>true</interfaceOnly>
                                 <skipDefaultInterface>true</skipDefaultInterface>
-                                <generateBuilders>true</generateBuilders>
                             </configOptions>
                         </configuration>
                     </execution>
@@ -415,14 +415,6 @@
                     <plugin>
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
-                        <configuration>
-                            <image>
-                                <buildpacks>
-                                    <buildpack>gcr.io/paketo-buildpacks/graalvm</buildpack>
-                                    <buildpack>gcr.io/paketo-buildpacks/java-native-image</buildpack>
-                                </buildpacks>
-                            </image>
-                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.graalvm.buildtools</groupId>
@@ -456,7 +448,7 @@
             </activation>
             <properties>
                 <bp.native.image>false</bp.native.image>
-                <project.suffix>arm-jvm</project.suffix>
+                <project.suffix>jvm</project.suffix>
             </properties>
         </profile>
     </profiles>
