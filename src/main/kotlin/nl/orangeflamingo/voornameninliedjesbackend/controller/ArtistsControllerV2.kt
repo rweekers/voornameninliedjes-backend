@@ -10,6 +10,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.model.PhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistService
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -22,10 +23,12 @@ class ArtistsControllerV2(private val artistService: ArtistService) : ArtistsApi
         return ResponseEntity.ok(artistService.findAllOrderedByName().map { toArtistMessage(it) })
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     override fun createArtist(artistInputDto: @Valid ArtistInputDto): ResponseEntity<ArtistDto> {
         return ResponseEntity.ok(toArtistMessage(artistService.create(toDomain(artistInputDto))))
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     override fun deleteArtist(artistId: Long): ResponseEntity<Unit> {
         artistService.delete(artistId)
         return ResponseEntity.noContent().build()
@@ -37,6 +40,7 @@ class ArtistsControllerV2(private val artistService: ArtistService) : ArtistsApi
         return ResponseEntity.ok(toArtistMessage(artist))
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     override fun updateArtist(
         artistId: Long,
         artistInputDto: @Valid ArtistInputDto

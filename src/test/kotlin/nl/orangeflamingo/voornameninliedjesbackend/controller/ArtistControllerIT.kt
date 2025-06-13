@@ -1,33 +1,55 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
+import java.net.URI
 import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.User
+import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistDto
 import nl.orangeflamingo.voornameninliedjesbackend.model.ArtistInputDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
+import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import org.springframework.web.reactive.function.BodyInserters
 import org.testcontainers.shaded.com.google.common.net.HttpHeaders
-import java.net.URI
 
 class ArtistControllerIT : AbstractIntegrationTest() {
     private lateinit var artistMap: Map<String, Long>
     @Autowired
     private lateinit var client: WebTestClient
     @Autowired
+    private lateinit var userRepository: UserRepository
+    @Autowired
+    private lateinit var encoder: PasswordEncoder
+    @Autowired
     private lateinit var songRepository: SongRepository
     @Autowired
     private lateinit var artistRepository: ArtistRepository
 
+    private val adminUser: String = "admin"
+    private val adminPassword: String = "secret"
+    private val adminRole: String = "ADMIN"
+
     @BeforeEach
     fun createUser() {
+        userRepository.deleteAll()
+        userRepository.saveAll(
+            listOf(
+                User(
+                    username = adminUser,
+                    password = encoder.encode(adminPassword),
+                    roles = mutableSetOf(UserRole(1, adminRole))
+                )
+            )
+        )
         songRepository.deleteAll()
         artistRepository.deleteAll()
         val artist = Artist(
@@ -98,7 +120,10 @@ class ArtistControllerIT : AbstractIntegrationTest() {
     fun deleteArtistByIdTestV2() {
         client.delete()
             .uri("/api/artists/${artistMap["The Beatles"]}")
-            .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
+            .headers { headers ->
+                headers.set(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
+                headers.setBasicAuth(adminUser, adminPassword)
+            }
             .exchange()
             .expectStatus().isEqualTo(HttpStatus.NO_CONTENT)
     }
@@ -107,7 +132,10 @@ class ArtistControllerIT : AbstractIntegrationTest() {
     fun createArtistTestV2() {
         client.post()
             .uri("/api/artists")
-            .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
+            .headers { headers ->
+                headers.set(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
+                headers.setBasicAuth(adminUser, adminPassword)
+            }
             .body(
                 BodyInserters.fromValue(
                     ArtistInputDto("newArtist", emptyList())
@@ -121,7 +149,10 @@ class ArtistControllerIT : AbstractIntegrationTest() {
     fun createArtistWithExistingNameTestV2() {
         client.post()
             .uri("/api/artists")
-            .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
+            .headers { headers ->
+                headers.set(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
+                headers.setBasicAuth(adminUser, adminPassword)
+            }
             .body(
                 BodyInserters.fromValue(
                     ArtistInputDto("The Beatles", emptyList())
@@ -135,7 +166,10 @@ class ArtistControllerIT : AbstractIntegrationTest() {
     fun updateArtistTestV2() {
         client.put()
             .uri("/api/artists/${artistMap["The Beatles"]}")
-            .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
+            .headers { headers ->
+                headers.set(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
+                headers.setBasicAuth(adminUser, adminPassword)
+            }
             .body(
                 BodyInserters.fromValue(
                     ArtistInputDto("Updated name", emptyList())
