@@ -41,14 +41,20 @@ class ArtistsControllerV2(private val artistService: ArtistService) : ArtistsApi
         artistId: Long,
         artistInputDto: @Valid ArtistInputDto
     ): ResponseEntity<ArtistDto> {
-        val updatedArtist = Artist(name = artistInputDto.name)
+        val updatedArtist = toDomain(artistInputDto)
         val artist = artistService.update(artistId, updatedArtist)
         return ResponseEntity.ok(toArtistMessage(artist))
     }
 
     private fun toDomain(artistMessage: ArtistInputDto): Artist {
         return Artist(
-            name = artistMessage.name
+            name = artistMessage.name,
+            photos = artistMessage.photos.map {
+                ArtistPhoto(
+                    url = it.url,
+                    attribution = it.attribution
+                )
+            }.toMutableSet()
         )
     }
 
