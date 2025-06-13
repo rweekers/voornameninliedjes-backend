@@ -4,6 +4,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepos
 import nl.orangeflamingo.voornameninliedjesbackend.service.MyUserPrincipal
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer.withDefaults
@@ -41,6 +42,10 @@ class SecurityConfig(
             .authorizeHttpRequests { requests ->
                 requests
                     .requestMatchers("/admin/authenticate").permitAll()
+                    .requestMatchers(HttpMethod.POST).authenticated()
+                    .requestMatchers(HttpMethod.PUT).authenticated()
+                    .requestMatchers(HttpMethod.PATCH).authenticated()
+                    .requestMatchers(HttpMethod.DELETE).authenticated()
                     .requestMatchers("/admin/**").authenticated()
                     .anyRequest().permitAll()
             }

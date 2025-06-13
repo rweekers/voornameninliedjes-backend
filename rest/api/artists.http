@@ -15,6 +15,7 @@ Accept: application/vnd.voornameninliedjes.artists.v2+json
 
 ### Create artist
 POST {{host}}/artists
+Authorization: Basic {{username}} {{password}}
 Accept: application/vnd.voornameninliedjes.artists.v2+json
 Content-Type: application/json
 
