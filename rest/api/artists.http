@@ -19,7 +19,13 @@ Accept: application/vnd.voornameninliedjes.artists.v2+json
 Content-Type: application/json
 
 {
-    "name": "{{artist}}"
+    "name": "{{artist}}",
+    "photos": [
+        {
+            "url": "https://photo.com/1.jpg",
+            "attribution": "Some attribution 1"
+        }
+    ]
 }
 
 ### Update artist
@@ -28,7 +34,17 @@ Accept: application/vnd.voornameninliedjes.artists.v2+json
 Content-Type: application/json
 
 {
-    "name": "Nieuwe naam"
+    "name": "Nieuwe naam",
+    "photos": [
+        {
+            "url": "https://photo.com/1.jpg",
+            "attribution": "Some attribution 1"
+        },
+        {
+            "url": "https://photo.com/2.jpg",
+            "attribution": "Some attribution 2"
+        }
+    ]
 }
 
 ### Delete artist

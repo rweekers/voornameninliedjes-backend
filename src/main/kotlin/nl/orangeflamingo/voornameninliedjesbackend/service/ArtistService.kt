@@ -32,7 +32,7 @@ class ArtistService(private val repository: ArtistRepository) {
             throw DuplicateArtistNameException(updated.name)
         }
 
-        val updatedEntity = existing.copy(name = updated.name)
+        val updatedEntity = existing.copy(name = updated.name, photos = updated.photos)
 
         return repository.save(updatedEntity)
     }
