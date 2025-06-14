@@ -1,0 +1,22 @@
+voornameninliedjes:
+  batch:
+    interval: 1000
+  datasource:
+    application:
+      jdbc-url: jdbc:postgresql://localhost:5432/voornameninliedjes
+      schema: vil
+      username: vil_app
+      password: secret
+      pool-name: voornameninliedjes-app-hikari-pool
+    migration:
+      jdbc-url: jdbc:postgresql://localhost:5432/voornameninliedjes
+      schema: vil
+      username: vil_admin
+      password: secret
+      pool-name: voornameninliedjes-migration-hikari-pool
+
+jobs:
+  enrichSong:
+    rate: 60000
+  updateSong:
+    cron: 10 * * * * MON-FRI
