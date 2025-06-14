@@ -1,0 +1,47 @@
+version: '3'
+services:
+  db:
+    image: postgres:17.5-bookworm
+    restart: unless-stopped
+    container_name: pg-restore
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: voornameninliedjes
+    ports:
+      - "5432:5432"
+  app-jvm:
+    image: rweekers/voornameninliedjes-backend:3.1.1-jvm
+    user: ${MY_UID}:${MY_GID}
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: backup
+      logging.file.path: logs
+      voornameninliedjes.datasource.application.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
+      voornameninliedjes.datasource.migration.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
+      voornameninliedjes.images.service.path: http://localhost:8000/images/
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./logs-docker:/workspace/logs"
+      - "./images:/workspace/images"
+    depends_on:
+      - db
+  app-native:
+    image: rweekers/voornameninliedjes-backend:3.1.1-native
+    user: ${MY_UID}:${MY_GID}
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: backup
+      logging.file.path: logs
+      server.port: 9000
+      voornameninliedjes.datasource.application.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
+      voornameninliedjes.datasource.migration.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
+      voornameninliedjes.images.service.path: http://localhost:8000/images/
+    ports:
+      - "9000:9000"
+    volumes:
+      - "./logs:/workspace/logs"
+      - "./images:/workspace/images"
+    depends_on:
+      - db
