@@ -2,7 +2,11 @@
 GET {{host}}/songs?name-starts-with=Caroline
 
 ### Get all songs V2
-GET {{host}}/songs?name-starts-with=
+GET {{host}}/songs?offset=0&limit=20
+Accept: application/vnd.voornameninliedjes.songs.v2+json
+
+### Get filtered songs V2
+GET {{host}}/songs?name-starts-with=Ca&offset=0&limit=20
 Accept: application/vnd.voornameninliedjes.songs.v2+json
 
 ### Get songdetails default

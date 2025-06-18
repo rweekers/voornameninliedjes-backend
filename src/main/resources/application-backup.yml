@@ -17,6 +17,6 @@ voornameninliedjes:
 
 jobs:
   enrichSong:
-    rate: 60000
+    enabled: false
   updateSong:
-    cron: 10 * * * * MON-FRI
+    cron: "-"
