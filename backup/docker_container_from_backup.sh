@@ -9,7 +9,7 @@ ROLES_BACKUP_FILE=$2
 DB_BACKUP_FILE=$1
 
 if [ -z "$DB_BACKUP_FILE" ]; then
-    echo "Usage: $0 <backup_file>"
+    echo "Usage: $0 <backup_file> <roles_file>"
     exit 1
 fi
 
