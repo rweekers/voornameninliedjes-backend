@@ -8,13 +8,16 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongSource
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.dto.TestSongDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.TestSongPageDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.jdbc.core.mapping.AggregateReference
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.test.web.reactive.server.expectBodyList
 import java.net.URI
 
@@ -95,7 +98,14 @@ class SongControllerV2IT: AbstractIntegrationTest() {
             .header("Accept", "application/vnd.voornameninliedjes.songs.v2+json")
             .exchange()
             .expectStatus().isOk
-            .expectBodyList<TestSongDto>().hasSize(2)
+            .expectBody<TestSongPageDto>()
+            .consumeWith { response ->
+                val body = response.responseBody
+                assertThat(body).isNotNull
+                assertThat(body?.songs).hasSize(2)
+                assertThat(body?.totalItems).isEqualTo(2)
+                assertThat(body?.isLast).isEqualTo(true)
+            }
     }
 
     @Test

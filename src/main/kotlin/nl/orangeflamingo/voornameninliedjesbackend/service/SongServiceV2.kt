@@ -1,12 +1,12 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
+import nl.orangeflamingo.voornameninliedjesbackend.domain.PaginatedSongs
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Photo
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongDetail
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWithArtist
-import nl.orangeflamingo.voornameninliedjesbackend.domain.Photo
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongDetailRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepositoryV2
@@ -19,9 +19,15 @@ class SongServiceV2(
     private val songDetailRepository: SongDetailRepository,
     private val artistRepository: ArtistRepository
 ) {
-    fun findByNameStartingWith(firstChars: String?, status: SongStatus, pageable: Pageable): List<SongWithArtist> {
-        return songRepositoryV2
-            .findAllSongsWithArtistsStartingWith(status.code, firstChars, pageable.pageSize, pageable.pageNumber)
+    fun findByNameStartingWith(firstChars: String?, status: SongStatus, pageable: Pageable): PaginatedSongs {
+        val totalCount = songRepositoryV2.countAllSongsWithArtistsStartingWith(status.code, firstChars)
+
+        return PaginatedSongs(
+            songRepositoryV2
+                .findAllSongsWithArtistsStartingWith(status.code, firstChars, pageable.pageSize, pageable.pageNumber),
+            totalCount,
+            (pageable.pageNumber + 1) * pageable.pageSize >= totalCount
+        )
     }
 
     fun findByArtistAndTitle(artist: String, title: String): SongDetail {

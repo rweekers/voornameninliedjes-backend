@@ -1,5 +1,11 @@
 package nl.orangeflamingo.voornameninliedjesbackend.dto
 
+data class TestSongPageDto(
+    val songs: List<TestSongDto> = emptyList(),
+    val totalItems: Long = 0,
+    val isLast: Boolean = false
+)
+
 data class TestSongDto(
     val id: String? = null,
     val artist: String = "The Beatles",

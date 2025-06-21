@@ -174,9 +174,7 @@ paths:
           content:
             application/vnd.voornameninliedjes.songs.v2+json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Song'
+                $ref: '#/components/schemas/SongPageDto'
         '500':
           description: Server error
   /api/songs/{artist}/{title}:
@@ -257,7 +255,24 @@ components:
       required:
         - name
         - photos
-    Song:
+    SongPageDto:
+      type: object
+      properties:
+        songs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SongDto'
+        totalItems:
+          type: integer
+          format: int64
+          minimum: 0
+        isLast:
+          type: boolean
+      required:
+        - songs
+        - totalItems
+        - isLast
+    SongDto:
       type: object
       properties:
         artist:
