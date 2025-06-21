@@ -1,6 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
+import nl.orangeflamingo.voornameninliedjesbackend.domain.PaginatedSongs
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Photo
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongDetail
@@ -40,8 +41,10 @@ class SongServiceV2Test {
         val page = 3
         whenever(songRepositoryV2.findAllSongsWithArtistsStartingWith(status.code, name, limit, page))
             .thenReturn(listOf(song))
-        val songs = songServiceV2.findByNameStartingWith(name, status, Pageable.ofSize(limit).withPage(page))
-        assertThat(songs).isEqualTo(listOf(song))
+        whenever(songRepositoryV2.countAllSongsWithArtistsStartingWith(status.code, name))
+            .thenReturn(41)
+        val songPage = songServiceV2.findByNameStartingWith(name, status, Pageable.ofSize(limit).withPage(page))
+        assertThat(songPage).isEqualTo(PaginatedSongs(listOf(song), 41, false))
         verify(songRepositoryV2).findAllSongsWithArtistsStartingWith(status = "SHOW", name = "Al", limit = 10, offset = page)
     }
 

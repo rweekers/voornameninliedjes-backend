@@ -1,5 +1,11 @@
 package nl.orangeflamingo.voornameninliedjesbackend.domain
 
+data class PaginatedSongs(
+    val songs: List<SongWithArtist>,
+    val totalItems: Long,
+    val isLastPage: Boolean
+)
+
 data class SongWithArtist(
     val artist: String,
     val title: String,

@@ -28,4 +28,18 @@ interface SongRepositoryV2: PagingAndSortingRepository<SongWithArtist, Long> {
         @Param("offset") offset: Int
     ): List<SongWithArtist>
 
+    @Query(
+        """
+        SELECT count(1)
+        FROM songs s
+        INNER JOIN artists a ON s.artist_id = a.id
+        WHERE s.status = :status
+        AND (:name IS NULL OR LOWER(s.name) LIKE LOWER(CONCAT(:name, '%')))
+        """
+    )
+    fun countAllSongsWithArtistsStartingWith(
+        @Param("status") status: String,
+        @Param("name") name: String?
+    ): Long
+
 }
