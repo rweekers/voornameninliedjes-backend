@@ -5,6 +5,10 @@ GET {{actuatorHost}}/health
 GET {{actuatorHost}}/info
 
 ### Metrics endpoint
+GET {{actuatorHost}}/prometheus
+Content-Type: application/json
+
+### Metrics endpoint
 GET {{actuatorHost}}/metrics
 Authorization: Basic {{username}} {{password}}
 Content-Type: application/json
