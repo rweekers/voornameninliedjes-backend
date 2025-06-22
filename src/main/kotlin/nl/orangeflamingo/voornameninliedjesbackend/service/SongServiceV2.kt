@@ -26,7 +26,7 @@ class SongServiceV2(
             songRepositoryV2
                 .findAllSongsWithArtistsStartingWith(status.code, firstChars, pageable.pageSize, pageable.pageNumber),
             totalCount,
-            (pageable.pageNumber + 1) * pageable.pageSize >= totalCount
+            pageable.pageNumber + pageable.pageSize >= totalCount
         )
     }
 
