@@ -10,6 +10,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongDetailRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepositoryV2
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
@@ -19,6 +20,7 @@ class SongServiceV2(
     private val songDetailRepository: SongDetailRepository,
     private val artistRepository: ArtistRepository
 ) {
+    @Cacheable("songsByPrefix", key = "#firstChars?.toLowerCase() ?: ''")
     fun findByNameStartingWith(firstChars: String?, status: SongStatus, pageable: Pageable): PaginatedSongs {
         val totalCount = songRepositoryV2.countAllSongsWithArtistsStartingWith(status.code, firstChars)
 
