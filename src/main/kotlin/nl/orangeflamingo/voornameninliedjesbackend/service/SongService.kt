@@ -1,6 +1,5 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
-import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistLogEntry
@@ -25,8 +24,7 @@ import java.util.Locale
 @Service
 class SongService @Autowired constructor(
     val artistRepository: ArtistRepository,
-    val songRepository: SongRepository,
-    val flickrApiClient: FlickrApiClient
+    val songRepository: SongRepository
 ) {
     private val log = LoggerFactory.getLogger(SongService::class.java)
 

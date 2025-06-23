@@ -1,6 +1,8 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
+import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmAlbum
 import nl.orangeflamingo.voornameninliedjesbackend.domain.PaginatedSongs
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Photo
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
@@ -20,7 +22,10 @@ class SongServiceV2(
     private val songDetailRepository: SongDetailRepository,
     private val artistRepository: ArtistRepository
 ) {
-    @Cacheable("songsByPrefix", key = "#firstChars?.toLowerCase() ?: ''")
+    @Cacheable(
+        "songsByPrefix",
+        key = "(#firstChars?.toLowerCase() ?: '') + '_' + #pageable.pageNumber + '_' + #pageable.pageSize + '_' + #pageable.sort.toString()"
+    )
     fun findByNameStartingWith(firstChars: String?, status: SongStatus, pageable: Pageable): PaginatedSongs {
         val totalCount = songRepositoryV2.countAllSongsWithArtistsStartingWith(status.code, firstChars)
 
@@ -42,6 +47,8 @@ class SongServiceV2(
     }
 
     private fun convert(song: Song, artist: Artist): SongDetail {
+        val (name, url) = song.albumName to song.albumLastFmUrl
+
         return SongDetail(
             artist = artist.name,
             title = song.title,
@@ -52,16 +59,27 @@ class SongServiceV2(
             background = song.background,
             artistImageWidth = song.artistImageWidth,
             artistImageHeight = song.artistImageHeight,
+            wikipediaPage = song.wikipediaPage,
+            wikiContentNl = song.wikiContentNl,
+            wikiContentEn = song.wikiContentEn,
+            wikiSummaryEn = song.wikiSummaryEn,
             blurredImage = song.blurredImage,
             localImage = song.localImage,
             artistImage = song.artistImage,
             artistImageAttribution = song.artistImageAttribution,
-            photos = song.photos.map { convert(it) }
+            lastfmAlbum = if (name != null && url != null) LastFmAlbum(name, song.albumMbid, url) else null,
+            photos = song.photos.map { convert(it) } + artist.photos.map { convert(it) },
+            sources = song.sources.toList(),
+            tags = song.lastFmTags.toList()
         )
     }
 
     private fun convert(wikimediaPhoto: SongPhoto): Photo {
         return Photo(url = wikimediaPhoto.url, attribution = wikimediaPhoto.attribution)
+    }
+
+    private fun convert(wikimediaPhoto: ArtistPhoto): Photo {
+        return Photo(url = wikimediaPhoto.url.toString(), attribution = wikimediaPhoto.attribution)
     }
 
 }

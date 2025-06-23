@@ -1,12 +1,19 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import nl.orangeflamingo.voornameninliedjesbackend.api.SongsApi
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmAlbum
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Photo
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongDetail
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLastFmTag
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongSource
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongWithArtist
-import nl.orangeflamingo.voornameninliedjesbackend.model.SongDetail
+import nl.orangeflamingo.voornameninliedjesbackend.model.LastFmAlbumDto
+import nl.orangeflamingo.voornameninliedjesbackend.model.SongDetailDto
 import nl.orangeflamingo.voornameninliedjesbackend.model.SongDto
 import nl.orangeflamingo.voornameninliedjesbackend.model.SongPageDto
+import nl.orangeflamingo.voornameninliedjesbackend.model.SourceDto
+import nl.orangeflamingo.voornameninliedjesbackend.model.TagDto
 import nl.orangeflamingo.voornameninliedjesbackend.service.NotFoundException
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongServiceV2
 import org.slf4j.LoggerFactory
@@ -14,6 +21,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import java.net.URI
+import java.util.UUID
 
 @RestController
 class SongsControllerV2(private val songServiceV2: SongServiceV2) : SongsApi {
@@ -46,18 +54,18 @@ class SongsControllerV2(private val songServiceV2: SongServiceV2) : SongsApi {
         )
     }
 
-    override fun getApiSongDetail(artist: String, title: String): ResponseEntity<SongDetail> {
+    override fun getApiSongDetail(artist: String, title: String): ResponseEntity<SongDetailDto> {
         log.info("Get song details for {} - {}", artist, title)
         try {
             return ResponseEntity.ok(convertToDto(songServiceV2.findByArtistAndTitle(artist, title)))
-        } catch (ex: NotFoundException) {
+        } catch (_: NotFoundException) {
             log.warn("Could not get song details for {} - {}", artist, title)
             return ResponseEntity.notFound().build()
         }
     }
 
-    private fun convertToDto(songDetail: nl.orangeflamingo.voornameninliedjesbackend.domain.SongDetail): SongDetail {
-        return SongDetail(
+    private fun convertToDto(songDetail: SongDetail): SongDetailDto {
+        return SongDetailDto(
             name = songDetail.name,
             title = songDetail.title,
             artist = songDetail.artist,
@@ -66,10 +74,17 @@ class SongsControllerV2(private val songServiceV2: SongServiceV2) : SongsApi {
             spotify = songDetail.spotify,
             background = songDetail.background,
             localImage = songDetail.localImage,
+            blurredImage = songDetail.blurredImage,
             artistImageWidth = songDetail.artistImageWidth,
             artistImageHeight = songDetail.artistImageHeight,
+            wikipediaPage = songDetail.wikipediaPage,
+            wikiContentNl = songDetail.wikiContentNl,
+            wikiContentEn = songDetail.wikiContentEn,
+            wikiSummaryEn = songDetail.wikiSummaryEn,
+            lastFmAlbum = convert(songDetail.lastfmAlbum),
             photos = songDetail.photos.map { convert(it) },
-            sources = emptyList()
+            sources = songDetail.sources.map { convert(it) },
+            tags = songDetail.tags.map { convert(it) }
         )
     }
 
@@ -78,5 +93,24 @@ class SongsControllerV2(private val songServiceV2: SongServiceV2) : SongsApi {
             url = URI.create(photo.url),
             attribution = photo.attribution,
         )
+    }
+
+    private fun convert(lastFmAlbum: LastFmAlbum?): LastFmAlbumDto? {
+        if (lastFmAlbum == null) {
+            return null
+        }
+        return LastFmAlbumDto(
+            name = lastFmAlbum.name,
+            url = URI.create(lastFmAlbum.url),
+            mbid = if (lastFmAlbum.mbid != null) UUID.fromString(lastFmAlbum.mbid) else null
+        )
+    }
+
+    private fun convert(source: SongSource): SourceDto {
+        return SourceDto(URI.create(source.url), source.name)
+    }
+
+    private fun convert(tag: SongLastFmTag): TagDto {
+        return TagDto(URI.create(tag.url), tag.name)
     }
 }
