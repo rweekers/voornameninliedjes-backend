@@ -1,6 +1,5 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
-import nl.orangeflamingo.voornameninliedjesbackend.client.FlickrHttpApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatusStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.TestSong
@@ -19,10 +18,8 @@ class SongServiceTest {
 
     private val songRepository = mock(SongRepository::class.java)
 
-    private val flickrApiClient = mock(FlickrHttpApiClient::class.java)
-
     private val songService: SongService = SongService(
-        artistRepository, songRepository, flickrApiClient
+        artistRepository, songRepository
     )
 
     @Test
