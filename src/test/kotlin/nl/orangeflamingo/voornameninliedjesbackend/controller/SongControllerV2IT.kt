@@ -137,4 +137,25 @@ class SongControllerV2IT: AbstractIntegrationTest() {
             .expectStatus().isOk
             .expectBodyList<TestSongDto>().hasSize(1)
     }
+
+    @Test
+    fun getSongDetailsTest() {
+        client.get()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/api/songs/the beatles/michelle")
+                    .build()
+            }
+            .header("Accept", "application/vnd.voornameninliedjes.songs.v2+json")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody<TestSongDto>()
+            .consumeWith { response ->
+                val body = response.responseBody
+                assertThat(body).isNotNull
+                assertThat(body?.artist).isEqualTo("The Beatles")
+                assertThat(body?.title).isEqualTo("Michelle")
+                assertThat(body?.name).isEqualTo("Michelle")
+            }
+    }
 }
