@@ -11,24 +11,25 @@ services:
     ports:
       - "5432:5432"
   app-jvm:
-    image: rweekers/voornameninliedjes-backend:3.1.1-jvm
+    image: rweekers/voornameninliedjes-backend:3.2.1-jvm
     user: ${MY_UID}:${MY_GID}
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: backup
       logging.file.path: logs
+      server.port: 8000
       voornameninliedjes.datasource.application.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
       voornameninliedjes.datasource.migration.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
       voornameninliedjes.images.service.path: http://localhost:8000/images/
     ports:
-      - "8080:8080"
+      - "8000:8000"
     volumes:
       - "./logs-docker:/workspace/logs"
       - "./images:/workspace/images"
     depends_on:
       - db
   app-native:
-    image: rweekers/voornameninliedjes-backend:3.1.1-native
+    image: rweekers/voornameninliedjes-backend:3.2.1-native
     user: ${MY_UID}:${MY_GID}
     restart: unless-stopped
     environment:
