@@ -2,7 +2,7 @@
 
 BASE_URL="https:/api.voornameninliedjes.nl/songs?name-starts-with="
 
-PREFIX_FILE="$(dirname "$0")prefixes.txt"
+PREFIX_FILE="$(dirname "$0")/prefixes.txt"
 
 if [[ ! -f "$PREFIX_FILE" ]]; then
   echo "❌ Prefix file '$PREFIX_FILE' not found."
