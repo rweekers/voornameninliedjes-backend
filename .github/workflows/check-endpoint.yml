@@ -1,0 +1,19 @@
+name: Nightly Check Prefix Endpoint
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'  # Every 15 minutes
+  workflow_dispatch:
+
+jobs:
+  check-endpoints:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run prefix endpoint check
+        run: |
+          chmod +x ./check/check-suggestions.sh
+          ./check/check-suggestions.sh
