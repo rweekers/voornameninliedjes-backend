@@ -14,7 +14,9 @@ FAIL=0
 while IFS= read -r prefix; do
   url="${BASE_URL}${prefix}"
   echo "🔍 Checking $url"
-  status=$(curl -s -o /dev/null -w "%{http_code}" "$url")
+  status=$(curl -s -o /dev/null -w "%{http_code}" \
+  -H "Accept: application/vnd.voornameninliedjes.songs.v2+json" \
+  "$url")
   if [[ "$status" -ne 200 ]]; then
     echo "❌ $url failed with status $status"
     FAIL=1
