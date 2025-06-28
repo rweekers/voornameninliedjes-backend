@@ -41,7 +41,7 @@ check_suggestion() {
 }
 
 export -f urlencode
-export -f check_prefix
+export -f check_suggestion
 export BASE_URL
 export FAIL_LOG
 
