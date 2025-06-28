@@ -47,7 +47,7 @@ export FAIL_LOG
 
 
 # --- Run calls in parallel ---
-cat "$PREFIX_FILE" | xargs -n 1 -P 10 -I {} bash -c 'check_suggestion "$@"' _ {}
+cat "$PREFIX_FILE" | xargs -P 10 -I {} bash -c 'check_suggestion "$@"' _ {}
 
 # --- Final status ---
 if [[ -s "$FAIL_LOG" ]]; then
