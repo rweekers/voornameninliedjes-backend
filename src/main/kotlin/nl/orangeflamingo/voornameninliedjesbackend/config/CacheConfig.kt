@@ -15,7 +15,7 @@ class CacheConfig {
         val caffeineCache = Caffeine.newBuilder()
             .recordStats()
             .maximumSize(5000)
-            .expireAfterWrite(Duration.ofDays(3))
+            .expireAfterWrite(Duration.ofHours(23))
 
         return CaffeineCacheManager().apply {
             isAllowNullValues = false
