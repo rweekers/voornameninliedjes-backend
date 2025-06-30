@@ -29,7 +29,7 @@ class SongsControllerV2(private val songServiceV2: SongServiceV2) : SongsApi {
     private val log = LoggerFactory.getLogger(SongsControllerV2::class.java)
 
     override fun getApiSongs(nameStartsWith: String?, offset: Int, limit: Int): ResponseEntity<SongPageDto> {
-        log.info("Requesting all songs v2 with first characters {}...", nameStartsWith)
+        log.info("Requesting all songs v2 with first characters {} ({}/{})...", nameStartsWith, offset, limit)
         return ResponseEntity.ok(
             songServiceV2.findByNameStartingWith(
                 nameStartsWith,
