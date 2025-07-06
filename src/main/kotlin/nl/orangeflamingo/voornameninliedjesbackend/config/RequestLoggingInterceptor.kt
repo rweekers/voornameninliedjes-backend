@@ -24,29 +24,30 @@ class RequestLoggingInterceptor : HandlerInterceptor {
         val remoteAddr = request.remoteAddr
         val clientIp = if (xForwardedFor != null) xForwardedFor.split(",".toRegex()).dropLastWhile { it.isEmpty() }
             .toTypedArray()[0].trim { it <= ' ' } else remoteAddr
+        val lang = request.getHeader("X-Accept-Language")
 
         val method = request.method
         val uri = request.requestURI
-        val userAgent = request.getHeader("User-Agent")
+        val userAgent = request.getHeader("X-User-Agent")
         val uaParser = Parser()
-        val c: Client = uaParser.parse(userAgent)
+        val c: Client? = uaParser.parse(userAgent)
 
-        val browser = c.userAgent.family
-        val browserMajorVersion = c.userAgent.major
-        val browserMinorVersion = c.userAgent.minor
-        val browserPatchVersion = c.userAgent.patch
+        val browser = c?.userAgent?.family
+        val browserMajorVersion = c?.userAgent?.major
+        val browserMinorVersion = c?.userAgent?.minor
+        val browserPatchVersion = c?.userAgent?.patch
 
-        val operatingSystem = c.os.family
-        val operatingSystemMajorVersion = c.os.major
-        val operatingSystemSystemMinorVersion = c.os.minor
-        val operatingSystemPatchVersion = c.os.patch
-        val operatingSystemPatchMinorVersion = c.os.patchMinor
+        val operatingSystem = c?.os?.family
+        val operatingSystemMajorVersion = c?.os?.major
+        val operatingSystemSystemMinorVersion = c?.os?.minor
+        val operatingSystemPatchVersion = c?.os?.patch
+        val operatingSystemPatchMinorVersion = c?.os?.patchMinor
 
-        val device = c.device.family
+        val device = c?.device?.family
 
-        val referer = request.getHeader("Referer")
+        val referer = request.getHeader("X-Referer")
 
-        log.info("Request: [{}] {} from IP={}, UA={}, Referer={}", method, uri, clientIp, userAgent, referer)
+        log.info("Request: [{}] {} from IP={}, UA={}, Referer={}, Language={}", method, uri, clientIp, userAgent, referer, lang)
         log.info("Browser $browser:$browserMajorVersion.$browserMinorVersion.$browserPatchVersion on $operatingSystem:$operatingSystemMajorVersion.$operatingSystemSystemMinorVersion.$operatingSystemPatchVersion.$operatingSystemPatchMinorVersion and device $device")
         return true
     }
