@@ -10,7 +10,7 @@ services:
       - "5432:5432"
   app-jvm:
     image: rweekers/voornameninliedjes-backend:3.4.0-jvm
-    user: 1000:1000
+    user: ${UID}:${GID}
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: dev
@@ -28,7 +28,7 @@ services:
       - db
   app-native:
     image: rweekers/voornameninliedjes-backend:3.4.0-native
-    user: 1000:1000
+    user: ${UID}:${GID}
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: dev
