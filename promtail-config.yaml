@@ -1,0 +1,29 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+positions:
+  filename: /tmp/positions.yaml
+
+scrape_configs:
+  - job_name: app-logs
+
+    static_configs:
+      - targets:
+        - localhost
+        labels:
+          job: app
+          __path__: /var/log/app/app-*.log
+
+    pipeline_stages:
+      - match:
+          selector: '{job="app"}'
+          stages:
+            - regex:
+                source: filename
+                expression: '.*/app-(?P<host>[^/]+)\.log'
+            - labels:
+                host:
