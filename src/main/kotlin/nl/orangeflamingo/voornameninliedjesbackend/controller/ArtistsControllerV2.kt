@@ -35,9 +35,7 @@ class ArtistsControllerV2(private val artistService: ArtistService) : ArtistsApi
     }
 
     override fun getArtistById(artistId: Long): ResponseEntity<ArtistDto> {
-        val artist = artistService.findById(artistId) ?: return ResponseEntity.notFound().build()
-
-        return ResponseEntity.ok(toArtistMessage(artist))
+        return ResponseEntity.ok(toArtistMessage(artistService.findById(artistId)))
     }
 
     @PreAuthorize("hasRole('ADMIN')")

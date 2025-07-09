@@ -1,6 +1,5 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
-import java.net.URI
 import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
@@ -8,20 +7,28 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.User
 import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistDto
 import nl.orangeflamingo.voornameninliedjesbackend.model.ArtistInputDto
+import nl.orangeflamingo.voornameninliedjesbackend.model.PhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import org.springframework.web.reactive.function.BodyInserters
 import org.testcontainers.shaded.com.google.common.net.HttpHeaders
+import java.net.URI
 
 class ArtistControllerIT : AbstractIntegrationTest() {
+
+    private val nonExistingArtistId = 100
+
     private lateinit var artistMap: Map<String, Long>
     @Autowired
     private lateinit var client: WebTestClient
@@ -31,7 +38,7 @@ class ArtistControllerIT : AbstractIntegrationTest() {
     private lateinit var encoder: PasswordEncoder
     @Autowired
     private lateinit var songRepository: SongRepository
-    @Autowired
+    @MockitoSpyBean
     private lateinit var artistRepository: ArtistRepository
 
     private val adminUser: String = "admin"
@@ -117,6 +124,20 @@ class ArtistControllerIT : AbstractIntegrationTest() {
     }
 
     @Test
+    fun getArtistByIdNotFoundTestV2() {
+        client.get()
+            .uri("/api/artists/$nonExistingArtistId")
+            .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
+            .exchange()
+            .expectStatus().isNotFound
+            .expectBody()
+            .jsonPath("$.error").isNotEmpty
+            .jsonPath("$.error").isEqualTo("Not Found")
+            .jsonPath("$.message").isNotEmpty
+            .jsonPath("$.message").isEqualTo("Artist with id $nonExistingArtistId not found")
+    }
+
+    @Test
     fun deleteArtistByIdTestV2() {
         client.delete()
             .uri("/api/artists/${artistMap["The Beatles"]}")
@@ -138,7 +159,10 @@ class ArtistControllerIT : AbstractIntegrationTest() {
             }
             .body(
                 BodyInserters.fromValue(
-                    ArtistInputDto("newArtist", emptyList())
+                    ArtistInputDto(
+                        "newArtist",
+                        listOf(PhotoDto(URI.create("https://image.nl/artist1"), "Some attribution"))
+                    )
                 )
             )
             .exchange()
@@ -180,6 +204,24 @@ class ArtistControllerIT : AbstractIntegrationTest() {
             .expectBody()
             .jsonPath("$.name").isNotEmpty
             .jsonPath("$.name").isEqualTo("Updated name")
+    }
+
+    @Test
+    fun getArtistByIdUnknownExceptionTestV2() {
+        whenever(
+            artistRepository.findById(
+                artistMap["The Beatles"] ?: throw IllegalStateException()
+            )
+        ).doAnswer { throw RuntimeException("Unknown exception") }
+
+        client.get()
+            .uri("/api/artists/${artistMap["The Beatles"]}")
+            .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
+            .exchange()
+            .expectStatus().is5xxServerError
+            .expectBody()
+            .jsonPath("$.message").isNotEmpty
+            .jsonPath("$.message").isEqualTo("An unexpected error occurred")
     }
 }
 
