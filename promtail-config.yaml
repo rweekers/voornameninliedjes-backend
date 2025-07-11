@@ -27,3 +27,8 @@ scrape_configs:
                 expression: '.*/app-(?P<host>[^/]+)\.log'
             - labels:
                 host:
+
+            - regex:
+                expression: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} (?P<level>[A-Z]+)\s+'
+            - labels:
+                level:

@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432"
   app-jvm:
-    image: rweekers/voornameninliedjes-backend:3.4.0-jvm
+    image: rweekers/voornameninliedjes-backend:3.3.0-jvm
     user: ${UID}:${GID}
     restart: unless-stopped
     environment:
@@ -27,7 +27,7 @@ services:
     depends_on:
       - db
   app-native:
-    image: rweekers/voornameninliedjes-backend:3.4.0-native
+    image: rweekers/voornameninliedjes-backend:3.3.0-native
     user: ${UID}:${GID}
     restart: unless-stopped
     environment:
@@ -46,20 +46,20 @@ services:
       - db
 
   loki:
-    image: grafana/loki:2.9.3
+    image: grafana/loki:3.5.1
     ports:
       - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
 
   promtail:
-    image: grafana/promtail:2.9.3
+    image: grafana/promtail:3.5.1
     volumes:
       - ./logs-docker:/var/log/app
       - ./promtail-config.yaml:/etc/promtail/config.yml
     command: -config.file=/etc/promtail/config.yml
 
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:v3.4.2
     container_name: prometheus
     ports:
       - "9090:9090"
@@ -67,7 +67,7 @@ services:
       - ./prometheus.yaml:/etc/prometheus/prometheus.yml
 
   grafana:
-    image: grafana/grafana:10.4.2
+    image: grafana/grafana:12.0.2
     ports:
       - "4000:3000"
     environment:

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="true">
+<configuration>
 
     <property name="LOG_PATH" value="${LOG_PATH:-./logs}"/>
     <property name="CONTAINER" value="${CONTAINER:-default}" />
