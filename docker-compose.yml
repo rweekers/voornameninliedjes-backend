@@ -19,6 +19,8 @@ services:
       voornameninliedjes.datasource.application.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
       voornameninliedjes.datasource.migration.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
       voornameninliedjes.images.service.path: http://localhost:8000/images/
+      jobs.updateSong.cron: "-"
+      jobs.enrichSong.enabled: false
     ports:
       - "8080:8080"
     volumes:
@@ -37,6 +39,8 @@ services:
       voornameninliedjes.datasource.application.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
       voornameninliedjes.datasource.migration.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
       voornameninliedjes.images.service.path: http://localhost:8000/images/
+      jobs.updateSong.cron: "-"
+      jobs.enrichSong.enabled: false
     ports:
       - "9000:9000"
     volumes:
@@ -77,3 +81,12 @@ services:
       - GF_INSTALL_PLUGINS=grafana-clock-panel
     depends_on:
       - loki
+
+  frontend:
+    image: rweekers/voornameninliedjes-frontend:1.0.0
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.production-docker
+    environment:
+      NODE_ENV: production
