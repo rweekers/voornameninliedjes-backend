@@ -5,11 +5,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.service.MyUserPrincipal
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
-import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer.withDefaults
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -30,12 +26,9 @@ class SecurityConfig(
     private val authenticationEntryPoint: MyBasicAuthPoint
 ) {
     @Bean
-    fun filterChain(http: HttpSecurity): SecurityFilterChain {
-        val authenticationManagerBuilder = http.getSharedObject(
-            AuthenticationManagerBuilder::class.java
-        )
-        authenticationManagerBuilder.authenticationProvider(authenticationProvider())
-
+    fun filterChain(
+        http: HttpSecurity
+    ): SecurityFilterChain {
         http
             .cors(withDefaults())
             .csrf { it.disable() }
@@ -50,7 +43,6 @@ class SecurityConfig(
                     .anyRequest().permitAll()
             }
             .httpBasic(withDefaults())
-            .authenticationManager(authenticationManagerBuilder.build())
         return http.build()
     }
 
@@ -61,25 +53,16 @@ class SecurityConfig(
     }
 
     @Bean
-    fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager {
-        return authenticationConfiguration.authenticationManager
-    }
-
-    private fun userDetailsService(): UserDetailsService {
+    fun userDetailsService(): UserDetailsService {
         return UserDetailsService { username ->
             val user = userRepository.findByUsername(username) ?: throw UsernameNotFoundException(username)
             MyUserPrincipal(user)
         }
     }
 
-    private fun authenticationProvider(): DaoAuthenticationProvider {
-        val authProvider = DaoAuthenticationProvider(userDetailsService())
-        authProvider.setPasswordEncoder(passwordEncoder())
-        return authProvider
-    }
-
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
     }
+
 }

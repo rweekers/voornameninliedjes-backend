@@ -5,15 +5,13 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRep
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.MethodSource
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
+import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Optional
 import java.util.UUID
-import java.util.stream.Stream
 
 class ArtistServiceTest {
 
@@ -21,21 +19,19 @@ class ArtistServiceTest {
 
     private val artistService = ArtistService(repository)
 
-    @ParameterizedTest
-    @MethodSource("artistsProvider")
-    fun `get artist by id`(artistOptional : Optional<Artist>, artist: Artist?) {
+    @Test
+    fun `get artist by id`() {
         val id = 1L
-        whenever(repository.findById(id)).thenReturn(artistOptional)
+        val artist = Artist(1L, "The Beatles", UUID.randomUUID())
+        whenever(repository.findById(id)).thenReturn(Optional.of(artist))
         val artistFound = artistService.findById(id)
         assertThat(artistFound).isEqualTo(artist)
     }
 
-    companion object {
-        @JvmStatic
-        fun artistsProvider(): Stream<Arguments> {
-            val artist = Artist(1L, "The Beatles", UUID.randomUUID())
-            return Stream.of(Arguments.of(Optional.ofNullable(null), null), Arguments.of(Optional.of(artist), artist))
-        }
+    @Test
+    fun `artist not found`() {
+        whenever(repository.findById(any())).thenReturn(Optional.empty())
+        assertThrows<ArtistNotFoundException> { artistService.findById(any()) }
     }
 
     @Test

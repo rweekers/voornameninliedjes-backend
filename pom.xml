@@ -12,7 +12,7 @@
     </parent>
     <groupId>nl.orangeflamingo</groupId>
     <artifactId>voornameninliedjes-backend</artifactId>
-    <version>3.2.2</version>
+    <version>3.3.0</version>
     <name>Voornameninliedjes Backend</name>
     <description>Backend service voor voornamen in liedjes</description>
     <url>https://voornameninliedjes.nl</url>
@@ -30,6 +30,7 @@
         <jacoco.plugin.version>0.8.11</jacoco.plugin.version>
         <copy_down.version>1.1</copy_down.version>
         <jsoup.version>1.16.2</jsoup.version>
+        <uap-java.version>1.6.1</uap-java.version>
         <mockito-kotlin.version>5.1.0</mockito-kotlin.version>
         <cucumber.version>7.14.0</cucumber.version>
         <klaxon.version>5.6</klaxon.version>
@@ -136,6 +137,11 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>${jsoup.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ua-parser</groupId>
+            <artifactId>uap-java</artifactId>
+            <version>${uap-java.version}</version>
         </dependency>
 
         <dependency>

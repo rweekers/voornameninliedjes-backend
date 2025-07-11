@@ -44,8 +44,8 @@ class ArtistService(private val repository: ArtistRepository) {
         repository.deleteById(id)
     }
 
-    fun findById(id: Long): Artist? =
-        repository.findById(id).orElse(null)
+    fun findById(id: Long): Artist =
+        repository.findById(id).orElseThrow { ArtistNotFoundException(id) }
 
     private fun existsByName(name: String): Boolean =
         repository.findFirstByName(name) != null

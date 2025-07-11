@@ -6,7 +6,6 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -134,9 +133,6 @@ class UserControllerIT : AbstractIntegrationTest() {
     }
 
     @Test
-    // Check Servlet.service() for servlet [dispatcherServlet] in context with path [] met java.lang.StackOverflowError: null
-    // Seems to be related to wrong password (can be validated by calling endpoint with wrong credentials
-    @Disabled
     fun userWrongCredentialsTest() {
         client.get()
             .uri("/admin/users")

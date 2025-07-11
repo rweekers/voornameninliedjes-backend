@@ -37,3 +37,6 @@ target
 *.pk8
 
 /src/main/resources/static/*.yaml
+
+/backup/database_voornameninliedjes_backup_*.backup
+/backup/roles_voornameninliedjes_backup_*.sql
