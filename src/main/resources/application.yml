@@ -1,7 +1,4 @@
 spring:
-  output:
-    ansi:
-      enabled: always
   banner:
     location: classpath:banner.txt
   profiles:
