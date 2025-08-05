@@ -59,7 +59,7 @@ class RequestLoggingInterceptorTest {
         assertTrue(logs.filter { it.level == Level.INFO }.size == 3)
         assertTrue(logs.any { it.formattedMessage.contains("Authenticated user: test-user") })
         assertTrue(logs.any { it.formattedMessage.contains("Request: [GET] /api/test from IP=127.0.0.1") })
-        assertTrue(logs.any { it.formattedMessage.contains("Browser Firefox:127.0.null on Linux:null.null.null.null and device Other") })
+        assertTrue(logs.any { it.formattedMessage.contains("Browser Firefox:127.0 on operating system Linux and device Other") })
         appender.stop()
     }
 }

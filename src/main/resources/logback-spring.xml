@@ -6,7 +6,7 @@
 
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{ISO8601} %-5level [%t] %C{1}: %msg%n%throwable</pattern>
+            <pattern>%yellow(%d{ISO8601}) %highlight(%-5level) [%green(%t)] %cyan(%C{1}): %msg%n%throwable</pattern>
         </encoder>
     </appender>
 
@@ -28,17 +28,6 @@
     <springProfile name="pro, log">
         <root level="INFO">
             <appender-ref ref="Console"/>
-        </root>
-    </springProfile>
-
-    <springProfile name="log-coloured">
-        <appender name="ConsoleColoured" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder>
-                <pattern>%yellow(%d{ISO8601}) %highlight(%-5level) [%green(%t)] %cyan(%C{1}): %msg%n%throwable</pattern>
-            </encoder>
-        </appender>
-        <root level="INFO">
-            <appender-ref ref="ConsoleColoured"/>
         </root>
     </springProfile>
 
