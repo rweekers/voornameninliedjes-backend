@@ -47,10 +47,34 @@ class RequestLoggingInterceptor : HandlerInterceptor {
 
         val referer = request.getHeader("X-Referer")
 
-        log.info("Request: [{}] {} from IP={}, UA={}, Referer={}, Language={}", method, uri, clientIp, userAgent, referer, lang)
-        log.info("Browser $browser:$browserMajorVersion.$browserMinorVersion.$browserPatchVersion on $operatingSystem:$operatingSystemMajorVersion.$operatingSystemSystemMinorVersion.$operatingSystemPatchVersion.$operatingSystemPatchMinorVersion and device $device")
+        log.info("Request: [{}] {} from IP={}, UA={}, Referer={}, Language={}", method, uri, clientIp, determineVersion(userAgent), determineVersion(referer), determineVersion(lang))
+        log.info(
+            "Browser ${
+                determineVersion(
+                    browser,
+                    browserMajorVersion,
+                    browserMinorVersion,
+                    browserPatchVersion
+                )
+            } on operating system ${
+                determineVersion(
+                    operatingSystem,
+                    operatingSystemMajorVersion,
+                    operatingSystemSystemMinorVersion,
+                    operatingSystemPatchVersion,
+                    operatingSystemPatchMinorVersion
+                )
+            } and device ${determineVersion(device)}"
+        )
         return true
     }
+
+    fun determineVersion(vararg parts: String?): String =
+        if (parts.firstOrNull() == null) {
+            "unknown"
+        } else {
+            parts.filterNotNull().joinToString(".").replaceFirst(".", ":")
+        }
 
     companion object {
         private val log: Logger = LoggerFactory.getLogger(RequestLoggingInterceptor::class.java)
