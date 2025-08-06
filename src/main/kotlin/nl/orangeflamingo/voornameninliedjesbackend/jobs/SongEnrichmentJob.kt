@@ -1,6 +1,5 @@
 package nl.orangeflamingo.voornameninliedjesbackend.jobs
 
-import nl.orangeflamingo.voornameninliedjesbackend.service.ImagesEnrichmentService
 import nl.orangeflamingo.voornameninliedjesbackend.service.LastFmEnrichmentService
 import nl.orangeflamingo.voornameninliedjesbackend.service.WikipediaEnrichmentService
 import org.slf4j.LoggerFactory
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class SongEnrichmentJob @Autowired constructor(
-    private val imagesEnrichmentService: ImagesEnrichmentService,
     private val wikipediaEnrichmentService: WikipediaEnrichmentService,
     private val lastFmEnrichmentService: LastFmEnrichmentService
 ) {
@@ -24,7 +22,6 @@ class SongEnrichmentJob @Autowired constructor(
     @Scheduled(cron = "\${jobs.updateSong.cron}")
     fun updateSongImages() {
         log.info("Starting update job")
-        imagesEnrichmentService.enrichImagesForSongs(true)
         wikipediaEnrichmentService.enrichWikipediaForSongs(true)
         lastFmEnrichmentService.enrichLastFmInfoForSongs(true)
     }
@@ -35,7 +32,6 @@ class SongEnrichmentJob @Autowired constructor(
             return;
         }
         log.info("Starting enrichment job")
-        imagesEnrichmentService.enrichImagesForSongs()
         wikipediaEnrichmentService.enrichWikipediaForSongs()
         lastFmEnrichmentService.enrichLastFmInfoForSongs()
     }

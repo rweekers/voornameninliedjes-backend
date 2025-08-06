@@ -1,40 +1,16 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
-import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
-import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLastFmTag
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLogEntry
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongSource
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
+import nl.orangeflamingo.voornameninliedjesbackend.domain.*
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminLogEntry
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSongDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSourceDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminWikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
-import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistNotFoundException
-import nl.orangeflamingo.voornameninliedjesbackend.service.ImagesEnrichmentService
-import nl.orangeflamingo.voornameninliedjesbackend.service.ImagesService
-import nl.orangeflamingo.voornameninliedjesbackend.service.LastFmEnrichmentService
-import nl.orangeflamingo.voornameninliedjesbackend.service.NotFoundException
-import nl.orangeflamingo.voornameninliedjesbackend.service.SongNotFoundException
-import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
-import nl.orangeflamingo.voornameninliedjesbackend.service.WikipediaEnrichmentService
+import nl.orangeflamingo.voornameninliedjesbackend.service.*
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.net.URI
 
 @RestController
@@ -42,10 +18,8 @@ import java.net.URI
 class SongAdminController(
     private val songRepository: SongRepository,
     private val songService: SongService,
-    private val imagesEnrichmentService: ImagesEnrichmentService,
     private val wikipediaEnrichmentService: WikipediaEnrichmentService,
-    private val lastFmEnrichmentService: LastFmEnrichmentService,
-    private val imagesService: ImagesService
+    private val lastFmEnrichmentService: LastFmEnrichmentService
 ) {
 
     private val log = LoggerFactory.getLogger(SongAdminController::class.java)
@@ -92,40 +66,6 @@ class SongAdminController(
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/songs/{id}/download")
-    fun downloadImageForSongById(
-        @PathVariable("id") id: Long,
-        @RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean
-    ) {
-        val song = songRepository.findById(id).orElseThrow { SongNotFoundException("Song with id $id not found") }
-        imagesService.downloadImageForSong(song, updateAll)
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/songs/{id}/blur")
-    fun blurImageForSongById(
-        @PathVariable("id") id: Long,
-        @RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean
-    ) {
-        val song = songRepository.findById(id).orElseThrow { SongNotFoundException("Song with id $id not found") }
-        imagesService.blurImageForSong(song, updateAll)
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/songs/blur-all")
-    fun blurImagesForSongs(
-        @RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean
-    ) {
-        imagesService.blurImages(updateAll)
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/songs/download-all")
-    fun downloadImagesForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
-        imagesService.downloadImages(updateAll)
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/songs/{user}")
     fun newSong(@RequestBody newSong: AdminSongDto, @PathVariable user: String): AdminSongDto {
         log.info("Saving song with title ${newSong.title} and artist ${newSong.artist}")
@@ -145,19 +85,6 @@ class SongAdminController(
             return convertToDto(songService.updateSong(convertToDomain(song), songFromDb.get(), user))
         }
         return convertToDto(songService.newSong(convertToDomain(song), user))
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/songs/{id}/enrich-images")
-    fun enrichImageForSongById(@PathVariable("id") id: Long) {
-        val song = songRepository.findById(id).orElseThrow { SongNotFoundException("Song with id $id not found") }
-        imagesEnrichmentService.updateArtistImageForSong(song)
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/songs/enrich-images")
-    fun enrichImagesForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
-        imagesEnrichmentService.enrichImagesForSongs(updateAll)
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

@@ -1,6 +1,9 @@
 package nl.orangeflamingo.voornameninliedjesbackend
 
-import nl.orangeflamingo.voornameninliedjesbackend.client.*
+import nl.orangeflamingo.voornameninliedjesbackend.client.FakeLastFmApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.FakeWikipediaApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.LastFmApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -20,11 +23,5 @@ class IntegrationTestConfiguration {
     @Primary
     fun lastFmApiClient(): LastFmApiClient {
         return FakeLastFmApiClient()
-    }
-
-    @Bean
-    @Primary
-    fun imageClient(): ImageClient {
-        return FakeImageClient()
     }
 }

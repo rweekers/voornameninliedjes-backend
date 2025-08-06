@@ -15,7 +15,7 @@ class WikipediaEnrichmentService @Autowired constructor(
     private val wikipediaApiClient: WikipediaApiClient
 ) {
 
-    private val log = LoggerFactory.getLogger(ImagesEnrichmentService::class.java)
+    private val log = LoggerFactory.getLogger(WikipediaEnrichmentService::class.java)
 
     fun enrichWikipediaForSongs(updateAll: Boolean = false) {
         log.info("Starting wikipedia enrichment with update all: $updateAll")
