@@ -1,11 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.LastFmApiClient
-import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmError
-import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTrack
-import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLastFmTag
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
+import nl.orangeflamingo.voornameninliedjesbackend.domain.*
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.utils.clean
@@ -14,7 +10,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.net.URI
-import java.util.UUID
+import java.util.*
 
 
 @Service
@@ -24,7 +20,7 @@ class LastFmEnrichmentService @Autowired constructor(
     private val lastFmApiClient: LastFmApiClient
 ) {
 
-    private val log = LoggerFactory.getLogger(ImagesEnrichmentService::class.java)
+    private val log = LoggerFactory.getLogger(LastFmEnrichmentService::class.java)
 
     fun enrichLastFmInfoForSongs(updateAll: Boolean = false) {
         log.info("Starting last fm enrichment with update all: $updateAll")
