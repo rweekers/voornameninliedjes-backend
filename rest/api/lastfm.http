@@ -1,0 +1,3 @@
+### Get lastfm track information
+GET {{host}}/lastfm/the police/roxanne
+Accept: application/json

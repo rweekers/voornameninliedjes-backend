@@ -2,6 +2,7 @@ package nl.orangeflamingo.voornameninliedjesbackend.config
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.LastFmApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.client.LastFmHttpApiClient
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -11,7 +12,9 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
 @Profile("!integration-test")
-class LastFmConfig {
+class LastFmConfig(
+    @Value("\${voornameninliedjes.lastfm.api.key}") private val lastFmKey: String
+) {
 
     @Bean
     fun lastFmWebClient(): WebClient {
@@ -23,6 +26,6 @@ class LastFmConfig {
 
     @Bean
     fun lastFmApiClient(lastFmWebClient: WebClient): LastFmApiClient {
-        return LastFmHttpApiClient(lastFmWebClient)
+        return LastFmHttpApiClient(lastFmWebClient, lastFmKey)
     }
 }
