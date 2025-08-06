@@ -79,7 +79,7 @@ class LastFmHttpApiClientTest {
     )
 
     private val lastFmHttpApiClient = LastFmHttpApiClient(
-        mockWebClient
+        mockWebClient, "some-api-key"
     )
 
     @BeforeEach
