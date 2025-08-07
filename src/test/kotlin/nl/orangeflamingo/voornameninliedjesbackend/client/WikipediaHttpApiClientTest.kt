@@ -1,23 +1,22 @@
 package nl.orangeflamingo.voornameninliedjesbackend.client
 
+import io.mockk.every
+import io.mockk.mockk
 import nl.orangeflamingo.voornameninliedjesbackend.domain.PageDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.QueryDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.WikipediaSongDto
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.anyString
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 
 class WikipediaHttpApiClientTest {
 
-    private val mockWebClient = mock(WebClient::class.java)
-    private val mockRequestHeadersUriSpec = mock(WebClient.RequestHeadersUriSpec::class.java)
-    private val mockRequestHeadersSpec = mock(WebClient.RequestHeadersSpec::class.java)
-    private val mockResponseSpec = mock(WebClient.ResponseSpec::class.java)
+    private val mockWebClient = mockk<WebClient>()
+    private val mockRequestHeadersUriSpec = mockk<WebClient.RequestHeadersUriSpec<*>>()
+    private val mockRequestHeadersSpec = mockk<WebClient.RequestHeadersSpec<*>>()
+    private val mockResponseSpec = mockk<WebClient.ResponseSpec>()
 
     private val wikipediaResponse = Mono.just(
         WikipediaSongDto(
@@ -40,10 +39,10 @@ class WikipediaHttpApiClientTest {
 
     @BeforeEach
     fun init() {
-        `when`(mockWebClient.get()).thenReturn(mockRequestHeadersUriSpec)
-        `when`(mockRequestHeadersUriSpec.uri(anyString(), anyString())).thenReturn(mockRequestHeadersSpec)
-        `when`(mockRequestHeadersSpec.retrieve()).thenReturn(mockResponseSpec)
-        `when`(mockResponseSpec.bodyToMono(WikipediaSongDto::class.java)).thenReturn(wikipediaResponse)
+        every { mockWebClient.get() } returns mockRequestHeadersUriSpec
+        every { mockRequestHeadersUriSpec.uri(any(String::class), any(String::class)) } returns mockRequestHeadersSpec
+        every { mockRequestHeadersSpec.retrieve() } returns mockResponseSpec
+        every { mockResponseSpec.bodyToMono(WikipediaSongDto::class.java) } returns wikipediaResponse
     }
 
     @Test
