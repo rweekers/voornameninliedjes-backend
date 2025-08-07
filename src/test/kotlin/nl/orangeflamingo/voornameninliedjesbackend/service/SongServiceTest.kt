@@ -1,5 +1,8 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
+import io.mockk.every
+import io.mockk.mockk
+import java.util.Optional
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatusStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.TestSong
@@ -8,15 +11,12 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepos
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
-import java.util.Optional
 
 class SongServiceTest {
 
-    private val artistRepository = mock(ArtistRepository::class.java)
+    private val artistRepository = mockk<ArtistRepository>()
 
-    private val songRepository = mock(SongRepository::class.java)
+    private val songRepository = mockk<SongRepository>()
 
     private val songService: SongService = SongService(
         artistRepository, songRepository
@@ -24,18 +24,18 @@ class SongServiceTest {
 
     @Test
     fun countSongsTest() {
-        `when`(songRepository.count()).thenReturn(1)
+        every { songRepository.count() } returns 1
         assertEquals(1, songService.countSongs())
     }
 
     @Test
     fun songStatisticsTest() {
-        `when`(songRepository.getCountPerStatus()).thenReturn(listOf(
+        every { songRepository.getCountPerStatus() } returns listOf(
             SongStatusStatistics(SongStatus.SHOW, 8),
             SongStatusStatistics(SongStatus.IN_PROGRESS, 3),
             SongStatusStatistics(SongStatus.INCOMPLETE, 1),
             SongStatusStatistics(SongStatus.TO_BE_DELETED, 2)
-        ))
+        )
         assertEquals(4, songService.countSongsByStatus().size)
     }
 
@@ -44,8 +44,8 @@ class SongServiceTest {
         val returnSong = TestSong(
             artist = 1
         )
-        `when`(songRepository.findById(1)).thenReturn(Optional.of(returnSong.toDomain()))
-        `when`(artistRepository.findById(1)).thenReturn(Optional.empty())
+        every { songRepository.findById(1) } returns Optional.of(returnSong.toDomain())
+        every { artistRepository.findById(1) } returns Optional.empty()
 
         assertThatThrownBy { songService.findById(1) }
             .isInstanceOf(ArtistNotFoundException::class.java)

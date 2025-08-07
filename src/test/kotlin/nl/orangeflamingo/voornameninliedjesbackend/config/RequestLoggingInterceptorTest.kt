@@ -4,13 +4,13 @@ import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
+import io.mockk.every
+import io.mockk.mockk
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.mock
-import org.mockito.kotlin.whenever
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
@@ -19,13 +19,13 @@ class RequestLoggingInterceptorTest {
 
     private val interceptor = RequestLoggingInterceptor()
 
-    private val request = mock(HttpServletRequest::class.java)
+    private val request: HttpServletRequest = mockk()
 
-    private val response = mock(HttpServletResponse::class.java)
+    private val response: HttpServletResponse = mockk()
 
-    private val handler = mock(Any::class.java)
+    private val handler: Any = mockk()
 
-    private val authentication = mock(Authentication::class.java)
+    private val authentication: Authentication = mockk()
 
     @BeforeEach
     fun setUp() {
@@ -41,16 +41,16 @@ class RequestLoggingInterceptorTest {
         appender.start()
         logger.addAppender(appender)
 
-        whenever(authentication.isAuthenticated).thenReturn(true)
-        whenever(authentication.name).thenReturn("test-user")
+        every { authentication.isAuthenticated } returns true
+        every { authentication.name } returns "test-user"
 
-        whenever(request.method).thenReturn("GET")
-        whenever(request.requestURI).thenReturn("/api/test")
-        whenever(request.remoteAddr).thenReturn("127.0.0.1")
-        whenever(request.getHeader("X-User-Agent")).thenReturn("Mozilla/5.0 (X11; Linux x86_64; rv:127.0) Gecko/20100101 Firefox/127.0")
-        whenever(request.getHeader("X-Forwarded-For")).thenReturn(null)
-        whenever(request.getHeader("X-Referer")).thenReturn("https://example.com")
-        whenever(request.getHeader("X-Accept-Language")).thenReturn("en-US")
+        every { request.method } returns "GET"
+        every { request.requestURI } returns "/api/test"
+        every { request.remoteAddr } returns "127.0.0.1"
+        every { request.getHeader("X-User-Agent") } returns "Mozilla/5.0 (X11; Linux x86_64; rv:127.0) Gecko/20100101 Firefox/127.0"
+        every { request.getHeader("X-Forwarded-For") } returns null
+        every { request.getHeader("X-Referer") } returns "https://example.com"
+        every { request.getHeader("X-Accept-Language") } returns "en-US"
 
         val result = interceptor.preHandle(request, response, handler)
 

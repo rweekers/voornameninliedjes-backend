@@ -1,5 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.client
 
+import io.mockk.every
+import io.mockk.mockk
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmAlbumDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmArtistDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmError
@@ -13,22 +15,18 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.anyString
-import org.mockito.ArgumentMatchers.eq
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 
 class LastFmHttpApiClientTest {
 
-    private val mockWebClient = mock(WebClient::class.java)
-    private val mockRequestHeadersUriSpec = mock(WebClient.RequestHeadersUriSpec::class.java)
-    private val mockRequestHeadersSpec = mock(WebClient.RequestHeadersSpec::class.java)
-    private val mockResponseSpec = mock(WebClient.ResponseSpec::class.java)
+    private val mockWebClient = mockk<WebClient>()
+    private val mockRequestHeadersUriSpec = mockk<WebClient.RequestHeadersUriSpec<*>>()
+    private val mockRequestHeadersSpec = mockk<WebClient.RequestHeadersSpec<*>>()
+    private val mockResponseSpec = mockk<WebClient.ResponseSpec>()
 
-    private val mockErrorRequestHeadersSpec = mock(WebClient.RequestHeadersSpec::class.java)
-    private val mockErrorResponseSpec = mock(WebClient.ResponseSpec::class.java)
+    private val mockErrorRequestHeadersSpec = mockk<WebClient.RequestHeadersSpec<*>>()
+    private val mockErrorResponseSpec = mockk<WebClient.ResponseSpec>()
 
     private val lastFmResponse: Mono<LastFmResponseDto> = Mono.just(
         LastFmResponseDto(
@@ -84,13 +82,13 @@ class LastFmHttpApiClientTest {
 
     @BeforeEach
     fun init() {
-        `when`(mockWebClient.get()).thenReturn(mockRequestHeadersUriSpec)
-        `when`(mockRequestHeadersUriSpec.uri(anyString(), eq("The Police"), eq("Roxanne"))).thenReturn(mockRequestHeadersSpec)
-        `when`(mockRequestHeadersUriSpec.uri(anyString(), eq("The Police"), eq("Not actually Roxanne"))).thenReturn(mockErrorRequestHeadersSpec)
-        `when`(mockRequestHeadersSpec.retrieve()).thenReturn(mockResponseSpec)
-        `when`(mockResponseSpec.bodyToMono(LastFmResponseDto::class.java)).thenReturn(lastFmResponse)
-        `when`(mockErrorRequestHeadersSpec.retrieve()).thenReturn(mockErrorResponseSpec)
-        `when`(mockErrorResponseSpec.bodyToMono(LastFmResponseDto::class.java)).thenReturn(lastFmErrorResponse)
+        every { mockWebClient.get() } returns mockRequestHeadersUriSpec
+        every { mockRequestHeadersUriSpec.uri(any(), eq("The Police"), eq("Roxanne")) } returns mockRequestHeadersSpec
+        every { mockRequestHeadersUriSpec.uri(any(), eq("The Police"), eq("Not actually Roxanne")) } returns mockErrorRequestHeadersSpec
+        every { mockRequestHeadersSpec.retrieve() } returns mockResponseSpec
+        every { mockResponseSpec.bodyToMono(LastFmResponseDto::class.java) } returns lastFmResponse
+        every { mockErrorRequestHeadersSpec.retrieve() } returns mockErrorResponseSpec
+        every { mockErrorResponseSpec.bodyToMono(LastFmResponseDto::class.java) } returns lastFmErrorResponse
     }
 
     @Test
