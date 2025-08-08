@@ -18,6 +18,8 @@
     <url>https://voornameninliedjes.nl</url>
 
     <properties>
+        <sonar.coverage.exclusions>**/config/**</sonar.coverage.exclusions>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
         <spring.profiles.active>jvm</spring.profiles.active>
@@ -27,7 +29,6 @@
         <springdoc-openapi.version>2.3.0</springdoc-openapi.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <openapi-generator-maven-plugin.version>7.7.0</openapi-generator-maven-plugin.version>
-        <kotlin.version>1.9.25</kotlin.version>
         <jacoco.plugin.version>0.8.11</jacoco.plugin.version>
         <copy_down.version>1.1</copy_down.version>
         <jsoup.version>1.16.2</jsoup.version>
@@ -35,8 +36,9 @@
         <cucumber.version>7.14.0</cucumber.version>
         <klaxon.version>5.6</klaxon.version>
         <mockk.version>1.14.5</mockk.version>
+        <mockwebserver.version>4.12.0</mockwebserver.version>
 
-        <argLine />
+        <argLine>-XX:+EnableDynamicAgentLoading</argLine>
     </properties>
 
     <dependencies>
@@ -170,6 +172,22 @@
                     <artifactId>mockito-core</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>mockwebserver</artifactId>
+            <version>${mockwebserver.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -334,11 +352,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>
-                        -XX:+EnableDynamicAgentLoading
-                    </argLine>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -356,8 +369,15 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco.plugin.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/config/*</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
+                        <id>prepare-agent</id>
+                        <phase>initialize</phase>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
