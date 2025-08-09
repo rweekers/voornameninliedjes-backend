@@ -8,7 +8,7 @@ import io.mockk.every
 import io.mockk.mockk
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
@@ -54,12 +54,12 @@ class RequestLoggingInterceptorTest {
 
         val result = interceptor.preHandle(request, response, handler)
 
-        assertTrue(result)
+        assertThat(result).isTrue()
         val logs = appender.list
-        assertTrue(logs.filter { it.level == Level.INFO }.size == 3)
-        assertTrue(logs.any { it.formattedMessage.contains("Authenticated user: test-user") })
-        assertTrue(logs.any { it.formattedMessage.contains("Request: [GET] /api/test from IP=127.0.0.1") })
-        assertTrue(logs.any { it.formattedMessage.contains("Browser Firefox:127.0 on operating system Linux and device Other") })
+        assertThat(logs.filter { it.level == Level.INFO }.size == 3).isTrue()
+        assertThat(logs.any { it.formattedMessage.contains("Authenticated user: test-user") }).isTrue()
+        assertThat(logs.any { it.formattedMessage.contains("Request: [GET] /api/test from IP=127.0.0.1") }).isTrue()
+        assertThat(logs.any { it.formattedMessage.contains("Browser Firefox:127.0 on operating system Linux and device Other") }).isTrue()
         appender.stop()
     }
 }

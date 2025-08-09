@@ -8,8 +8,8 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatusStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.TestSong
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
+import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class SongServiceTest {
@@ -25,7 +25,7 @@ class SongServiceTest {
     @Test
     fun countSongsTest() {
         every { songRepository.count() } returns 1
-        assertEquals(1, songService.countSongs())
+        assertThat(songService.countSongs()).isEqualTo(1)
     }
 
     @Test
@@ -36,7 +36,7 @@ class SongServiceTest {
             SongStatusStatistics(SongStatus.INCOMPLETE, 1),
             SongStatusStatistics(SongStatus.TO_BE_DELETED, 2)
         )
-        assertEquals(4, songService.countSongsByStatus().size)
+        assertThat(songService.countSongsByStatus()).hasSize(4)
     }
 
     @Test
