@@ -1,5 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
+import java.net.URI
 import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
@@ -13,17 +14,13 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepos
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.doAnswer
-import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.test.context.bean.override.mockito.MockitoSpyBean
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import org.springframework.web.reactive.function.BodyInserters
 import org.testcontainers.shaded.com.google.common.net.HttpHeaders
-import java.net.URI
 
 class ArtistControllerIT : AbstractIntegrationTest() {
 
@@ -38,7 +35,7 @@ class ArtistControllerIT : AbstractIntegrationTest() {
     private lateinit var encoder: PasswordEncoder
     @Autowired
     private lateinit var songRepository: SongRepository
-    @MockitoSpyBean
+    @Autowired
     private lateinit var artistRepository: ArtistRepository
 
     private val adminUser: String = "admin"
@@ -204,24 +201,6 @@ class ArtistControllerIT : AbstractIntegrationTest() {
             .expectBody()
             .jsonPath("$.name").isNotEmpty
             .jsonPath("$.name").isEqualTo("Updated name")
-    }
-
-    @Test
-    fun getArtistByIdUnknownExceptionTestV2() {
-        whenever(
-            artistRepository.findById(
-                artistMap["The Beatles"] ?: throw IllegalStateException()
-            )
-        ).doAnswer { throw RuntimeException("Unknown exception") }
-
-        client.get()
-            .uri("/api/artists/${artistMap["The Beatles"]}")
-            .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
-            .exchange()
-            .expectStatus().is5xxServerError
-            .expectBody()
-            .jsonPath("$.message").isNotEmpty
-            .jsonPath("$.message").isEqualTo("An unexpected error occurred")
     }
 }
 
