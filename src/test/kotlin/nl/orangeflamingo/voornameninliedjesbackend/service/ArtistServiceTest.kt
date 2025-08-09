@@ -10,7 +10,6 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRep
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 class ArtistServiceTest {
 
@@ -30,7 +29,10 @@ class ArtistServiceTest {
     @Test
     fun `artist not found`() {
         every { repository.findById(any()) } returns Optional.empty()
-        assertThrows<ArtistNotFoundException> { artistService.findById(1) }
+        val artistId = 1L
+        assertThatThrownBy { artistService.findById(artistId) }
+            .isInstanceOf(ArtistNotFoundException::class.java)
+            .hasMessage("Artist with id $artistId not found")
     }
 
     @Test

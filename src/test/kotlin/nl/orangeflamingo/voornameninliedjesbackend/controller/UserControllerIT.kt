@@ -1,10 +1,11 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
+import kotlin.random.Random
 import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.User
 import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
-import org.junit.jupiter.api.Assertions.assertNull
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import org.springframework.web.reactive.function.BodyInserters
-import kotlin.random.Random
 
 class UserControllerIT : AbstractIntegrationTest() {
 
@@ -129,7 +129,7 @@ class UserControllerIT : AbstractIntegrationTest() {
             .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(ownerUser, ownerPassword) }
             .exchange()
             .expectStatus().isOk
-        assertNull(userRepository.findByUsername(adminUser))
+        assertThat(userRepository.findByUsername(adminUser)).isNull()
     }
 
     @Test

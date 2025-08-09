@@ -7,7 +7,7 @@ import io.cucumber.java.en.Then
 import nl.orangeflamingo.voornameninliedjesbackend.controller.ArtistController
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -33,13 +33,13 @@ class ArtistSteps {
 
     @Then("there are {int} artists returned")
      fun thereAreXArtistsReturned(numberOfArtists: Int) {
-            val artistsCount = artistController.getArtists().size
-            assertEquals(numberOfArtists, artistsCount)
+            val artists = artistController.getArtists()
+            assertThat(artists).hasSize(numberOfArtists)
         }
 
     @Then("there are {int} artists with name {string}")
     fun thereAreXArtistsWithNameY(numberOfArtists: Int, artistName: String) {
-        val artistsCount = artistRepository.findByNameIgnoreCase(artistName).size
-        assertEquals(numberOfArtists, artistsCount)
+        val artists = artistRepository.findByNameIgnoreCase(artistName)
+        assertThat(artists).hasSize(numberOfArtists)
     }
 }

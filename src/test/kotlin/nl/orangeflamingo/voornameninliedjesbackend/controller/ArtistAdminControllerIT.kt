@@ -1,5 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
+import java.net.URI
+import java.time.Instant
 import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistLogEntry
@@ -11,15 +13,12 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRep
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
-import java.net.URI
-import java.time.Instant
 
 class ArtistAdminControllerIT : AbstractIntegrationTest() {
 
@@ -111,7 +110,7 @@ class ArtistAdminControllerIT : AbstractIntegrationTest() {
             .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(ownerUser, ownerPassword) }
             .exchange()
             .expectStatus().isOk
-        assertFalse(artistRepository.findById(artistMap["The Beatles"]!!).isPresent)
+        assertThat(artistRepository.findById(artistMap["The Beatles"]!!).isPresent).isFalse
     }
 
     @Test
