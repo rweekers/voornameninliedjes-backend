@@ -1,57 +1,71 @@
 package nl.orangeflamingo.voornameninliedjesbackend.client
 
-import io.mockk.every
-import io.mockk.mockk
-import nl.orangeflamingo.voornameninliedjesbackend.domain.PageDto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.QueryDto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.WikipediaSongDto
-import org.junit.jupiter.api.Assertions.assertEquals
+import nl.orangeflamingo.voornameninliedjesbackend.domain.WikipediaApi
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.fail
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClient
-import reactor.core.publisher.Mono
+import reactor.test.StepVerifier
 
 class WikipediaHttpApiClientTest {
 
-    private val mockWebClient = mockk<WebClient>()
-    private val mockRequestHeadersUriSpec = mockk<WebClient.RequestHeadersUriSpec<*>>()
-    private val mockRequestHeadersSpec = mockk<WebClient.RequestHeadersSpec<*>>()
-    private val mockResponseSpec = mockk<WebClient.ResponseSpec>()
-
-    private val wikipediaResponse = Mono.just(
-        WikipediaSongDto(
-            batchcomplete = "true",
-            query = QueryDto(
-                pages = listOf(
-                    PageDto(
-                        pageid = 1,
-                        title = "theTitle",
-                        extract = "Some background from wikipedia"
-                    )
-                )
-            )
-        )
-    )
-
-    private val wikipediaHttpApiClient = WikipediaHttpApiClient(
-        mockWebClient
-    )
+    private val mockWebServer = MockWebServer()
+    private lateinit var client: WikipediaHttpApiClient
 
     @BeforeEach
     fun init() {
-        every { mockWebClient.get() } returns mockRequestHeadersUriSpec
-        every { mockRequestHeadersUriSpec.uri(any(String::class), any(String::class)) } returns mockRequestHeadersSpec
-        every { mockRequestHeadersSpec.retrieve() } returns mockResponseSpec
-        every { mockResponseSpec.bodyToMono(WikipediaSongDto::class.java) } returns wikipediaResponse
+        mockWebServer.start()
+        val webClient = WebClient.builder()
+            .baseUrl(mockWebServer.url("/").toString())
+            .build()
+        client = WikipediaHttpApiClient(webClient)
     }
 
     @Test
     fun `get background`() {
-        val requestWikiPage = "some_song"
-        val apiResponse = wikipediaHttpApiClient.getBackground(requestWikiPage).block()
-        assertEquals(
-            "Some background from wikipedia",
-            apiResponse?.background
+        val json = """
+            {
+                "batchcomplete": true,
+                "query": {
+                    "pages": [
+                        {
+                            "pageid": 4599996,
+                            "ns": 0,
+                            "title": "Roxanne",
+                            "extract": "Roxanne is een nummer van de Britse band The Police uit april 1978."
+                        }
+                    ]
+                }
+            }
+        """
+
+        mockWebServer.enqueue(
+            MockResponse()
+            .setBody(json)
+            .addHeader("Content-Type", "application/json")
+            .setResponseCode(200)
         )
+
+        StepVerifier.create(client.getBackground("Roxanne"))
+            .assertNext { result ->
+                when (result) {
+                    is WikipediaApi -> {
+                        assertThat(result.background)
+                            .isEqualTo("Roxanne is een nummer van de Britse band The Police uit april 1978.")
+                    }
+
+                    else -> fail("Unexpected type: ${result::class.simpleName}")
+                }
+            }
+            .verifyComplete()
+    }
+
+    @AfterEach
+    fun tearDown() {
+        mockWebServer.shutdown()
     }
 }
