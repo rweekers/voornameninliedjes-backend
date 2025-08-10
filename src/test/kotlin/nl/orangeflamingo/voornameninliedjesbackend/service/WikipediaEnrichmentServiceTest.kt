@@ -31,6 +31,7 @@ class WikipediaEnrichmentServiceTest {
     )
 
     @BeforeEach
+    @Suppress("ReactiveStreamsUnusedPublisher")
     fun init() {
         every {
             mockSongRepository.findAllByStatusAndWikipediaPageIsNotNullAndWikiContentNlIsNullOrderedByNameAndTitle(

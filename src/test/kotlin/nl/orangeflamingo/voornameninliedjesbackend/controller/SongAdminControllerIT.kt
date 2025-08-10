@@ -1,7 +1,12 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
 import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
-import nl.orangeflamingo.voornameninliedjesbackend.domain.*
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
+import nl.orangeflamingo.voornameninliedjesbackend.domain.TestSong
+import nl.orangeflamingo.voornameninliedjesbackend.domain.User
+import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSongDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminWikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
@@ -245,11 +250,80 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
     }
 
     @Test
+    fun enrichImagesForSongs() {
+        client.post()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/admin/songs/enrich-images")
+                    .queryParam("update-all", "true")
+                    .build()
+            }
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    fun enrichImagesForSong() {
+        client.post()
+            .uri("/admin/songs/${songMap[songTitle]}/enrich-images")
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    fun blurImageForSong() {
+        client.post()
+            .uri("/admin/songs/${songMap[songTitle]}/blur")
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    fun blurImagesForSong() {
+        client.post()
+            .uri("/admin/songs/blur-all")
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
     fun enrichLastFmInfoForSongs() {
         client.post()
             .uri { uriBuilder ->
                 uriBuilder
                     .path("/admin/songs/enrich-lastfm")
+                    .queryParam("update-all", "true")
+                    .build()
+            }
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    fun downloadImagesForSongs() {
+        client.post()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/admin/songs/download-all")
+                    .queryParam("update-all", "true")
+                    .build()
+            }
+            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    fun downloadImagesForSong() {
+        client.post()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/admin/songs/${songMap[songTitle]}/download")
                     .queryParam("update-all", "true")
                     .build()
             }
