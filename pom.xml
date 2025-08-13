@@ -7,12 +7,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.4</version>
+        <version>4.0.0-M1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>nl.orangeflamingo</groupId>
     <artifactId>voornameninliedjes-backend</artifactId>
-    <version>3.3.4</version>
+    <version>4.0.0</version>
     <name>Voornameninliedjes Backend</name>
     <description>Backend service voor voornamen in liedjes</description>
     <url>https://voornameninliedjes.nl</url>
@@ -37,6 +37,8 @@
         <klaxon.version>5.6</klaxon.version>
         <mockk.version>1.14.5</mockk.version>
         <mockwebserver.version>4.12.0</mockwebserver.version>
+
+        <!-- kotlin.version>2.1.0</kotlin.version -->
 
         <argLine>-XX:+EnableDynamicAgentLoading</argLine>
     </properties>
@@ -517,5 +519,21 @@
             </properties>
         </profile>
     </profiles>
+
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>

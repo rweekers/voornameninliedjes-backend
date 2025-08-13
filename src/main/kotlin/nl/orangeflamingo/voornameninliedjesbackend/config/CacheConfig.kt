@@ -18,9 +18,9 @@ class CacheConfig {
             .expireAfterWrite(Duration.ofHours(23))
 
         return CaffeineCacheManager().apply {
-            isAllowNullValues = false
+            setAllowNullValues(false)
             setCaffeine(caffeineCache)
-            cacheNames = listOf("songsByPrefix")
+            setCacheNames(listOf("songsByPrefix"))
         }
     }
 }

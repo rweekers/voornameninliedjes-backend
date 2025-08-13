@@ -17,6 +17,11 @@ class ImageConfig {
     private val imagesServicePath: String = "https://images.voornameninliedjes.nl"
 
     @Bean
+    fun webClientBuilder(): WebClient.Builder {
+        return WebClient.builder()
+    }
+
+    @Bean
     fun imageClient(builder: WebClient.Builder): ImageClient {
         val wca = WebClientAdapter.create(builder.baseUrl(imagesServicePath).build())
         return HttpServiceProxyFactory.builder()

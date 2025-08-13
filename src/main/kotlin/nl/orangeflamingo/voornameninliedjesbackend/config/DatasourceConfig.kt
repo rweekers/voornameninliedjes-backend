@@ -2,14 +2,14 @@ package nl.orangeflamingo.voornameninliedjesbackend.config
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import javax.sql.DataSource
+import org.flywaydb.core.Flyway
 import org.postgresql.Driver
-import org.springframework.boot.autoconfigure.flyway.FlywayDataSource
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
-import javax.sql.DataSource
 
 
 @Configuration
@@ -24,11 +24,12 @@ class DatasourceConfig {
         createDatasource(applicationDatasourceProperties)
 
     @Bean
-    @FlywayDataSource
-    fun migrationDataSource(
-        migrationDatasourceProperties: MigrationDatasourceProperties
-    ): DataSource =
-        createDatasource(migrationDatasourceProperties)
+    fun flyway(migrationDatasourceProperties: MigrationDatasourceProperties): Flyway {
+        return Flyway.configure()
+            .dataSource(createDatasource(migrationDatasourceProperties))
+            .locations("classpath:db/migration/{vendor}/prod")
+            .load()
+    }
 
     private fun createDatasource(properties: DatasourceProperties): DataSource {
         val config = HikariConfig()
