@@ -1,6 +1,5 @@
 package nl.orangeflamingo.voornameninliedjesbackend.domain
 
-import com.beust.klaxon.Json
 import org.springframework.data.jdbc.core.mapping.AggregateReference
 
 class TestSong(
@@ -17,7 +16,6 @@ class TestSong(
     var status: SongStatus = SongStatus.SHOW,
     val mongoId: String? = null,
     var sources: Set<SongSource> = setOf(),
-    @Json(ignored = true)
     val artist: Long? = null
 ) {
     fun toDomain(): Song {

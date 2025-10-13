@@ -1,18 +1,13 @@
 package nl.orangeflamingo.voornameninliedjesbackend.cucumber.steps
 
-import com.beust.klaxon.JsonObject
-import com.beust.klaxon.Klaxon
-import com.beust.klaxon.Parser
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.cucumber.java.DataTableType
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import nl.orangeflamingo.voornameninliedjesbackend.controller.SongController
-import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
-import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
-import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
-import nl.orangeflamingo.voornameninliedjesbackend.domain.TestAggregateSong
-import nl.orangeflamingo.voornameninliedjesbackend.domain.TestSong
+import nl.orangeflamingo.voornameninliedjesbackend.domain.*
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
@@ -20,14 +15,14 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.jdbc.core.mapping.AggregateReference
-import java.util.Optional
+import java.util.*
 
 @Suppress("SpringJavaAutowiredMembersInspection")
 class SongSteps {
 
     private val log = LoggerFactory.getLogger(SongSteps::class.java)
-    private val klaxon = Klaxon()
-    private val parser = Parser.default()
+    private val mapper = ObjectMapper()
+        .registerModule(KotlinModule.Builder().build())
 
     @Autowired
     private lateinit var songService: SongService
@@ -63,21 +58,11 @@ class SongSteps {
 
     @DataTableType
     fun song(entry: Map<String, String>): Song {
-        val testSong = TestSong()
-        val jsonObject = parser.parse(StringBuilder(klaxon.toJsonString(testSong))) as JsonObject
-        entry.forEach { (key, value) -> jsonObject[key] = value }
-
-        val updatedTestSong = klaxon.maybeParse<TestSong>(jsonObject)!!
-        return updatedTestSong.toDomain()
+        return mapper.convertValue(entry, TestSong::class.java).toDomain()
     }
 
     @DataTableType
     fun aggregateSong(entry: Map<String, String>): AggregateSong {
-        val testAggregateSong = TestAggregateSong()
-        val jsonObject = parser.parse(StringBuilder(klaxon.toJsonString(testAggregateSong))) as JsonObject
-        entry.forEach { (key, value) -> jsonObject[key] = value }
-
-        val updatedTestAggregateSong = klaxon.maybeParse<TestAggregateSong>(jsonObject)!!
-        return updatedTestAggregateSong.toDomain()
+        return mapper.convertValue(entry, TestAggregateSong::class.java).toDomain()
     }
 }
