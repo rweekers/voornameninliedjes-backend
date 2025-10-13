@@ -7,12 +7,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.4</version>
+        <version>3.5.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>nl.orangeflamingo</groupId>
     <artifactId>voornameninliedjes-backend</artifactId>
-    <version>3.3.4</version>
+    <version>3.3.5</version>
     <name>Voornameninliedjes Backend</name>
     <description>Backend service voor voornamen in liedjes</description>
     <url>https://voornameninliedjes.nl</url>
@@ -26,20 +26,44 @@
         <sonar.organization>rweekers</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
-        <springdoc-openapi.version>2.3.0</springdoc-openapi.version>
-        <commons-lang3.version>3.18.0</commons-lang3.version>
-        <openapi-generator-maven-plugin.version>7.7.0</openapi-generator-maven-plugin.version>
-        <jacoco.plugin.version>0.8.11</jacoco.plugin.version>
+        <springdoc-openapi.version>2.8.13</springdoc-openapi.version>
+        <commons-lang3.version>3.19.0</commons-lang3.version>
+        <openapi-generator-maven-plugin.version>7.16.0</openapi-generator-maven-plugin.version>
+        <jacoco.plugin.version>0.8.13</jacoco.plugin.version>
         <copy_down.version>1.1</copy_down.version>
-        <jsoup.version>1.16.2</jsoup.version>
+        <openapitools.jackson-databind-nullable.version>0.2.7</openapitools.jackson-databind-nullable.version>
+        <jsoup.version>1.21.2</jsoup.version>
         <uap-java.version>1.6.1</uap-java.version>
-        <cucumber.version>7.14.0</cucumber.version>
-        <klaxon.version>5.6</klaxon.version>
-        <mockk.version>1.14.5</mockk.version>
+        <cucumber.version>7.30.0</cucumber.version>
+        <mockk.version>1.14.6</mockk.version>
         <mockwebserver.version>4.12.0</mockwebserver.version>
+
+        <!-- See https://github.com/cucumber/cucumber-jvm/blob/main/CHANGELOG.md#7240-&#45;-2025-07-07 and -->
+        <!-- See https://docs.junit.org/current/user-guide/#running-tests-build-spring-boot for overriding -->
+        <!-- From Cucumber 7.24.0 at least Use JUnit Platform 1.13.3 (JUnit Jupiter 5.13.3) is needed      -->
+        <junit-jupiter.version>5.14.0</junit-jupiter.version>
 
         <argLine>-XX:+EnableDynamicAgentLoading</argLine>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-bom</artifactId>
+                <version>${cucumber.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-bom</artifactId>
+                <version>${kotlin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -114,7 +138,7 @@
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
-            <version>0.2.6</version>
+            <version>${openapitools.jackson-databind-nullable.version}</version>
         </dependency>
 
         <dependency>
@@ -158,7 +182,6 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
-            <version>${kotlin.version}</version>
         </dependency>
 
         <!-- Test dependencies -->
@@ -196,11 +219,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-            <version>1.27.1</version>
-        </dependency>
-        <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
@@ -229,25 +247,16 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
-            <version>${cucumber.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-spring</artifactId>
-            <version>${cucumber.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit-platform-engine</artifactId>
-            <version>${cucumber.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.beust</groupId>
-            <artifactId>klaxon</artifactId>
-            <version>${klaxon.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -283,11 +292,11 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
                 <configuration>
                     <compilerPlugins>
                         <plugin>spring</plugin>
                     </compilerPlugins>
+                    <jvmTarget>21</jvmTarget>
                 </configuration>
                 <executions>
                     <execution>
