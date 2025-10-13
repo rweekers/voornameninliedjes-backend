@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.authorization.AuthorizationDeniedException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.servlet.resource.NoResourceFoundException
 import java.time.OffsetDateTime
 
 @RestControllerAdvice
@@ -40,6 +41,16 @@ class GenericExceptionHandler {
         )
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response)
+    }
+
+    @ExceptionHandler(NoResourceFoundException::class)
+    fun handleNoResourceFound(ex: NoResourceFoundException, request: HttpServletRequest): ResponseEntity<Unit> {
+        val uri = request.requestURI
+        val ip =
+            if (request.getHeader("X-Forwarded-For") != null) request.getHeader("X-Forwarded-For") else request.remoteAddr
+        logger.warn("Static resource not found: uri={} ip={}", uri, ip)
+
+        return ResponseEntity.notFound().build()
     }
 
     companion object {
