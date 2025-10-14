@@ -110,12 +110,33 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc-openapi.version}</version>
         </dependency>
+
+        <!-- Security overrides -->
         <!-- override due to vulnerabilities in version 3.17.0 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
         </dependency>
+        <!-- because("included version has a security vulnerability, see https://advisory.checkmarx.net/advisory/vulnerability/CVE-2021-37714/") -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>${jsoup.version}</version>
+        </dependency>
+        <!-- override due to https://spring.io/security/cve-2025-41248 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>6.2.11</version>
+        </dependency>
+        <!-- override due to https://spring.io/security/cve-2025-41249 -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>6.5.4</version>
+        </dependency>
+
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
@@ -166,12 +187,6 @@
             <groupId>io.github.furstenheim</groupId>
             <artifactId>copy_down</artifactId>
             <version>${copy_down.version}</version>
-        </dependency>
-        <!-- because("included version has a security vulnerability, see https://advisory.checkmarx.net/advisory/vulnerability/CVE-2021-37714/") -->
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>${jsoup.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.ua-parser</groupId>
