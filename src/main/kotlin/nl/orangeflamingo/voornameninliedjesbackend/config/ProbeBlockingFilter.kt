@@ -26,7 +26,7 @@ class ProbeBlockingFilter : OncePerRequestFilter() {
     private val blacklistSeconds: Long = 60 * 60 // 1 hour
 
     @Throws(ServletException::class, IOException::class)
-    override fun doFilterInternal(
+    public override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain
