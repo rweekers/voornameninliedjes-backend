@@ -3,10 +3,22 @@
 
     <property name="LOG_PATH" value="${LOG_PATH:-./logs}"/>
     <property name="CONTAINER" value="${CONTAINER:-default}" />
+    <springProperty scope="context" name="PROBE_LOG_DIR" source="logging.file.fail2ban"/>
 
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%yellow(%d{ISO8601}) %highlight(%-5level) [%green(%t)] %cyan(%C{1}): %msg%n%throwable</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FAIL2BAN_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${PROBE_LOG_DIR}/probe-blocking.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${PROBE_LOG_DIR}/fail2ban.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>14</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -37,5 +49,9 @@
             <appender-ref ref="Console"/>
         </root>
     </springProfile>
+
+    <logger name="fail2ban" level="INFO" additivity="false">
+        <appender-ref ref="FAIL2BAN_FILE"/>
+    </logger>
 
 </configuration>

@@ -16,14 +16,12 @@ import java.util.regex.Pattern
 @Component
 class ProbeBlockingFilter : OncePerRequestFilter() {
 
-    // pattern to detect probing URLs
     private val probePattern: Pattern = Pattern.compile(
         "(?i).*(?:\\.php\$|\\.phtml\$|wp-login\\.php\$|admin\\.php\$|xmlrpc\\.php\$|\\.env\$)"
     )
 
-    // simple in-memory blacklist: IP -> expiry epoch seconds
     private val blacklist = ConcurrentHashMap<String, Long>()
-    private val blacklistSeconds: Long = 60 * 60 // 1 hour
+    private val blacklistSeconds: Long = 60 * 60
 
     @Throws(ServletException::class, IOException::class)
     public override fun doFilterInternal(
@@ -41,14 +39,11 @@ class ProbeBlockingFilter : OncePerRequestFilter() {
             return
         }
 
-        // check for probing patterns
         if (probePattern.matcher(uri).matches()) {
             log.warn("Probe detected: uri=$uri ip=$remoteIp")
 
-            // add IP to blacklist
             blacklist[remoteIp] = Instant.now().epochSecond + blacklistSeconds
 
-            // short-circuit response
             response.status = HttpServletResponse.SC_NOT_FOUND
             return
         }
@@ -66,6 +61,6 @@ class ProbeBlockingFilter : OncePerRequestFilter() {
     }
 
     companion object {
-        private val log: Logger = LoggerFactory.getLogger(RequestLoggingInterceptor::class.java)
+        private val log: Logger = LoggerFactory.getLogger("fail2ban")
     }
 }
