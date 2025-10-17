@@ -12,3 +12,7 @@ jobs:
     rate: 60000
   updateSong:
     cron: "-"
+
+logging:
+  file:
+    fail2ban: ./logs

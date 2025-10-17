@@ -1,0 +1,3 @@
+logging:
+  file:
+    fail2ban: ./logs
