@@ -2,21 +2,21 @@ package nl.orangeflamingo.voornameninliedjesbackend
 
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.testcontainers.containers.PostgreSQLContainer
-import org.testcontainers.junit.jupiter.Testcontainers
+import org.testcontainers.postgresql.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
 
-@Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureWebTestClient
 @ActiveProfiles("integration-test")
 abstract class AbstractIntegrationTest {
     companion object {
 
         @JvmStatic
-        val postgresContainer: PostgreSQLContainer<*> = PostgreSQLContainer(DockerImageName.parse("postgres:17.5-bookworm"))
+        val postgresContainer: PostgreSQLContainer = PostgreSQLContainer(DockerImageName.parse("postgres:17.5-bookworm"))
             .withExposedPorts(5432)
             .withUsername("vil_app")
             .withPassword("secret")

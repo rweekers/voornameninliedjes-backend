@@ -49,7 +49,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
         userRepository.save(
             User(
                 username = user,
-                password = encoder.encode(password),
+                password = encoder.encode(password) ?: throw IllegalStateException(),
                 roles = mutableSetOf(UserRole(1, adminRole))
             )
         )

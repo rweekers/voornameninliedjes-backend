@@ -17,10 +17,14 @@ class CacheConfig {
             .maximumSize(5000)
             .expireAfterWrite(Duration.ofHours(23))
 
-        return CaffeineCacheManager().apply {
-            isAllowNullValues = false
-            setCaffeine(caffeineCache)
-            cacheNames = listOf("songsByPrefix")
-        }
+        val manager = CaffeineCacheManager()
+
+        manager.setAllowNullValues(false)
+        manager.setCaffeine(caffeineCache)
+        manager.setCacheNames(listOf("songsByPrefix"))
+
+        return manager
     }
+
+
 }

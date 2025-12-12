@@ -48,7 +48,7 @@ class GenericExceptionHandlerTest {
             override fun getHeader(name: String?): String? = null
             override fun getRemoteAddr(): String = "127.0.0.1"
         }
-        val ex = NoResourceFoundException(HttpMethod.GET, "/static/file.txt")
+        val ex = NoResourceFoundException(HttpMethod.GET, "/static/", "file.txt")
 
         val response = handler.handleNoResourceFound(ex, request)
 

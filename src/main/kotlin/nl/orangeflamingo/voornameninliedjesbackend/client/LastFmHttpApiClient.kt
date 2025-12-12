@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 
 class LastFmHttpApiClient(
-    @Autowired val lastFmWebClient: WebClient,
+    @param:Autowired val lastFmWebClient: WebClient,
     private val lastFmKey: String
 ) : LastFmApiClient {
 

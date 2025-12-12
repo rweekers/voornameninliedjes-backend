@@ -17,7 +17,7 @@ class MyBasicAuthPoint: BasicAuthenticationEntryPoint() {
 
     @Override
     override fun afterPropertiesSet() {
-        realmName = "OrangeFlamingo"
+        setRealmName("OrangeFlamingo")
         super.afterPropertiesSet()
     }
 }

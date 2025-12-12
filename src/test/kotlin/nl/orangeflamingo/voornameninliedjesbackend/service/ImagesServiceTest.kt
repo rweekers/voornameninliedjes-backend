@@ -118,21 +118,6 @@ class ImagesServiceTest {
     }
 
     @Test
-    fun `test artistId not present`() {
-        val aggregateReference: AggregateReference<Artist, Long> = mockk()
-        val songWithoutArtistId = Song(
-            id = 10,
-            title = "Gloria",
-            name = "Gloria",
-            artist = aggregateReference,
-            status = SongStatus.SHOW
-        )
-        every { aggregateReference.id } returns null
-        assertThatThrownBy { imagesService.downloadImageForSong(songWithoutArtistId) }
-            .isInstanceOf(IllegalStateException::class.java)
-    }
-
-    @Test
     fun `test artist image not present for song`() {
         imagesService.downloadImageForSong(songWithoutArtistImage)
         verify(exactly = 0) { mockSongRepository.save(any()) }

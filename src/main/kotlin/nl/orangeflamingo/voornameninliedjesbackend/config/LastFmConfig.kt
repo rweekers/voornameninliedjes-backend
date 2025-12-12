@@ -13,7 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient
 @Configuration
 @Profile("!integration-test")
 class LastFmConfig(
-    @Value("\${voornameninliedjes.lastfm.api.key}") private val lastFmKey: String
+    @param:Value("\${voornameninliedjes.lastfm.api.key}") private val lastFmKey: String
 ) {
 
     @Bean

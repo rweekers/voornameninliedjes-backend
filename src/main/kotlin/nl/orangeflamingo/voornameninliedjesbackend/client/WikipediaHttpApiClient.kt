@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 
 class WikipediaHttpApiClient(
-    @Autowired val wikipediaWebClient: WebClient
+    @param:Autowired val wikipediaWebClient: WebClient
 ) : WikipediaApiClient {
     override fun getBackground(wikipediaPage: String): Mono<WikipediaApi> {
         return wikipediaWebClient.get().uri(
