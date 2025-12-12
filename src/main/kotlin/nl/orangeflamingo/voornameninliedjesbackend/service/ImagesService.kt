@@ -54,7 +54,7 @@ class ImagesService @Autowired constructor(
     }
 
     fun downloadImageForSong(song: Song, overwrite: Boolean = false) {
-        val artist = artistRepository.findById(song.artist.id ?: throw IllegalStateException())
+        val artist = artistRepository.findById(song.artist.id)
             .orElseThrow { ArtistNotFoundException("Artist with id ${song.artist.id} for song with title ${song.title} not found") }
 
         if (song.artistImage == null) {
@@ -81,7 +81,7 @@ class ImagesService @Autowired constructor(
     }
 
     fun blurImageForSong(song: Song, overwrite: Boolean = false) {
-        val artist = artistRepository.findById(song.artist.id ?: throw IllegalStateException())
+        val artist = artistRepository.findById(song.artist.id)
             .orElseThrow { ArtistNotFoundException("Artist with id ${song.artist.id} for song with title ${song.title} not found") }
 
         if (song.artistImage == null) {

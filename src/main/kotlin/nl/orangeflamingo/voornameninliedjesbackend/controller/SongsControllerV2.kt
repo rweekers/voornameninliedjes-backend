@@ -36,7 +36,7 @@ class SongsControllerV2(private val songServiceV2: SongServiceV2) : SongsApi {
                 SongStatus.SHOW,
                 Pageable.ofSize(limit).withPage(offset)
             )
-                .let { SongPageDto(it.songs.map { s -> convertToDto(s) }, it.totalItems, it.isLastPage) }
+                .let { SongPageDto(it.songs.map { s -> convertToDto(s) }.toMutableList(), it.totalItems, it.isLastPage) }
         )
     }
 

@@ -1,12 +1,11 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
-import java.net.URI
 import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.User
 import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
-import nl.orangeflamingo.voornameninliedjesbackend.dto.ArtistDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.TestArtistDto
 import nl.orangeflamingo.voornameninliedjesbackend.model.ArtistInputDto
 import nl.orangeflamingo.voornameninliedjesbackend.model.PhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
@@ -21,6 +20,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import org.springframework.web.reactive.function.BodyInserters
 import org.testcontainers.shaded.com.google.common.net.HttpHeaders
+import java.net.URI
 
 class ArtistControllerIT : AbstractIntegrationTest() {
 
@@ -49,7 +49,7 @@ class ArtistControllerIT : AbstractIntegrationTest() {
             listOf(
                 User(
                     username = adminUser,
-                    password = encoder.encode(adminPassword),
+                    password = encoder.encode(adminPassword) ?: throw IllegalStateException(),
                     roles = mutableSetOf(UserRole(1, adminRole))
                 )
             )
@@ -83,7 +83,7 @@ class ArtistControllerIT : AbstractIntegrationTest() {
             .header("Accept", "application/vnd.voornameninliedjes.artists.v1+json")
             .exchange()
             .expectStatus().isOk
-            .expectBodyList<ArtistDto>().hasSize(2)
+            .expectBodyList<TestArtistDto>().hasSize(2)
     }
 
     @Test
@@ -93,7 +93,7 @@ class ArtistControllerIT : AbstractIntegrationTest() {
             .header(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
             .exchange()
             .expectStatus().isOk
-            .expectBodyList<ArtistDto>().hasSize(2)
+            .expectBodyList<TestArtistDto>().hasSize(2)
     }
 
     @Test

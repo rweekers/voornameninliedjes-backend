@@ -1,82 +1,55 @@
 package nl.orangeflamingo.voornameninliedjesbackend.dto
 
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
 import java.time.Instant
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-data class AdminSongDto(
-
-    val id: String? = null,
-
-    val artist: String,
-
-    val title: String,
-
-    val name: String,
-
-    val artistImage: String? = null,
-
-    val localImage: String? = null,
-
-    val blurredImage: String? = null,
-
-    val artistLastFmUrl: String? = null,
-
-    val background: String? = null,
-
-    val wikipediaPage: String? = null,
-
-    val youtube: String? = null,
-
-    val spotify: String? = null,
-
-    val wikipediaNl: String? = null,
-
-    val wikipediaEn: String? = null,
-
-    val wikipediaSummaryEn: String? = null,
-
-    val lastFmUrl: String? = null,
-
-    val albumName: String? = null,
-
-    val albumLastFmUrl: String? = null,
-
-    val status: String,
-
-    val remarks: String? = null,
-
-    val hasDetails: Boolean = false,
-
-    val artistWikimediaPhotos: List<AdminWikimediaPhotoDto> = listOf(),
-
-    val songWikimediaPhotos: List<AdminWikimediaPhotoDto> = listOf(),
-
-    val sources: List<AdminSourceDto> = listOf(),
-
-    val tags: List<LastFmTagDto> = listOf(),
-
-    @JsonIgnoreProperties(allowGetters = true)
-    val logs: List<AdminLogEntry> = listOf()
+data class AdminSongDto @JsonCreator constructor(
+    @param:JsonProperty("id") val id: String? = null,
+    @param:JsonProperty("artist") val artist: String,
+    @param:JsonProperty("title") val title: String,
+    @param:JsonProperty("name") val name: String,
+    @param:JsonProperty("artistImage") val artistImage: String? = null,
+    @param:JsonProperty("localImage") val localImage: String? = null,
+    @param:JsonProperty("blurredImage") val blurredImage: String? = null,
+    @param:JsonProperty("artistLastFmUrl") val artistLastFmUrl: String? = null,
+    @param:JsonProperty("background") val background: String? = null,
+    @param:JsonProperty("wikipediaPage") val wikipediaPage: String? = null,
+    @param:JsonProperty("youtube") val youtube: String? = null,
+    @param:JsonProperty("spotify") val spotify: String? = null,
+    @param:JsonProperty("wikipediaNl") val wikipediaNl: String? = null,
+    @param:JsonProperty("wikipediaEn") val wikipediaEn: String? = null,
+    @param:JsonProperty("wikipediaSummaryEn") val wikipediaSummaryEn: String? = null,
+    @param:JsonProperty("lastFmUrl") val lastFmUrl: String? = null,
+    @param:JsonProperty("albumName") val albumName: String? = null,
+    @param:JsonProperty("albumLastFmUrl") val albumLastFmUrl: String? = null,
+    @param:JsonProperty("status") val status: String,
+    @param:JsonProperty("remarks") val remarks: String? = null,
+    @param:JsonProperty("hasDetails") val hasDetails: Boolean = false,
+    @param:JsonProperty("artistWikimediaPhotos") val artistWikimediaPhotos: List<AdminWikimediaPhotoDto> = listOf(),
+    @param:JsonProperty("songWikimediaPhotos") val songWikimediaPhotos: List<AdminWikimediaPhotoDto> = listOf(),
+    @param:JsonProperty("sources") val sources: List<AdminSourceDto> = listOf(),
+    @param:JsonProperty("tags") val tags: List<LastFmTagDto> = listOf(),
+    @param:JsonProperty("logs") val logs: List<AdminLogEntry> = listOf()
 )
 
-data class AdminWikimediaPhotoDto(
-    val url: String,
-    val attribution: String
+data class AdminWikimediaPhotoDto @JsonCreator constructor(
+    @param:JsonProperty("url")val url: String,
+    @param:JsonProperty("attribution")val attribution: String
 )
 
-data class AdminSourceDto(
-    val url: String,
-    val name: String
+data class AdminSourceDto @JsonCreator constructor(
+    @param:JsonProperty("url")val url: String,
+    @param:JsonProperty("name")val name: String
 )
 
-data class AdminLogEntry(
-
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "Europe/Amsterdam")
-    val date: Instant = Instant.now(),
-    val user: String
+data class AdminLogEntry @JsonCreator constructor(
+    @param:JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "Europe/Amsterdam")
+    @param:JsonProperty("date")val date: Instant = Instant.now(),
+    @param:JsonProperty("user")val user: String
 )

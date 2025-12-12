@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.8</version>
+        <version>4.0.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>nl.orangeflamingo</groupId>
@@ -31,16 +31,10 @@
         <jacoco.plugin.version>0.8.13</jacoco.plugin.version>
         <copy_down.version>1.1</copy_down.version>
         <openapitools.jackson-databind-nullable.version>0.2.7</openapitools.jackson-databind-nullable.version>
-        <jsoup.version>1.21.2</jsoup.version>
         <uap-java.version>1.6.1</uap-java.version>
         <cucumber.version>7.30.0</cucumber.version>
         <mockk.version>1.14.6</mockk.version>
         <mockwebserver.version>4.12.0</mockwebserver.version>
-
-        <!-- See https://github.com/cucumber/cucumber-jvm/blob/main/CHANGELOG.md#7240-&#45;-2025-07-07 and -->
-        <!-- See https://docs.junit.org/current/user-guide/#running-tests-build-spring-boot for overriding -->
-        <!-- From Cucumber 7.24.0 at least Use JUnit Platform 1.13.3 (JUnit Jupiter 5.13.3) is needed      -->
-        <junit-jupiter.version>5.14.0</junit-jupiter.version>
 
         <argLine>-XX:+EnableDynamicAgentLoading</argLine>
     </properties>
@@ -75,15 +69,11 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -108,20 +98,6 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc-openapi.version}</version>
-        </dependency>
-
-        <!-- Security overrides -->
-        <!-- because("included version has a security vulnerability, see https://advisory.checkmarx.net/advisory/vulnerability/CVE-2021-37714/") -->
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>${jsoup.version}</version>
-        </dependency>
-        <!-- override due to https://spring.io/security/cve-2025-41248 -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>6.2.11</version>
         </dependency>
 
         <dependency>
@@ -159,8 +135,8 @@
             <artifactId>jackson-module-kotlin</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-flyway</artifactId>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -191,13 +167,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.mockito</groupId>
-                    <artifactId>mockito-core</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-webtestclient</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>mockwebserver</artifactId>
@@ -222,18 +197,7 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
+            <artifactId>testcontainers-postgresql</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -299,6 +263,9 @@
                         <plugin>spring</plugin>
                     </compilerPlugins>
                     <jvmTarget>21</jvmTarget>
+                    <args>
+                        <arg>-Xannotation-default-target=param-property</arg>
+                    </args>
                 </configuration>
                 <executions>
                     <execution>

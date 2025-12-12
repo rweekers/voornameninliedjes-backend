@@ -54,12 +54,12 @@ class ArtistAdminControllerIT : AbstractIntegrationTest() {
             listOf(
                 User(
                     username = adminUser,
-                    password = encoder.encode(adminPassword),
+                    password = encoder.encode(adminPassword) ?: throw IllegalStateException(),
                     roles = mutableSetOf(UserRole(1, adminRole))
                 ),
                 User(
                     username = ownerUser,
-                    password = encoder.encode(ownerPassword),
+                    password = encoder.encode(ownerPassword) ?: throw IllegalStateException(),
                     roles = mutableSetOf(UserRole(2, ownerRole))
                 )
             )

@@ -4,7 +4,6 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.WikipediaApi
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -57,8 +56,6 @@ class WikipediaHttpApiClientTest {
                         assertThat(result.background)
                             .isEqualTo("Roxanne is een nummer van de Britse band The Police uit april 1978.")
                     }
-
-                    else -> fail("Unexpected type: ${result::class.simpleName}")
                 }
             }
             .verifyComplete()

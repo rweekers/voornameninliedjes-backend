@@ -3,7 +3,6 @@ package nl.orangeflamingo.voornameninliedjesbackend.config
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.postgresql.Driver
-import org.springframework.boot.autoconfigure.flyway.FlywayDataSource
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -23,8 +22,7 @@ class DatasourceConfig {
     ): DataSource =
         createDatasource(applicationDatasourceProperties)
 
-    @Bean
-    @FlywayDataSource
+    @Bean("flywayDataSource")
     fun migrationDataSource(
         migrationDatasourceProperties: MigrationDatasourceProperties
     ): DataSource =

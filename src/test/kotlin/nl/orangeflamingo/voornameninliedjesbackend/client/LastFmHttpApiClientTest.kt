@@ -46,7 +46,6 @@ class LastFmHttpApiClientTest {
                             .isEqualTo("Roxanne")
                     }
                     is LastFmError -> fail("Expected LastFmTrack but got LastFmError: ${result.message}")
-                    else -> fail("Unexpected type: ${result::class.simpleName}")
                 }
             }
             .verifyComplete()
@@ -76,7 +75,6 @@ class LastFmHttpApiClientTest {
                             .isEqualTo("Track not found")
                     }
                     is LastFmTrack -> fail("Expected LastFmError but got LastFmTrack: ${result.artist} - ${result.name}")
-                    else -> fail("Unexpected type: ${result::class.simpleName}")
                 }
             }
             .verifyComplete()

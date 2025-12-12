@@ -6,6 +6,8 @@ spring:
   flyway:
     # Explicit configuration to easily add development data in different profile
     locations: classpath:db/migration/{vendor}/prod
+  jackson:
+    use-jackson2-defaults: true
   threads:
     virtual:
       enabled: true

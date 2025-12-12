@@ -1,5 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 import nl.orangeflamingo.voornameninliedjesbackend.controller.UserControllerUtils.Companion.INVALID_CREDENTIALS
 import nl.orangeflamingo.voornameninliedjesbackend.domain.User
 import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
@@ -89,7 +91,7 @@ class UserController(private val userRepository: UserRepository, private val pas
         return User(
             userDto.id?.toLong(),
             userDto.username,
-            passwordEncoder.encode(userDto.password),
+            passwordEncoder.encode(userDto.password) ?: throw IllegalStateException(),
             userDto.roles.map { UserRole(null, it) }.toMutableSet()
         )
     }
@@ -99,15 +101,11 @@ class UserController(private val userRepository: UserRepository, private val pas
     }
 }
 
-data class UserDto(
-
-    val id: String? = null,
-
-    val username: String,
-
-    val password: String,
-
-    val roles: MutableSet<String> = mutableSetOf()
+data class UserDto @JsonCreator constructor(
+    @param:JsonProperty("id") val id: String? = null,
+    @param:JsonProperty("username") val username: String,
+    @param:JsonProperty("password")val password: String,
+    @param:JsonProperty("roles") val roles: MutableSet<String> = mutableSetOf()
 )
 
 class InvalidCredentialsException(message: String) : Exception(message)

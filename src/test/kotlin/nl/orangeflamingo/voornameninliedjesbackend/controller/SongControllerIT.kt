@@ -8,6 +8,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongSource
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.dto.TestSongDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.TestSongStatisticsDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.junit.jupiter.api.BeforeEach
@@ -192,7 +193,7 @@ class SongControllerIT : AbstractIntegrationTest() {
             .expectStatus().isOk
             .expectHeader()
             .contentType(MediaType.APPLICATION_JSON)
-            .expectBodyList<TestSongDto>().hasSize(1)
+            .expectBodyList<TestSongStatisticsDto>().hasSize(1)
     }
 }
 
