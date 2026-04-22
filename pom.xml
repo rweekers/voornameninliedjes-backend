@@ -7,12 +7,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>nl.orangeflamingo</groupId>
     <artifactId>voornameninliedjes-backend</artifactId>
-    <version>3.3.5</version>
+    <version>3.3.6</version>
     <name>Voornameninliedjes Backend</name>
     <description>Backend service voor voornamen in liedjes</description>
     <url>https://voornameninliedjes.nl</url>
@@ -26,8 +26,9 @@
         <sonar.organization>rweekers</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
-        <springdoc-openapi.version>2.8.13</springdoc-openapi.version>
+        <springdoc-openapi.version>3.0.3</springdoc-openapi.version>
         <openapi-generator-maven-plugin.version>7.16.0</openapi-generator-maven-plugin.version>
+        <maven-resources-plugin.version>3.5.0</maven-resources-plugin.version>
         <jacoco.plugin.version>0.8.13</jacoco.plugin.version>
         <copy_down.version>1.1</copy_down.version>
         <openapitools.jackson-databind-nullable.version>0.2.7</openapitools.jackson-databind-nullable.version>
@@ -418,7 +419,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
+                <version>${maven-resources-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>copy-openapi-to-static</id>

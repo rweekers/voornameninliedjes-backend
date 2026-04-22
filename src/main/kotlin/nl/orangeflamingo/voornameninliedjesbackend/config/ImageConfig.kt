@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.support.WebClientAdapter
+import org.springframework.web.client.RestClient
+import org.springframework.web.client.support.RestClientAdapter
 import org.springframework.web.service.invoker.HttpServiceProxyFactory
 
 @Configuration
@@ -17,10 +17,12 @@ class ImageConfig {
     private val imagesServicePath: String = "https://images.voornameninliedjes.nl"
 
     @Bean
-    fun imageClient(builder: WebClient.Builder): ImageClient {
-        val wca = WebClientAdapter.create(builder.baseUrl(imagesServicePath).build())
+    open fun imageClient(): ImageClient {
+        val restClient = RestClient.builder()
+            .baseUrl(imagesServicePath)
+            .build()
         return HttpServiceProxyFactory.builder()
-            .exchangeAdapter(wca)
+            .exchangeAdapter(RestClientAdapter.create(restClient))
             .build()
             .createClient(ImageClient::class.java)
     }
