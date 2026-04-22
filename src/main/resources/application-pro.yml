@@ -2,3 +2,13 @@ voornameninliedjes:
   images:
     service:
       path: http://localhost:8000/images/
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+logging:
+  file:
+    fail2ban: /workspace/logs

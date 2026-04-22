@@ -37,7 +37,7 @@
         </root>
     </springProfile>
 
-    <springProfile name="pro, log">
+    <springProfile name="pro,log">
         <root level="INFO">
             <appender-ref ref="Console"/>
         </root>
