@@ -1,7 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.config
 
-import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClient
-import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaHttpApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClientOrig
+import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaHttpApiClientOrig
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -22,7 +22,7 @@ class WikipediaConfig {
     }
 
     @Bean
-    fun wikipediaApiClient(wikipediaWebClient: WebClient): WikipediaApiClient {
-        return WikipediaHttpApiClient(wikipediaWebClient)
+    fun wikipediaApiClient(wikipediaWebClient: WebClient): WikipediaApiClientOrig {
+        return WikipediaHttpApiClientOrig(wikipediaWebClient)
     }
 }

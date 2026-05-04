@@ -1,6 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
-import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClientOrig
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
 @Service
 class WikipediaEnrichmentService @Autowired constructor(
     private val songRepository: SongRepository,
-    private val wikipediaApiClient: WikipediaApiClient
+    private val wikipediaApiClient: WikipediaApiClientOrig
 ) {
 
     private val log = LoggerFactory.getLogger(WikipediaEnrichmentService::class.java)

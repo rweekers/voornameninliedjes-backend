@@ -13,7 +13,7 @@ import reactor.test.StepVerifier
 class WikipediaHttpApiClientTest {
 
     private val mockWebServer = MockWebServer()
-    private lateinit var client: WikipediaHttpApiClient
+    private lateinit var client: WikipediaHttpApiClientOrig
 
     @BeforeEach
     fun init() {
@@ -21,7 +21,7 @@ class WikipediaHttpApiClientTest {
         val webClient = WebClient.builder()
             .baseUrl(mockWebServer.url("/").toString())
             .build()
-        client = WikipediaHttpApiClient(webClient)
+        client = WikipediaHttpApiClientOrig(webClient)
     }
 
     @Test
