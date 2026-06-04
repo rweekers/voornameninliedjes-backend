@@ -25,7 +25,7 @@ docker run -d --name $DB_CONTAINER_NAME \
   -e POSTGRES_PASSWORD=$DB_PASSWORD \
   -e POSTGRES_DB=$DB_NAME \
   -p 5432:5432 \
-  postgres:17.5-bookworm
+  postgres:18.4-bookworm
 
 # Wacht even totdat de database volledig gestart is
 echo "Waiting for PostgreSQL to start..."
