@@ -16,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = {IntegrationTestConfiguration.class})
@@ -32,8 +32,8 @@ public class CucumberHooksSteps {
     @Autowired
     private SongRepository songRepository;
 
-    static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>(
-            "postgres:17.5-bookworm"
+    static PostgreSQLContainer postgresContainer = new PostgreSQLContainer(
+            "postgres:18.4-bookworm"
     ).withExposedPorts(5432)
             .withUsername("vil_app")
             .withPassword("secret")
