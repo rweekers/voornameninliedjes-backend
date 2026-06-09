@@ -1,16 +1,19 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.LastFmApiClient
-import nl.orangeflamingo.voornameninliedjesbackend.domain.*
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmError
+import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTrack
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongLastFmTag
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.utils.clean
-import nl.orangeflamingo.voornameninliedjesbackend.utils.html2md
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.net.URI
-import java.util.*
+import java.util.UUID
 
 
 @Service
@@ -52,8 +55,8 @@ class LastFmEnrichmentService @Autowired constructor(
                     is LastFmTrack -> {
                         song.mbid = it.mbid
                         song.lastFmUrl = it.url
-                        song.wikiSummaryEn = it.wiki?.summary.html2md()
-                        song.wikiContentEn = it.wiki?.content.html2md()
+                        song.wikiSummaryEn = it.wiki?.summary//.html2md()
+                        song.wikiContentEn = it.wiki?.content//.html2md()
                         song.albumName = it.album?.name
                         song.albumMbid = it.album?.mbid
                         song.albumLastFmUrl = it.album?.url

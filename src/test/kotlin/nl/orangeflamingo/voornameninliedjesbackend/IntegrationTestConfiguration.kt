@@ -5,7 +5,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.client.FakeLastFmApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.client.FakeWikipediaApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.client.ImageClient
 import nl.orangeflamingo.voornameninliedjesbackend.client.LastFmApiClient
-import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClientOrig
+import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -17,7 +17,7 @@ class IntegrationTestConfiguration {
 
     @Bean
     @Primary
-    fun wikipediaApiClient(): WikipediaApiClientOrig {
+    fun wikipediaApiClient(): WikipediaApiClient {
         return FakeWikipediaApiClient()
     }
 
