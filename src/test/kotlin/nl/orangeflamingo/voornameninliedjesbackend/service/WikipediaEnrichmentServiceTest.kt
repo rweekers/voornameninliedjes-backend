@@ -3,7 +3,7 @@ package nl.orangeflamingo.voornameninliedjesbackend.service
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClientOrig
+import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.domain.WikipediaApi
@@ -11,12 +11,12 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepos
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.data.jdbc.core.mapping.AggregateReference
-import reactor.core.publisher.Mono
+import java.util.Optional
 
 class WikipediaEnrichmentServiceTest {
 
     private val mockSongRepository = mockk<SongRepository>()
-    private val mockWikipediaApiClient = mockk<WikipediaApiClientOrig>()
+    private val mockWikipediaApiClient = mockk<WikipediaApiClient>()
     private val wikipediaEnrichmentService = WikipediaEnrichmentService(
         mockSongRepository,
         mockWikipediaApiClient
@@ -40,7 +40,7 @@ class WikipediaEnrichmentServiceTest {
         } returns
                 listOf(song)
         every { mockWikipediaApiClient.getBackground("Wiki page Roxanne") } returns
-                Mono.just(
+                Optional.of(
                     WikipediaApi(
                         background = "Background on Roxanne"
                     )

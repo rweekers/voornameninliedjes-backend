@@ -85,3 +85,9 @@ info:
 logging:
   file:
     fail2ban: /var/log/voornameninliedjes
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

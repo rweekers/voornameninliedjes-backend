@@ -144,11 +144,6 @@
             <artifactId>postgresql</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.furstenheim</groupId>
-            <artifactId>copy_down</artifactId>
-            <version>${copy_down.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.github.ua-parser</groupId>
             <artifactId>uap-java</artifactId>
             <version>${uap-java.version}</version>

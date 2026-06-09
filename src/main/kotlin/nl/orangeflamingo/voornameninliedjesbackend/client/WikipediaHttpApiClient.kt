@@ -2,6 +2,7 @@ package nl.orangeflamingo.voornameninliedjesbackend.client
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.WikipediaApi
 import nl.orangeflamingo.voornameninliedjesbackend.dto.WikipediaApiResponse
+import org.springframework.http.HttpHeaders
 import org.springframework.web.client.RestClient
 import java.util.*
 
@@ -11,8 +12,7 @@ class WikipediaHttpApiClient(
 
     override fun getBackground(wikipediaPage: String): Optional<WikipediaApi> {
         return try {
-            // 1. Fetch the RAW API response
-            val rawResponse = wikipediaRestClient.get()
+                val rawResponse = wikipediaRestClient.get()
                 .uri { builder ->
                     builder.path("/w/api.php")
                         .queryParam("action", "query")
@@ -25,16 +25,17 @@ class WikipediaHttpApiClient(
                         .queryParam("format", "json")
                         .build()
                 }
+                .header(
+                    HttpHeaders.USER_AGENT,
+                    "VoornamenInLiedjesNederland/1.0 (https://www.voornameninliedjes.nl; info@voornameninliedjes.nl)"
+                )
                 .retrieve()
                 .body(WikipediaApiResponse::class.java)
 
-            // 2. Extract the text from the nested structure
             val extractText = rawResponse?.query?.pages?.firstOrNull()?.extract
 
-            // 3. Create the DOMAIN object ONLY if text exists
             extractText?.takeIf { it.isNotBlank() }
                 ?.let { text ->
-                    // ✅ Correct: Creating WikipediaApi (Domain) with the text
                     Optional.of(WikipediaApi(background = text.trim()))
                 } ?: Optional.empty() // Return empty if no text found
 

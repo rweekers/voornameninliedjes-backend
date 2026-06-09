@@ -1,11 +1,11 @@
 package nl.orangeflamingo.voornameninliedjesbackend.client
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.WikipediaApi
-import reactor.core.publisher.Mono
+import java.util.Optional
 
-class FakeWikipediaApiClient : WikipediaApiClientOrig {
-    override fun getBackground(wikipediaPage: String): Mono<WikipediaApi> {
-        return Mono.just(
+class FakeWikipediaApiClient : WikipediaApiClient {
+    override fun getBackground(wikipediaPage: String): Optional<WikipediaApi> {
+        return Optional.of(
             WikipediaApi(background = "Mooie background uit fake wikipedia client")
         )
     }
