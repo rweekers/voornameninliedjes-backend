@@ -24,7 +24,7 @@ class WikipediaController(
 
     @GetMapping("/wikipedia/{page}")
     fun getLastFmInfoByArtistAndTitle(@PathVariable page: String): Optional<WikipediaApi> {
-        log.info("Getting wikipedia for page $page")
+        log.info("Getting wikipedia for page ${page.replace("[\n\r]".toRegex(), "_")}")
         return wikipediaApi.getBackground(page)
     }
 }
