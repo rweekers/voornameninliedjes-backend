@@ -11,17 +11,6 @@
         </encoder>
     </appender>
 
-    <appender name="FAIL2BAN_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${PROBE_LOG_DIR}/probe-blocking.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${PROBE_LOG_DIR}/fail2ban.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>14</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %msg%n</pattern>
-        </encoder>
-    </appender>
-
     <!-- Local development -->
     <springProfile name="dev">
         <appender name="FileAppender" class="ch.qos.logback.core.FileAppender">
@@ -38,6 +27,16 @@
     </springProfile>
 
     <springProfile name="pro,log">
+        <appender name="FAIL2BAN_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${PROBE_LOG_DIR}/probe-blocking.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${PROBE_LOG_DIR}/fail2ban.%d{yyyy-MM-dd}.log</fileNamePattern>
+                <maxHistory>14</maxHistory>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %msg%n</pattern>
+            </encoder>
+        </appender>
         <root level="INFO">
             <appender-ref ref="Console"/>
         </root>
