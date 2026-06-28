@@ -7,6 +7,8 @@ voornameninliedjes:
       schema: vil
       username: vil_app
       password: secret
+      max-pool-size: 10
+      min-idle: 5
       pool-name: voornameninliedjes-app-hikari-pool
     migration:
       jdbc-url: jdbc:postgresql://localhost:5432/voornameninliedjes
