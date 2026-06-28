@@ -18,24 +18,31 @@ class DatasourceConfig {
     @Bean
     @Primary
     fun dataSource(
-        applicationDatasourceProperties: ApplicationDatasourceProperties
-    ): DataSource =
-        createDatasource(applicationDatasourceProperties)
-
-    @Bean("flywayDataSource")
-    fun migrationDataSource(
-        migrationDatasourceProperties: MigrationDatasourceProperties
-    ): DataSource =
-        createDatasource(migrationDatasourceProperties)
-
-    private fun createDatasource(properties: DatasourceProperties): DataSource {
+        properties: ApplicationDatasourceProperties
+    ): DataSource {
         val config = HikariConfig()
         config.username = properties.username
         config.password = properties.password
         config.jdbcUrl = properties.jdbcUrl
-        // config.jdbcUrl = "jdbc:postgresql://${properties.host}:${properties.port}/${properties.database}"
         config.schema = properties.schema
-        config.maximumPoolSize = 10
+        config.maximumPoolSize = properties.maxPoolSize
+        config.minimumIdle = properties.minIdle
+        config.poolName = properties.poolName
+        config.driverClassName = Driver::class.java.name
+        config.dataSourceProperties["prepareThreshold"] = 0
+        return HikariDataSource(config)
+    }
+
+    @Bean("flywayDataSource")
+    fun migrationDataSource(
+        properties: MigrationDatasourceProperties
+    ): DataSource {
+        val config = HikariConfig()
+        config.username = properties.username
+        config.password = properties.password
+        config.jdbcUrl = properties.jdbcUrl
+        config.schema = properties.schema
+        config.maximumPoolSize = 5
         config.poolName = properties.poolName
         config.driverClassName = Driver::class.java.name
         config.dataSourceProperties["prepareThreshold"] = 0
@@ -43,21 +50,22 @@ class DatasourceConfig {
     }
 }
 
-@Configuration
-@ConfigurationProperties(prefix = "voornameninliedjes.datasource.application")
-class ApplicationDatasourceProperties : DatasourceProperties()
+@ConfigurationProperties("voornameninliedjes.datasource.application")
+data class ApplicationDatasourceProperties(
+    val username: String,
+    val password: String,
+    val jdbcUrl: String,
+    val schema: String,
+    val poolName: String,
+    val maxPoolSize: Int,
+    val minIdle: Int
+)
 
-@Configuration
-@ConfigurationProperties(prefix = "voornameninliedjes.datasource.migration")
-class MigrationDatasourceProperties : DatasourceProperties()
-
-open class DatasourceProperties {
-    open lateinit var username: String
-    lateinit var password: String
-    lateinit var jdbcUrl: String
-    // lateinit var host: String
-    // lateinit var port: String
-    // lateinit var database: String
-    lateinit var schema: String
-    lateinit var poolName: String
-}
+@ConfigurationProperties("voornameninliedjes.datasource.migration")
+data class MigrationDatasourceProperties(
+    val username: String,
+    val password: String,
+    val jdbcUrl: String,
+    val schema: String,
+    val poolName: String
+)

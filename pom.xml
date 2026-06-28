@@ -18,6 +18,9 @@
     <url>https://voornameninliedjes.nl</url>
 
     <properties>
+        <bp.native.image>false</bp.native.image>
+        <project.suffix>jvm</project.suffix>
+
         <sonar.coverage.exclusions>**/config/**</sonar.coverage.exclusions>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -241,7 +244,7 @@
                         <name>rweekers/${project.artifactId}:${project.version}-${project.suffix}</name>
                         <env>
                             <BP_NATIVE_IMAGE>${bp.native.image}</BP_NATIVE_IMAGE>
-                            <BP_JVM_VERSION>21</BP_JVM_VERSION>
+                            <BP_JVM_VERSION>25</BP_JVM_VERSION>
                         </env>
                         <createdDate>now</createdDate>
                     </image>
@@ -477,14 +480,21 @@
             </build>
         </profile>
         <profile>
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <bp.native.image>false</bp.native.image>
-                <project.suffix>jvm</project.suffix>
-            </properties>
+            <id>podman</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <docker>
+                                <host>unix:///run/user/1000/podman/podman.sock</host>
+                                <bindHostToBuilder>true</bindHostToBuilder>
+                            </docker>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 

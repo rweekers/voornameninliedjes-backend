@@ -43,11 +43,11 @@ class SongService @Autowired constructor(
     }
 
     fun findByName(name: String): List<AggregateSong> {
-        return mapSongs(songRepository.findAllByNameIgnoreCaseOrderByNameAscTitleAsc(name))
+        return mapSongs(songRepository.findAllByNameIgnoreCaseOrderByNameAsc(name))
     }
 
     fun findByNameStartsWithAndStatusIn(firstCharacter: String, statusList: List<SongStatus>): List<AggregateSong> {
-        return mapSongs(songRepository.findAllByNameStartingWithIgnoreCaseAndStatusInOrderByNameAscTitleAsc(firstCharacter, statusList))
+        return mapSongs(songRepository.findAllByNameStartingWithIgnoreCaseAndStatusInOrderByNameAsc(firstCharacter, statusList))
     }
 
     fun findAllByStatusOrderedByName(status: SongStatus): List<AggregateSong> {

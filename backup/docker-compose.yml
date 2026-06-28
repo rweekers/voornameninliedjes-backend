@@ -19,6 +19,8 @@ services:
       logging.file.path: logs
       server.port: 8000
       voornameninliedjes.datasource.application.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
+      voornameninliedjes.datasource.application.max-pool-size: 10
+      voornameninliedjes.datasource.application.min-idle: 5
       voornameninliedjes.datasource.migration.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
       voornameninliedjes.images.service.path: http://localhost:8000/images/
     ports:
@@ -37,6 +39,8 @@ services:
       logging.file.path: logs
       server.port: 9000
       voornameninliedjes.datasource.application.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
+      voornameninliedjes.datasource.application.max-pool-size: 10
+      voornameninliedjes.datasource.application.min-idle: 5
       voornameninliedjes.datasource.migration.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
       voornameninliedjes.images.service.path: http://localhost:8000/images/
     ports:

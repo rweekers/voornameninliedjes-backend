@@ -4,6 +4,7 @@ import java.util.Optional
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatusStatistics
+import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
@@ -27,15 +28,16 @@ interface SongRepository : CrudRepository<Song, Long> {
     @Query("select * from songs where status = :status and last_fm_url is null order by name, title")
     fun findAllByStatusAndLastFmUrlIsNullOrderedByNameAndTitle(@Param("status") status: String): List<Song>
 
-    fun findAllByNameStartingWithIgnoreCaseAndStatusInOrderByNameAscTitleAsc(firstCharacter: String, status: Collection<SongStatus>): List<Song>
+    fun findAllByNameStartingWithIgnoreCaseAndStatusInOrderByNameAsc(firstCharacter: String, status: Collection<SongStatus>): List<Song>
 
-    fun findAllByNameIgnoreCaseOrderByNameAscTitleAsc(name: String): List<Song>
+    fun findAllByNameIgnoreCaseOrderByNameAsc(name: String): List<Song>
 
     fun findFirstByTitle(title: String): Optional<Song>
 
     @Query("select * from songs order by name, title")
     fun findAllOrderByNameAscTitleAsc(): List<Song>
 
+    @Modifying
     @Query("update songs set status = :status")
     fun updateAllSongStatus(@Param("status") status: SongStatus)
 
