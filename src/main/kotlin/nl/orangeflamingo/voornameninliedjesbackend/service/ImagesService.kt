@@ -1,8 +1,5 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
-import java.time.Duration
 import nl.orangeflamingo.voornameninliedjesbackend.client.ImageClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
@@ -16,6 +13,9 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.scheduler.Schedulers
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
+import java.time.Duration
 
 @Service
 class ImagesService @Autowired constructor(
@@ -68,16 +68,14 @@ class ImagesService @Autowired constructor(
             "${artist.name}_${song.title}$extension".removeDiacritics().replace(" ", "-").clean().lowercase()
 
         val encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8)
-        imageClient.downloadImage(song.artistImage, encodedFileName, overwrite)
-            .publishOn(Schedulers.boundedElastic())
-            .onErrorComplete {
-                log.error("Could not download image ${song.artistImage} because of ${it.message}")
-                true
-            }
-            .subscribe { _ ->
+        try {
+            imageClient.downloadImage(song.artistImage, encodedFileName, overwrite).ifPresent {
                 songRepository.save(song.copy(localImage = fileName))
                 log.info("[image download] Downloaded image for ${artist.name} - ${song.title} from ${song.artistImage} as $fileName")
             }
+        } catch (e: Exception) {
+            log.error("Could not download image ${song.artistImage} because of ${e.message}")
+        }
     }
 
     fun blurImageForSong(song: Song, overwrite: Boolean = false) {
@@ -90,17 +88,14 @@ class ImagesService @Autowired constructor(
         }
         log.info("[image blur] Downloading image ${song.artistImage} for ${artist.name} - ${song.title}")
         if (overwrite || song.blurredImage == null) {
-            imageClient.createImageBlur(song.artistImage, maxDimensionBlur, maxDimensionBlur)
-                .publishOn(Schedulers.boundedElastic())
-                .onErrorComplete {
-                    log.error("[image blur] Could not create blur for ${artist.name} - ${song.title} because of ${it.message}")
-                    true
-                }
-                .map { it.hash }
-                .subscribe { encodedString ->
-                    songRepository.save(song.copy(blurredImage = encodedString))
+            try {
+                imageClient.createImageBlur(song.artistImage, maxDimensionBlur, maxDimensionBlur).ifPresent {
+                    songRepository.save(song.copy(blurredImage = it.hash))
                     log.info("[image blur] Written blur string for ${artist.name} - ${song.title}")
                 }
+            } catch (e: Exception) {
+                log.error("[image blur] Could not create blur for ${artist.name} - ${song.title} because of ${e.message}")
+            }
         } else {
             log.info("[image blur] Blur already known for ${artist.name} - ${song.title}")
         }

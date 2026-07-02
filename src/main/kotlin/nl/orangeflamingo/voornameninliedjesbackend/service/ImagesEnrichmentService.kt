@@ -1,6 +1,5 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
-import java.time.Duration
 import nl.orangeflamingo.voornameninliedjesbackend.client.ImageClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.scheduler.Schedulers
+import java.time.Duration
 
 @Service
 class ImagesEnrichmentService @Autowired constructor(
@@ -61,16 +61,8 @@ class ImagesEnrichmentService @Autowired constructor(
     }
 
     private fun updateArtistImage(url: String, attribution: String, song: Song) {
-        imageClient.getDimensions(url)
-            .publishOn(Schedulers.boundedElastic())
-            .onErrorComplete {
-                val errorMessage =
-                    "Could not find file on url $url for ${song.title} with error type ${it.javaClass.simpleName} and message ${it.message}"
-                songRepository.save(song.copy(status = SongStatus.INCOMPLETE, remarks = errorMessage))
-                log.error(errorMessage)
-                true
-            }
-            .subscribe {
+        try {
+            imageClient.getDimensions(url).ifPresent {
                 log.info("Gotten width ${it.width} and height ${it.height} for $url")
                 songRepository.save(
                     song.copy(
@@ -82,6 +74,12 @@ class ImagesEnrichmentService @Autowired constructor(
                 )
                 log.info("Updated ${song.title} with attribution $attribution and url $url and width ${it.height} and height ${it.height}")
             }
+        } catch (e: Exception) {
+            val errorMessage =
+                "Could not find file on url $url for ${song.title} with error type ${e.javaClass.simpleName} and message ${e.message}"
+            songRepository.save(song.copy(status = SongStatus.INCOMPLETE, remarks = errorMessage))
+            log.error(errorMessage)
+        }
     }
 
 }

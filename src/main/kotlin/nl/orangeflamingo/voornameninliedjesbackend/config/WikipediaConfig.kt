@@ -23,7 +23,7 @@ class WikipediaConfig {
 
 
     @Bean
-    fun wikipediaApiClient(wikipediaWebClient: RestClient): WikipediaApiClient {
-        return WikipediaHttpApiClient(wikipediaWebClient)
+    fun wikipediaApiClient(wikipediaRestClient: RestClient): WikipediaApiClient {
+        return WikipediaHttpApiClient(wikipediaRestClient)
     }
 }

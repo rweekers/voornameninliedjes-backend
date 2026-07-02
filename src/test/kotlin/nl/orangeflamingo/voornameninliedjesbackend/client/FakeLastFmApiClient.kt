@@ -6,11 +6,11 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmResponse
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTag
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTrack
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmWiki
-import reactor.core.publisher.Mono
+import java.util.Optional
 
 class FakeLastFmApiClient : LastFmApiClient {
-    override fun getTrack(artist: String, title: String): Mono<LastFmResponse> {
-        return Mono.just(
+    override fun getTrack(artist: String, title: String): Optional<LastFmResponse> {
+        return Optional.of(
             LastFmTrack(
                 name = "fake track name",
                 mbid = "fake track mbid",

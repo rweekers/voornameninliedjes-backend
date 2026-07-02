@@ -15,7 +15,6 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.data.jdbc.core.mapping.AggregateReference
-import reactor.core.publisher.Mono
 import java.io.IOException
 import java.util.Optional
 
@@ -52,9 +51,9 @@ class ImagesServiceTest {
     fun init() {
         every { mockSongRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code) } returns listOf(song)
         every { mockArtistRepository.findById(100) } returns Optional.of(artist)
-        every { mockImageClient.downloadImage(any(), any(), any()) } returns Mono.just("image")
+        every { mockImageClient.downloadImage(any(), any(), any()) } returns Optional.of("image")
         every { mockImageClient.createImageBlur(any(), any(), any()) } returns
-                Mono.just(
+                Optional.of(
                     ImageHashDto(
                         "imageName",
                         "hashString"
@@ -126,7 +125,7 @@ class ImagesServiceTest {
     @Test
     @Suppress("ReactiveStreamsUnusedPublisher")
     fun `test image api client throws exception `() {
-        every { mockImageClient.downloadImage(any(), any(), any()) } returns Mono.error(IOException("error downloading"))
+        every { mockImageClient.downloadImage(any(), any(), any()) } throws IOException("error downloading")
         imagesService.downloadImageForSong(song)
         verify(exactly = 0) { mockSongRepository.save(any()) }
     }

@@ -50,7 +50,7 @@ class LastFmEnrichmentService @Autowired constructor(
                     song.title.clean()
                 )
 
-            lastFmTrack.subscribe({
+            lastFmTrack.ifPresent {
                 when (it) {
                     is LastFmTrack -> {
                         song.mbid = it.mbid
@@ -73,12 +73,10 @@ class LastFmEnrichmentService @Autowired constructor(
                         songRepository.save(song)
                         artistRepository.save(artist)
                     }
+
                     is LastFmError -> log.warn("Error calling last fm api for ${artist.name} - ${song.title}. Gotten code ${it.code} and message ${it.message}")
                 }
-            },
-                {
-                    log.warn("Gotten eror with message ${it.message}")
-                })
+            }
         } catch (e: Exception) {
             log.error("Could not update last fm information for ${artist.name} - ${song.title} due to error", e)
         }

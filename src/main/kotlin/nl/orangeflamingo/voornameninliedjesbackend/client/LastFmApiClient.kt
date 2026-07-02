@@ -1,9 +1,9 @@
 package nl.orangeflamingo.voornameninliedjesbackend.client
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmResponse
-import reactor.core.publisher.Mono
+import java.util.Optional
 
 fun interface LastFmApiClient {
 
-    fun getTrack(artist: String, title: String): Mono<LastFmResponse>
+    fun getTrack(artist: String, title: String): Optional<LastFmResponse>
 }
