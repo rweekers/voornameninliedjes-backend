@@ -5,16 +5,16 @@ import nl.orangeflamingo.voornameninliedjesbackend.dto.ImageHashDto
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.service.annotation.GetExchange
 import org.springframework.web.service.annotation.PostExchange
-import reactor.core.publisher.Mono
+import java.util.Optional
 
 interface ImageClient {
 
     @GetExchange
-    fun createImageBlur(@RequestParam path: String, @RequestParam width: Int, @RequestParam height: Int): Mono<ImageHashDto>
+    fun createImageBlur(@RequestParam path: String, @RequestParam width: Int, @RequestParam height: Int): Optional<ImageHashDto>
 
     @GetExchange("/dimensions")
-    fun getDimensions(@RequestParam url: String): Mono<ImageDimensionsDto>
+    fun getDimensions(@RequestParam url: String): Optional<ImageDimensionsDto>
 
     @PostExchange
-    fun downloadImage(@RequestParam url: String, @RequestParam filename: String, @RequestParam overwrite: Boolean): Mono<String>
+    fun downloadImage(@RequestParam url: String, @RequestParam filename: String, @RequestParam overwrite: Boolean): Optional<String>
 }

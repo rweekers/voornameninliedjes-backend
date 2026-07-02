@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Mono
+import java.util.Optional
 
 
 @RestController
@@ -22,7 +22,7 @@ class LastFmController(
     private val log = LoggerFactory.getLogger(LastFmController::class.java)
 
     @GetMapping("/lastfm/{artist}/{title}")
-    fun getLastFmInfoByArtistAndTitle(@PathVariable artist: String, @PathVariable title: String): Mono<LastFmResponse> {
+    fun getLastFmInfoByArtistAndTitle(@PathVariable artist: String, @PathVariable title: String): Optional<LastFmResponse> {
         log.info(
             "Getting last fm information for ${
                 artist.replace(

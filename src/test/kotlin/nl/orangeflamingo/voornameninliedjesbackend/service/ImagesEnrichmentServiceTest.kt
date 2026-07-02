@@ -14,7 +14,6 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepos
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.data.jdbc.core.mapping.AggregateReference
-import reactor.core.publisher.Mono
 import java.net.URI
 import java.util.Optional
 
@@ -48,7 +47,7 @@ class ImagesEnrichmentServiceTest {
         every { mockSongRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code) } returns listOf(song)
         every { mockSongRepository.findAllByStatusAndArtistImageIsNullOrArtistImageAttributionIsNull(SongStatus.SHOW.code) } returns listOf(song)
         every { mockArtistRepository.findById(100) } returns Optional.of(artist)
-        every { mockImageClient.getDimensions(any()) } returns Mono.just(ImageDimensionsDto("imageName", 234, 234))
+        every { mockImageClient.getDimensions(any()) } returns Optional.of(ImageDimensionsDto("imageName", 234, 234))
     }
 
     @Test
@@ -85,7 +84,7 @@ class ImagesEnrichmentServiceTest {
     @Test
     @Suppress("ReactiveStreamsUnusedPublisher")
     fun `test image not found `() {
-        every { mockImageClient.getDimensions(any()) } returns Mono.error(RuntimeException("Not found"))
+        every { mockImageClient.getDimensions(any()) } throws RuntimeException("Not found")
         imagesEnrichmentService.enrichImagesForSongs()
         verify(timeout = 240) {
             mockSongRepository.save(

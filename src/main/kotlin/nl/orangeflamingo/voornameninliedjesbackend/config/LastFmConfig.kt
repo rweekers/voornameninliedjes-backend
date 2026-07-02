@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.web.client.RestClient
 import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
@@ -25,7 +26,7 @@ class LastFmConfig(
     }
 
     @Bean
-    fun lastFmApiClient(lastFmWebClient: WebClient): LastFmApiClient {
-        return LastFmHttpApiClient(lastFmWebClient, lastFmKey)
+    fun lastFmApiClient(lastFmRestClient: RestClient): LastFmApiClient {
+        return LastFmHttpApiClient(lastFmRestClient, lastFmKey)
     }
 }

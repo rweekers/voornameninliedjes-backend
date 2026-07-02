@@ -9,8 +9,7 @@ import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.web.reactive.function.client.WebClient
-import reactor.test.StepVerifier
+import org.springframework.web.client.RestClient
 
 class LastFmHttpApiClientTest {
 
@@ -20,10 +19,10 @@ class LastFmHttpApiClientTest {
     @BeforeEach
     fun setUp() {
         mockWebServer.start()
-        val webClient = WebClient.builder()
+        val restClient = RestClient.builder()
             .baseUrl(mockWebServer.url("/").toString())
             .build()
-        client = LastFmHttpApiClient(webClient, "key")
+        client = LastFmHttpApiClient(restClient, "key")
     }
 
     @Test
@@ -36,19 +35,18 @@ class LastFmHttpApiClientTest {
             .setResponseCode(200)
         )
 
-        StepVerifier.create(client.getTrack("The Police", "Roxanne"))
-            .assertNext { result ->
-                when (result) {
-                    is LastFmTrack -> {
-                        assertThat(result.url)
-                            .isEqualTo("https://www.last.fm/music/The+Police/_/Roxanne")
-                        assertThat(result.name)
-                            .isEqualTo("Roxanne")
-                    }
-                    is LastFmError -> fail("Expected LastFmTrack but got LastFmError: ${result.message}")
-                }
+        val result = client.getTrack("The Police", "Roxanne")
+            .orElseThrow { AssertionError("Expected a response") }
+        when (result) {
+            is LastFmTrack -> {
+                assertThat(result.url)
+                    .isEqualTo("https://www.last.fm/music/The+Police/_/Roxanne")
+                assertThat(result.name)
+                    .isEqualTo("Roxanne")
             }
-            .verifyComplete()
+
+            is LastFmError -> fail("Expected LastFmTrack but got LastFmError: ${result.message}")
+        }
     }
 
     @Test
@@ -65,19 +63,19 @@ class LastFmHttpApiClientTest {
             .setResponseCode(200)
         )
 
-        StepVerifier.create(client.getTrack("The Police", "Roxanne"))
-            .assertNext { result ->
-                when (result) {
-                    is LastFmError -> {
-                        assertThat(result.code)
-                            .isEqualTo("6")
-                        assertThat(result.message)
-                            .isEqualTo("Track not found")
-                    }
-                    is LastFmTrack -> fail("Expected LastFmError but got LastFmTrack: ${result.artist} - ${result.name}")
-                }
+        val result = client.getTrack("The Police", "Roxanne")
+            .orElseThrow { AssertionError("Expected a response") }
+
+        when (result) {
+            is LastFmError -> {
+                assertThat(result.code)
+                    .isEqualTo("6")
+                assertThat(result.message)
+                    .isEqualTo("Track not found")
             }
-            .verifyComplete()
+
+            is LastFmTrack -> fail("Expected LastFmError but got LastFmTrack: ${result.artist} - ${result.name}")
+        }
     }
 
     @AfterEach

@@ -3,7 +3,6 @@ package nl.orangeflamingo.voornameninliedjesbackend.service
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.Optional
 import nl.orangeflamingo.voornameninliedjesbackend.client.LastFmApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmArtist
@@ -17,7 +16,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepos
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.data.jdbc.core.mapping.AggregateReference
-import reactor.core.publisher.Mono
+import java.util.Optional
 
 class LastFmEnrichmentServiceTest {
 
@@ -49,7 +48,7 @@ class LastFmEnrichmentServiceTest {
                     )
                 )
         every { mockLastFmApiClient.getTrack("The Police", "Roxanne") } returns
-                Mono.just(
+                Optional.of(
                     LastFmTrack(
                         name = "Roxanne",
                         mbid = "8c2ead25-9d14-437b-aad2-cbc88958bf76",
