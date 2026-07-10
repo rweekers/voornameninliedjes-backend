@@ -41,7 +41,7 @@ class ImagesEnrichmentService @Autowired constructor(
     }
 
     fun updateArtistImageForSong(song: Song) {
-        val artist = artistRepository.findById(song.artist.id ?: throw IllegalStateException())
+        val artist = artistRepository.findById(song.artist.id)
             .orElseThrow { ArtistNotFoundException("Artist with id ${song.artist.id} for song with title ${song.title} not found") }
         try {
 
