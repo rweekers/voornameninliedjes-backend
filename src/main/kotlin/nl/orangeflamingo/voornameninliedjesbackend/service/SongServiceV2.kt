@@ -40,7 +40,7 @@ class SongServiceV2(
     fun findByArtistAndTitle(artist: String, title: String): SongDetail {
         val song = songDetailRepository.findByArtistAndTitle(artist, title).orElseThrow { SongNotFoundException("Song with title $title and artist $artist not found") }
 
-        val artistDb = artistRepository.findById(song.artist.id ?: throw IllegalArgumentException())
+        val artistDb = artistRepository.findById(song.artist.id)
             .orElseThrow { IllegalArgumentException() }
 
         return convert(song, artistDb)

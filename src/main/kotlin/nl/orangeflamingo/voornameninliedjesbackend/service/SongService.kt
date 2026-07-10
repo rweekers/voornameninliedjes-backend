@@ -73,7 +73,7 @@ class SongService @Autowired constructor(
     private fun mapSongs(songs: List<Song>): List<AggregateSong> {
         return songs
             .map { song ->
-                val artist = artistRepository.findById(song.artist.id?:throw IllegalStateException())
+                val artist = artistRepository.findById(song.artist.id)
                     .orElseThrow { ArtistNotFoundException("Artist with artist id ${song.artist.id} for title ${song.title} not found") }
                 createAggregateSong(song, artist)
             }
@@ -82,7 +82,7 @@ class SongService @Autowired constructor(
     fun findById(id: Long): AggregateSong {
         log.info("Getting song with id $id")
         val song = songRepository.findById(id).orElseThrow { SongNotFoundException("Song with id $id not found") }
-        val artist = artistRepository.findById(song.artist.id?:throw IllegalStateException())
+        val artist = artistRepository.findById(song.artist.id)
             .orElseThrow { ArtistNotFoundException("Artist with artist id ${song.artist.id} for title ${song.title} not found") }
 
         return createAggregateSong(song, artist)
@@ -93,7 +93,7 @@ class SongService @Autowired constructor(
         artist: Artist,
         photoDetails: Flux<PhotoDetail> = Flux.empty()
     ) = AggregateSong(
-        id = song.id ?: throw IllegalStateException("The song should have an id"),
+        id = song.id,
         title = song.title,
         name = song.name,
         artistName = artist.name,
@@ -136,7 +136,7 @@ class SongService @Autowired constructor(
     private fun getDetails(song: Song): AggregateSong {
         log.info("Getting song with id ${song.id}")
 
-        val artist = artistRepository.findById(song.artist.id?:throw IllegalArgumentException())
+        val artist = artistRepository.findById(song.artist.id)
             .orElseThrow { ArtistNotFoundException("Artist with artist id ${song.artist.id} for title ${song.title} not found") }
 
         return createAggregateSong(
@@ -175,7 +175,7 @@ class SongService @Autowired constructor(
     }
 
     fun findArtistForSong(song: Song): Artist {
-        return artistRepository.findById(song.artist.id ?: throw IllegalStateException())
+        return artistRepository.findById(song.artist.id)
             .orElseThrow { ArtistNotFoundException("Artist with artist id ${song.artist.id} for title ${song.title} not found") }
     }
 

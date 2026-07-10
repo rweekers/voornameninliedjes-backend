@@ -9,7 +9,7 @@ import org.springframework.aot.hint.TypeReference
 class MyRuntimeHints: RuntimeHintsRegistrar {
     override fun registerHints(hints: RuntimeHints, classLoader: ClassLoader?) {
         // Register serialization
-        hints.serialization().registerType(TypeReference.of(ImageDimensionsDto::class.java))
-        hints.serialization().registerType(TypeReference.of(ImageHashDto::class.java))
+        hints.reflection().registerType(TypeReference.of(ImageDimensionsDto::class.java))
+        hints.reflection().registerType(TypeReference.of(ImageHashDto::class.java))
     }
 }
