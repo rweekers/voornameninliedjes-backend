@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.jdbc.core.mapping.AggregateReference
 import org.springframework.stereotype.Service
-import reactor.core.publisher.Flux
 import java.time.Instant
 import java.util.Locale
 
@@ -91,7 +90,7 @@ class SongService @Autowired constructor(
     private fun createAggregateSong(
         song: Song,
         artist: Artist,
-        photoDetails: Flux<PhotoDetail> = Flux.empty()
+        photoDetails: Set<PhotoDetail> = setOf()
     ) = AggregateSong(
         id = song.id,
         title = song.title,

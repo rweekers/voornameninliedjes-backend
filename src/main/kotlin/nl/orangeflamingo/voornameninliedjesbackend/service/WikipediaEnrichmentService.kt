@@ -34,7 +34,7 @@ class WikipediaEnrichmentService @Autowired constructor(
             log.info("[wikipedia] Updating ${song.title}")
 
             val wikipediaInformation =
-                if (song.wikipediaPage != null) wikipediaApiClient.getBackground(song.wikipediaPage!!) else null
+                if (song.wikipediaPage != null) wikipediaApiClient.getBackground("nl", song.wikipediaPage!!) else null
 
             wikipediaInformation?.ifPresent {
                 song.wikiContentNl = it.background

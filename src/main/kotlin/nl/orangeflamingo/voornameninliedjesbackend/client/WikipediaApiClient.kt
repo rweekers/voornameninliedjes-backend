@@ -5,5 +5,5 @@ import java.util.*
 
 fun interface WikipediaApiClient {
 
-    fun getBackground(wikipediaPage: String): Optional<WikipediaApi>
+    fun getBackground(language: String, wikipediaPage: String): Optional<WikipediaApi>
 }

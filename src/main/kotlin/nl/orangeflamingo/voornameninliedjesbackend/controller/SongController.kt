@@ -7,9 +7,9 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTagDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.PhotoDetail
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongNameStatistics
+import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatistics
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
-import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrLicenseDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.FlickrOwnerDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.PhotoDto
@@ -25,6 +25,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.service.SongNotFoundException
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -32,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Mono
 import java.util.Optional
 
 
@@ -53,7 +53,7 @@ class SongController(
     }
 
     @GetMapping("/songs/{artist}/{title}")
-    fun getSongByArtistAndTitle(@PathVariable artist: String, @PathVariable title: String): Mono<SongDto> {
+    fun getSongByArtistAndTitle(@PathVariable artist: String, @PathVariable title: String): ResponseEntity<SongDto> {
         log.info(
             "Requesting song with artist ${
                 artist.replace(
@@ -62,15 +62,12 @@ class SongController(
                 )
             } and title ${title.replace("[\n\r]".toRegex(), "_")}..."
         )
-        return getSongDetails(artist, title)
+        return ResponseEntity.ok(getSongDetails(artist, title))
     }
 
-    private fun getSongDetails(artist: String, title: String): Mono<SongDto> {
+    private fun getSongDetails(artist: String, title: String): SongDto {
         val song = songService.findByArtistAndNameDetails(artist, title)
-        return song.flickrPhotoDetail.collectList()
-            .map {
-                convertToDto(song, it)
-            }
+        return convertToDto(song, song.flickrPhotoDetail.toList())
     }
 
     @GetMapping(value = ["/songs/", "/songs"])

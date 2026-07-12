@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.web.client.RestClient
-import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
 @Profile("!integration-test")
@@ -18,8 +17,8 @@ class LastFmConfig(
 ) {
 
     @Bean
-    fun lastFmWebClient(): WebClient {
-        return WebClient.builder()
+    fun lastFmRestClient(): RestClient {
+        return RestClient.builder()
             .baseUrl("https://ws.audioscrobbler.com/2.0")
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build()
