@@ -16,10 +16,11 @@ class WikipediaControllerTest {
 
     @Test
     fun `get wikipedia by page`() {
+        val language = "nl"
         val page = "Roxanne"
         val wikipageRoxanne = WikipediaApi("Some background on Roxanne")
-        every { wikipediaApi.getBackground(page) } returns Optional.of(wikipageRoxanne)
-        val wikipageFound = wikipediaController.getLastFmInfoByArtistAndTitle(page)
+        every { wikipediaApi.getBackground(language, page) } returns Optional.of(wikipageRoxanne)
+        val wikipageFound = wikipediaController.getLastFmInfoByArtistAndTitle(language, page)
         assertThat(wikipageFound)
             .isPresent()
             .hasValue(wikipageRoxanne)

@@ -1,46 +1,36 @@
 package nl.orangeflamingo.voornameninliedjesbackend.client
 
 import nl.orangeflamingo.voornameninliedjesbackend.domain.WikipediaApi
-import nl.orangeflamingo.voornameninliedjesbackend.dto.WikipediaApiResponse
+import nl.orangeflamingo.voornameninliedjesbackend.dto.WikipediaSummaryResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.web.client.RestClient
-import java.util.*
+import java.util.Optional
 
 class WikipediaHttpApiClient(
-    private val wikipediaRestClient: RestClient
+    private val restClientBuilder: RestClient.Builder
 ) : WikipediaApiClient {
 
-    override fun getBackground(wikipediaPage: String): Optional<WikipediaApi> {
+    override fun getBackground(language: String, wikipediaPage: String): Optional<WikipediaApi> {
         return try {
-                val rawResponse = wikipediaRestClient.get()
-                .uri { builder ->
-                    builder.path("/w/api.php")
-                        .queryParam("action", "query")
-                        .queryParam("prop", "extracts")
-                        .queryParam("exsentences", 10)
-                        .queryParam("exlimit", 1)
-                        .queryParam("titles", wikipediaPage)
-                        .queryParam("explaintext", true)
-                        .queryParam("formatversion", "2")
-                        .queryParam("format", "json")
-                        .build()
-                }
+            val restClient = restClientBuilder
+                .baseUrl("https://$language.wikipedia.org")
+                .build()
+
+            val response = restClient.get()
+                .uri("/api/rest_v1/page/summary/{title}", wikipediaPage)
                 .header(
                     HttpHeaders.USER_AGENT,
                     "VoornamenInLiedjesNederland/1.0 (https://www.voornameninliedjes.nl; info@voornameninliedjes.nl)"
                 )
                 .retrieve()
-                .body(WikipediaApiResponse::class.java)
+                .body(WikipediaSummaryResponse::class.java)
 
-            val extractText = rawResponse?.query?.pages?.firstOrNull()?.extract
-
-            extractText?.takeIf { it.isNotBlank() }
-                ?.let { text ->
-                    Optional.of(WikipediaApi(background = text.trim()))
-                } ?: Optional.empty() // Return empty if no text found
+            response?.extract
+                ?.takeIf { it.isNotBlank() }
+                ?.let { Optional.of(WikipediaApi(background = it.trim())) }
+                ?: Optional.empty()
 
         } catch (e: Exception) {
-            // Log error if needed
             Optional.empty()
         }
     }

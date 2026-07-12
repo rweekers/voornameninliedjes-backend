@@ -14,16 +14,15 @@ import org.springframework.web.client.RestClient
 class WikipediaConfig {
 
     @Bean
-    fun wikipediaRestClient(): RestClient {
+    fun wikipediaRestClientBuilder(): RestClient.Builder {
         return RestClient.builder()
-            .baseUrl("https://nl.wikipedia.org")
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .build()
     }
 
-
     @Bean
-    fun wikipediaApiClient(wikipediaRestClient: RestClient): WikipediaApiClient {
-        return WikipediaHttpApiClient(wikipediaRestClient)
+    fun wikipediaApiClient(
+        wikipediaRestClientBuilder: RestClient.Builder
+    ): WikipediaApiClient {
+        return WikipediaHttpApiClient(wikipediaRestClientBuilder)
     }
 }

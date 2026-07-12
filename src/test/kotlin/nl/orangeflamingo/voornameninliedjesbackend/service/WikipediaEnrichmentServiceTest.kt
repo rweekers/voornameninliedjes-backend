@@ -39,7 +39,7 @@ class WikipediaEnrichmentServiceTest {
             )
         } returns
                 listOf(song)
-        every { mockWikipediaApiClient.getBackground("Wiki page Roxanne") } returns
+        every { mockWikipediaApiClient.getBackground("nl", "Wiki page Roxanne") } returns
                 Optional.of(
                     WikipediaApi(
                         background = "Background on Roxanne"
