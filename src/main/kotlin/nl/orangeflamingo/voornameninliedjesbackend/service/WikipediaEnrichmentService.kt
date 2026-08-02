@@ -1,6 +1,7 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.controller.WikipediaLanguage
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
@@ -34,7 +35,7 @@ class WikipediaEnrichmentService @Autowired constructor(
             log.info("[wikipedia] Updating ${song.title}")
 
             val wikipediaInformation =
-                if (song.wikipediaPage != null) wikipediaApiClient.getBackground("nl", song.wikipediaPage!!) else null
+                if (song.wikipediaPage != null) wikipediaApiClient.getBackground(WikipediaLanguage.NL, song.wikipediaPage!!) else null
 
             wikipediaInformation?.ifPresent {
                 song.wikiContentNl = it.background

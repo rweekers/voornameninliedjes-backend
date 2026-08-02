@@ -16,7 +16,7 @@ class WikipediaControllerTest {
 
     @Test
     fun `get wikipedia by page`() {
-        val language = "nl"
+        val language = WikipediaLanguage.NL
         val page = "Roxanne"
         val wikipageRoxanne = WikipediaApi("Some background on Roxanne")
         every { wikipediaApi.getBackground(language, page) } returns Optional.of(wikipageRoxanne)

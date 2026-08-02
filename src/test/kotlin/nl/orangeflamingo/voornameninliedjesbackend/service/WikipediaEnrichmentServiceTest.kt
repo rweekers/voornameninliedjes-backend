@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.controller.WikipediaLanguage
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.domain.WikipediaApi
@@ -39,7 +40,7 @@ class WikipediaEnrichmentServiceTest {
             )
         } returns
                 listOf(song)
-        every { mockWikipediaApiClient.getBackground("nl", "Wiki page Roxanne") } returns
+        every { mockWikipediaApiClient.getBackground(WikipediaLanguage.NL, "Wiki page Roxanne") } returns
                 Optional.of(
                     WikipediaApi(
                         background = "Background on Roxanne"

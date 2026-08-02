@@ -1,5 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.client
 
+import nl.orangeflamingo.voornameninliedjesbackend.controller.WikipediaLanguage
 import nl.orangeflamingo.voornameninliedjesbackend.domain.WikipediaApi
 import nl.orangeflamingo.voornameninliedjesbackend.dto.WikipediaSummaryResponse
 import org.springframework.http.HttpHeaders
@@ -10,10 +11,13 @@ class WikipediaHttpApiClient(
     private val restClientBuilder: RestClient.Builder
 ) : WikipediaApiClient {
 
-    override fun getBackground(language: String, wikipediaPage: String): Optional<WikipediaApi> {
+    @Suppress("kotlinsecurity:S5144")
+    // Safe: language is an enum with fixed hosts; page is validated in the controller
+    // (alphanumeric, underscore, hyphen, parentheses only, max 255 chars)
+    override fun getBackground(wikipediaLanguage: WikipediaLanguage, wikipediaPage: String): Optional<WikipediaApi> {
         return try {
             val restClient = restClientBuilder
-                .baseUrl("https://$language.wikipedia.org")
+                .baseUrl(wikipediaLanguage.baseUrl)
                 .build()
 
             val response = restClient.get()
