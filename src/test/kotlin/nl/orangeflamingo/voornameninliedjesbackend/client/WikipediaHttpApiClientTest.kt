@@ -1,5 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.client
 
+import nl.orangeflamingo.voornameninliedjesbackend.controller.WikipediaLanguage
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
@@ -45,7 +46,7 @@ class WikipediaHttpApiClientTest {
             .setResponseCode(200)
         )
 
-        client.getBackground("nl", "Roxanne")
+        client.getBackground(WikipediaLanguage.NL, "Roxanne")
     }
 
     @AfterEach
