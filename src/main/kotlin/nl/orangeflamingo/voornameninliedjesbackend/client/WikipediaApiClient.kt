@@ -1,10 +1,9 @@
 package nl.orangeflamingo.voornameninliedjesbackend.client
 
-import nl.orangeflamingo.voornameninliedjesbackend.controller.WikipediaLanguage
 import nl.orangeflamingo.voornameninliedjesbackend.domain.WikipediaApi
-import java.util.*
+import java.util.Optional
 
 fun interface WikipediaApiClient {
 
-    fun getBackground(wikipediaLanguage: WikipediaLanguage, wikipediaPage: String): Optional<WikipediaApi>
+    fun getBackground(wikipediaPage: String): Optional<WikipediaApi>
 }

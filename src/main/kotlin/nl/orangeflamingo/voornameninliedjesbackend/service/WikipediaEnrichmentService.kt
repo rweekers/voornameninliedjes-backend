@@ -1,19 +1,19 @@
 package nl.orangeflamingo.voornameninliedjesbackend.service
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClient
-import nl.orangeflamingo.voornameninliedjesbackend.controller.WikipediaLanguage
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 
 
 @Service
 class WikipediaEnrichmentService @Autowired constructor(
     private val songRepository: SongRepository,
-    private val wikipediaApiClient: WikipediaApiClient
+    @Qualifier("wikipediaNlApiClient") private val nlApi: WikipediaApiClient
 ) {
 
     private val log = LoggerFactory.getLogger(WikipediaEnrichmentService::class.java)
@@ -35,7 +35,7 @@ class WikipediaEnrichmentService @Autowired constructor(
             log.info("[wikipedia] Updating ${song.title}")
 
             val wikipediaInformation =
-                if (song.wikipediaPage != null) wikipediaApiClient.getBackground(WikipediaLanguage.NL, song.wikipediaPage!!) else null
+                if (song.wikipediaPage != null) nlApi.getBackground(song.wikipediaPage!!) else null
 
             wikipediaInformation?.ifPresent {
                 song.wikiContentNl = it.background
