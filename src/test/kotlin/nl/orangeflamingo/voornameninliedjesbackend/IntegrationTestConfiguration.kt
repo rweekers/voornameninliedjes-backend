@@ -17,7 +17,13 @@ class IntegrationTestConfiguration {
 
     @Bean
     @Primary
-    fun wikipediaApiClient(): WikipediaApiClient {
+    fun wikipediaEnApiClient(): WikipediaApiClient {
+        return FakeWikipediaApiClient()
+    }
+
+    @Bean
+    @Primary
+    fun wikipediaNlApiClient(): WikipediaApiClient {
         return FakeWikipediaApiClient()
     }
 

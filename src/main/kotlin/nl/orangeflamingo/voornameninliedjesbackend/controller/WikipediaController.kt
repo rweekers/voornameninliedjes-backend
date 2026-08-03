@@ -3,6 +3,7 @@ package nl.orangeflamingo.voornameninliedjesbackend.controller
 import nl.orangeflamingo.voornameninliedjesbackend.client.WikipediaApiClient
 import nl.orangeflamingo.voornameninliedjesbackend.domain.WikipediaApi
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Profile
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -14,7 +15,8 @@ import java.util.Optional
 @RequestMapping("/api")
 @Profile("dev")
 class WikipediaController(
-    private val wikipediaApi: WikipediaApiClient
+    @Qualifier("wikipediaEnApiClient") private val enApi: WikipediaApiClient,
+    @Qualifier("wikipediaNlApiClient") private val nlApi: WikipediaApiClient
 ) {
 
     private val VALID_PAGE_REGEX = Regex("^[a-zA-Z0-9_\\-()]+$")
@@ -22,16 +24,19 @@ class WikipediaController(
 
     private val log = LoggerFactory.getLogger(WikipediaController::class.java)
 
-    @Suppress("kotlinsecurity:S5144")
-    // Safe: language is an enum with fixed hosts; page is validated in the controller
-    // (alphanumeric, underscore, hyphen, parentheses only, max 255 chars)
     @GetMapping("/wikipedia/{language}/{page}")
     fun getLastFmInfoByArtistAndTitle(
         @PathVariable language: WikipediaLanguage,
         @PathVariable page: String
     ): Optional<WikipediaApi> {
         log.info("Getting wikipedia for page ${page.replace("[\n\r]".toRegex(), "_")}")
-        return wikipediaApi.getBackground(language,normalizeAndValidate(page))
+
+        val validatedPage = normalizeAndValidate(page)
+
+        return when (language) {
+            WikipediaLanguage.EN -> enApi.getBackground(validatedPage)
+            WikipediaLanguage.NL -> nlApi.getBackground(validatedPage)
+        }
     }
 
     private fun normalizeAndValidate(page: String): String {

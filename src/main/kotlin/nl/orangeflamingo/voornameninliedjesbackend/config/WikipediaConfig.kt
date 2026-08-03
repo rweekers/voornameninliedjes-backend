@@ -20,9 +20,16 @@ class WikipediaConfig {
     }
 
     @Bean
-    fun wikipediaApiClient(
+    fun wikipediaEnApiClient(
         wikipediaRestClientBuilder: RestClient.Builder
     ): WikipediaApiClient {
-        return WikipediaHttpApiClient(wikipediaRestClientBuilder)
+        return WikipediaHttpApiClient("https://en.wikipedia.org", wikipediaRestClientBuilder)
+    }
+
+    @Bean
+    fun wikipediaNlApiClient(
+        wikipediaRestClientBuilder: RestClient.Builder
+    ): WikipediaApiClient {
+        return WikipediaHttpApiClient("https://nl.wikipedia.org", wikipediaRestClientBuilder)
     }
 }
