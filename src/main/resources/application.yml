@@ -34,8 +34,6 @@ voornameninliedjes:
   lastfm:
     api:
       key: ${LASTFM_API_KEY}
-  batch:
-    interval: 3000
   cors:
     domains:
       allowed:

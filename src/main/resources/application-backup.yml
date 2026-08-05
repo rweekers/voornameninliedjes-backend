@@ -1,6 +1,4 @@
 voornameninliedjes:
-  batch:
-    interval: 1000
   datasource:
     application:
       jdbc-url: jdbc:postgresql://localhost:5432/voornameninliedjes

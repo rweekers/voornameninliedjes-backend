@@ -8,10 +8,8 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepos
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
-import reactor.core.publisher.Flux
-import reactor.core.scheduler.Schedulers
-import java.time.Duration
 
 @Service
 class ImagesEnrichmentService @Autowired constructor(
@@ -22,9 +20,7 @@ class ImagesEnrichmentService @Autowired constructor(
 
     private val log = LoggerFactory.getLogger(ImagesEnrichmentService::class.java)
 
-    @Value("\${voornameninliedjes.batch.interval}")
-    private val interval: Long = 100
-
+    @Async
     fun enrichImagesForSongs(updateAll: Boolean = false) {
         log.info("Starting images enrichment with update all: $updateAll")
 
@@ -33,11 +29,7 @@ class ImagesEnrichmentService @Autowired constructor(
             else songRepository.findAllByStatusAndArtistImageIsNullOrArtistImageAttributionIsNull(
                 SongStatus.SHOW.code
             )
-        Flux.fromIterable(songsToUpdate)
-            .delayElements(Duration.ofMillis(interval), Schedulers.boundedElastic())
-            .subscribe({
-                updateArtistImageForSong(it)
-            }, { log.error("[image download] Gotten error", it) }, { log.info("[image download] Done...") })
+        songsToUpdate.forEach { updateArtistImageForSong(it) }
     }
 
     fun updateArtistImageForSong(song: Song) {

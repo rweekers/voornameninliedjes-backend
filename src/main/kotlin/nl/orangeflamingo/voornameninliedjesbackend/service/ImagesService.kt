@@ -9,13 +9,10 @@ import nl.orangeflamingo.voornameninliedjesbackend.utils.clean
 import nl.orangeflamingo.voornameninliedjesbackend.utils.removeDiacritics
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
-import reactor.core.publisher.Flux
-import reactor.core.scheduler.Schedulers
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import java.time.Duration
 
 @Service
 class ImagesService @Autowired constructor(
@@ -28,29 +25,16 @@ class ImagesService @Autowired constructor(
 
     private val maxDimensionBlur = 20
 
-    @Value("\${voornameninliedjes.batch.interval}")
-    private val interval: Long = 100
-
+    @Async
     fun downloadImages(overwrite: Boolean = false) {
-        log.info("[image download] Starting downloading all images with interval millis $interval and overwrite: $overwrite")
-        val songs = songRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)
-
-        Flux.fromIterable(songs)
-            .delayElements(Duration.ofMillis(interval), Schedulers.boundedElastic())
-            .subscribe({
-                downloadImageForSong(it, overwrite)
-            }, { log.error("[image download] Gotten error", it) }, { log.info("[image download] Done...") })
+        log.info("[image download] Starting downloading all images with overwrite: $overwrite")
+        songRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code).forEach { downloadImageForSong(it, overwrite) }
     }
 
+    @Async
     fun blurImages(overwrite: Boolean = false) {
-        log.info("[image blur] Starting blurring all images with interval millis $interval and overwrite: $overwrite")
-        val songs = songRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code)
-
-        Flux.fromIterable(songs)
-            .delayElements(Duration.ofMillis(interval), Schedulers.boundedElastic())
-            .subscribe({
-                blurImageForSong(it, overwrite)
-            }, { log.error("[image blur] Gotten error", it) }, { log.info("[image blur] Done...") })
+        log.info("[image blur] Starting blurring all images with overwrite: $overwrite")
+        songRepository.findAllByStatusOrderedByNameAndTitle(SongStatus.SHOW.code).forEach { blurImageForSong(it, overwrite) }
     }
 
     fun downloadImageForSong(song: Song, overwrite: Boolean = false) {
