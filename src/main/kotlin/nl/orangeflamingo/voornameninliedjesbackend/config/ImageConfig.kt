@@ -1,10 +1,15 @@
 package nl.orangeflamingo.voornameninliedjesbackend.config
 
 import nl.orangeflamingo.voornameninliedjesbackend.client.ImageClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.ImageHttpClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.LastFmApiClient
+import nl.orangeflamingo.voornameninliedjesbackend.client.LastFmHttpApiClient
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.support.RestClientAdapter
 import org.springframework.web.service.invoker.HttpServiceProxyFactory
@@ -17,13 +22,15 @@ class ImageConfig {
     private val imagesServicePath: String = "https://images.voornameninliedjes.nl"
 
     @Bean
-    open fun imageClient(): ImageClient {
-        val restClient = RestClient.builder()
+    fun imageRestClient(): RestClient {
+        return RestClient.builder()
             .baseUrl(imagesServicePath)
+            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build()
-        return HttpServiceProxyFactory.builder()
-            .exchangeAdapter(RestClientAdapter.create(restClient))
-            .build()
-            .createClient(ImageClient::class.java)
+    }
+
+    @Bean
+    fun imageClient(imageRestClient: RestClient): ImageClient {
+        return ImageHttpClient(imageRestClient)
     }
 }
