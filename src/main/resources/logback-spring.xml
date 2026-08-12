@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <property name="LOG_PATH" value="${LOG_PATH:-./logs}"/>
-    <property name="CONTAINER" value="${CONTAINER:-default}" />
     <springProperty scope="context" name="PROBE_LOG_DIR" source="logging.file.fail2ban"/>
 
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
@@ -13,16 +11,8 @@
 
     <!-- Local development -->
     <springProfile name="dev">
-        <appender name="FileAppender" class="ch.qos.logback.core.FileAppender">
-            <file>${LOG_PATH}/app-${CONTAINER}.log</file>
-            <append>true</append>
-            <encoder>
-                <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
-            </encoder>
-        </appender>
-
         <root level="INFO">
-            <appender-ref ref="FileAppender"/>
+            <appender-ref ref="Console"/>
         </root>
     </springProfile>
 
