@@ -9,13 +9,14 @@ services:
     ports:
       - "5432:5432"
   app-jvm:
-    image: rweekers/voornameninliedjes-backend:3.3.0-jvm
-    user: ${UID}:${GID}
+    image: rweekers/voornameninliedjes-backend:3.4.3-jvm
+    user: ${MY_UID}:${MY_GID}
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: dev
       LOG_PATH: /workspace/logs
       CONTAINER: jvm
+      LASTFM_API_KEY: ${LASTFM_API_KEY}
       voornameninliedjes.datasource.application.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
       voornameninliedjes.datasource.migration.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
       voornameninliedjes.images.service.path: http://localhost:8000/images/
@@ -24,17 +25,18 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - "./logs-docker:/workspace/logs"
-      - "./images:/workspace/images"
+      - "./logs-docker:/workspace/logs:Z"
+      - "./images:/workspace/images:Z"
     depends_on:
       - db
   app-native:
-    image: rweekers/voornameninliedjes-backend:3.3.0-native
-    user: ${UID}:${GID}
+    image: rweekers/voornameninliedjes-backend:3.4.3-native
+    user: ${MY_UID}:${MY_GID}
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: dev
       LOG_PATH: /workspace/logs
+      LASTFM_API_KEY: ${LASTFM_API_KEY}
       server.port: 9000
       voornameninliedjes.datasource.application.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
       voornameninliedjes.datasource.migration.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
@@ -44,8 +46,8 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - "./logs-docker:/workspace/logs"
-      - "./images:/workspace/images"
+      - "./logs-docker:/workspace/logs:Z"
+      - "./images:/workspace/images:Z"
     depends_on:
       - db
 
