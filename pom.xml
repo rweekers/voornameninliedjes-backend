@@ -12,7 +12,7 @@
     </parent>
     <groupId>nl.orangeflamingo</groupId>
     <artifactId>voornameninliedjes-backend</artifactId>
-    <version>3.4.3</version>
+    <version>3.4.4</version>
     <name>Voornameninliedjes Backend</name>
     <description>Backend service voor voornamen in liedjes</description>
     <url>https://voornameninliedjes.nl</url>
@@ -28,6 +28,9 @@
         <spring.profiles.active>jvm</spring.profiles.active>
         <sonar.organization>rweekers</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
+        <!-- Override to test native-image compatibility; the version managed by Spring Boot fails at runtime -->
+        <graalvm-native.version>0.11.5</graalvm-native.version>
 
         <springdoc-openapi.version>3.0.3</springdoc-openapi.version>
         <openapi-generator-maven-plugin.version>7.16.0</openapi-generator-maven-plugin.version>
@@ -63,12 +66,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- Explicit declaration required for GraalVM native image -->
-        <dependency>
-            <groupId>org.jboss.logging</groupId>
-            <artifactId>jboss-logging</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jdbc</artifactId>
@@ -455,6 +452,7 @@
                     <plugin>
                         <groupId>org.graalvm.buildtools</groupId>
                         <artifactId>native-maven-plugin</artifactId>
+                        <version>${graalvm-native.version}</version>
                     </plugin>
                 </plugins>
             </build>
