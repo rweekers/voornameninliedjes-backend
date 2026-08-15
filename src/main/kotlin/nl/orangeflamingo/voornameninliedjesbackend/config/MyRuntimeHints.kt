@@ -9,21 +9,28 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmTrackDto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.LastFmWikiDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ImageDimensionsDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.ImageHashDto
+import org.springframework.aot.hint.MemberCategory
 import org.springframework.aot.hint.RuntimeHints
 import org.springframework.aot.hint.RuntimeHintsRegistrar
-import org.springframework.aot.hint.TypeReference
 
 class MyRuntimeHints: RuntimeHintsRegistrar {
     override fun registerHints(hints: RuntimeHints, classLoader: ClassLoader?) {
         // Register serialization
-        hints.reflection().registerType(TypeReference.of(ImageDimensionsDto::class.java))
-        hints.reflection().registerType(TypeReference.of(ImageHashDto::class.java))
-        hints.reflection().registerType(TypeReference.of(LastFmResponseDto::class.java))
-        hints.reflection().registerType(TypeReference.of(LastFmTrackDto::class.java))
-        hints.reflection().registerType(TypeReference.of(LastFmArtistDto::class.java))
-        hints.reflection().registerType(TypeReference.of(LastFmAlbumDto::class.java))
-        hints.reflection().registerType(TypeReference.of(LastFmTopTagsDto::class.java))
-        hints.reflection().registerType(TypeReference.of(LastFmTagDto::class.java))
-        hints.reflection().registerType(TypeReference.of(LastFmWikiDto::class.java))
+        hints.registerDto(ImageDimensionsDto::class.java)
+        hints.registerDto(ImageHashDto::class.java)
+        hints.registerDto(LastFmResponseDto::class.java)
+        hints.registerDto(LastFmTrackDto::class.java)
+        hints.registerDto(LastFmArtistDto::class.java)
+        hints.registerDto(LastFmAlbumDto::class.java)
+        hints.registerDto(LastFmTopTagsDto::class.java)
+        hints.registerDto(LastFmTagDto::class.java)
+        hints.registerDto(LastFmWikiDto::class.java)
+    }
+
+    private fun RuntimeHints.registerDto(type: Class<*>) {
+        reflection().registerType(
+            type,
+            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS
+        )
     }
 }

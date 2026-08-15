@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432"
   app-jvm:
-    image: rweekers/voornameninliedjes-backend:3.4.4-jvm
+    image: rweekers/voornameninliedjes-backend:3.4.6-jvm
     user: ${MY_UID}:${MY_GID}
     restart: unless-stopped
     environment:
@@ -30,7 +30,7 @@ services:
     depends_on:
       - db
   app-native:
-    image: rweekers/voornameninliedjes-backend:3.4.4-native
+    image: rweekers/voornameninliedjes-backend:3.4.6-native
     user: ${MY_UID}:${MY_GID}
     restart: unless-stopped
     environment:
@@ -42,7 +42,7 @@ services:
       voornameninliedjes.datasource.migration.jdbcUrl: jdbc:postgresql://db:5432/voornameninliedjes
       voornameninliedjes.images.service.path: http://localhost:8000/images/
       jobs.updateSong.cron: "-"
-      jobs.enrichSong.enabled: false
+      jobs.enrichSong.enabled: true
     ports:
       - "9000:9000"
     volumes:
