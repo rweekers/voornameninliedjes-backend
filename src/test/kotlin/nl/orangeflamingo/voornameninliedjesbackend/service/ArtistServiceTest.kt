@@ -14,8 +14,9 @@ import org.junit.jupiter.api.Test
 class ArtistServiceTest {
 
     private val repository = mockk<ArtistRepository>()
+    private val currentUserService = mockk<CurrentUserService>()
 
-    private val artistService = ArtistService(repository)
+    private val artistService = ArtistService(repository, currentUserService)
 
     @Test
     fun `get artist by id`() {
