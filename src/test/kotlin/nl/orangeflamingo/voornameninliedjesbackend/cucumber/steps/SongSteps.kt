@@ -1,13 +1,15 @@
 package nl.orangeflamingo.voornameninliedjesbackend.cucumber.steps
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.cucumber.java.DataTableType
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import nl.orangeflamingo.voornameninliedjesbackend.controller.SongController
-import nl.orangeflamingo.voornameninliedjesbackend.domain.*
+import nl.orangeflamingo.voornameninliedjesbackend.domain.AggregateSong
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
+import nl.orangeflamingo.voornameninliedjesbackend.domain.Song
+import nl.orangeflamingo.voornameninliedjesbackend.domain.TestAggregateSong
+import nl.orangeflamingo.voornameninliedjesbackend.domain.TestSong
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.SongService
@@ -15,14 +17,16 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.jdbc.core.mapping.AggregateReference
-import java.util.*
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.module.kotlin.jacksonObjectMapper
+import java.util.Optional
 
 @Suppress("SpringJavaAutowiredMembersInspection")
 class SongSteps {
 
     private val log = LoggerFactory.getLogger(SongSteps::class.java)
-    private val mapper = ObjectMapper()
-        .registerModule(KotlinModule.Builder().build())
+
+    private val mapper: ObjectMapper = jacksonObjectMapper()
 
     @Autowired
     private lateinit var songService: SongService

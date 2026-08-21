@@ -1,5 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
+import jakarta.servlet.http.HttpServletRequest
 import nl.orangeflamingo.voornameninliedjesbackend.command.CreateArtistCommand
 import nl.orangeflamingo.voornameninliedjesbackend.command.UpdateArtistCommand
 import nl.orangeflamingo.voornameninliedjesbackend.config.ApiMediaTypes
@@ -10,6 +11,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistService
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -29,14 +31,14 @@ class ArtistAdminControllerV2(
     private val artistService: ArtistService
 ) {
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     fun getArtists(): List<AdminArtistDto> {
         return artistService.findAllOrderedByName()
             .map { convertToDto(it) }
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     fun getArtistById(
         @PathVariable id: Long
@@ -44,7 +46,7 @@ class ArtistAdminControllerV2(
         return convertToDto(artistService.findById(id))
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(
         consumes = ["application/json"]
     )
@@ -53,6 +55,12 @@ class ArtistAdminControllerV2(
         @RequestBody input: AdminArtistInputDto,
         authentication: Authentication
     ): AdminArtistDto {
+        val contextAuthentication =
+            SecurityContextHolder.getContext().authentication
+
+        println("SecurityContext authentication: $contextAuthentication")
+        println("Method authentication: $authentication")
+
         val command = CreateArtistCommand(
             name = input.name.trim(),
             background = input.background?.trim(),
@@ -64,7 +72,7 @@ class ArtistAdminControllerV2(
         return convertToDto(artist)
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(
         "/{id}",
         consumes = ["application/json"]
@@ -105,6 +113,4 @@ class ArtistAdminControllerV2(
             // logEntries = artist.logEntries.map { convertToDto(it) }
         )
     }
-
-    // Existing conversion methods...
 }

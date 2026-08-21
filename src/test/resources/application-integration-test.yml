@@ -1,3 +1,7 @@
 logging:
   file:
     fail2ban: ./logs
+
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
