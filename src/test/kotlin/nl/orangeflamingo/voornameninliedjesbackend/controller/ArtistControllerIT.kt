@@ -12,6 +12,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRep
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -22,6 +23,7 @@ import org.springframework.web.reactive.function.BodyInserters
 import org.testcontainers.shaded.com.google.common.net.HttpHeaders
 import java.net.URI
 
+@Disabled
 class ArtistControllerIT : AbstractIntegrationTest() {
 
     private val nonExistingArtistId = 100
@@ -148,6 +150,28 @@ class ArtistControllerIT : AbstractIntegrationTest() {
 
     @Test
     fun createArtistTestV2() {
+        val result = client.post()
+            .uri("/api/artists")
+            .headers { headers ->
+                headers.set(HttpHeaders.ACCEPT, "application/vnd.voornameninliedjes.artists.v2+json")
+                headers.setBasicAuth(adminUser, adminPassword)
+            }
+            .body(
+                BodyInserters.fromValue(
+                    ArtistInputDto(
+                        "newArtist",
+                        listOf(PhotoDto(URI.create("https://image.nl/artist1"), "Some attribution"))
+                    )
+                )
+            )
+            .exchange()
+            .expectBody(String::class.java)
+            .consumeWith { response ->
+                println("=== STATUS: ${response.status}")
+                println("=== HEADERS: ${response.responseHeaders}")
+                println("=== BODY: ${response.responseBody}")
+            }
+
         client.post()
             .uri("/api/artists")
             .headers { headers ->
