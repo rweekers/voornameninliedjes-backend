@@ -15,8 +15,8 @@ import ua_parser.Parser
 @Component
 class RequestLoggingInterceptor : HandlerInterceptor {
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        val auth: Authentication = SecurityContextHolder.getContext().authentication ?: throw IllegalStateException()
-        if (auth.isAuthenticated) {
+        val auth: Authentication? = SecurityContextHolder.getContext().authentication
+        if (auth?.isAuthenticated == true) {
             log.info("Authenticated user: {}", auth.name)
         }
 
