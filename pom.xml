@@ -41,6 +41,7 @@
         <uap-java.version>1.6.1</uap-java.version>
         <cucumber.version>7.30.0</cucumber.version>
         <mockk.version>1.14.6</mockk.version>
+        <springmockk.version>5.0.1</springmockk.version>
         <mockwebserver.version>4.12.0</mockwebserver.version>
 
         <argLine>-XX:+EnableDynamicAgentLoading</argLine>
@@ -164,6 +165,15 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-webtestclient</artifactId>
             <scope>test</scope>
         </dependency>
@@ -219,6 +229,12 @@
             <groupId>io.mockk</groupId>
             <artifactId>mockk-jvm</artifactId>
             <version>${mockk.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ninja-squad</groupId>
+            <artifactId>springmockk</artifactId>
+            <version>${springmockk.version}</version>
             <scope>test</scope>
         </dependency>
 
