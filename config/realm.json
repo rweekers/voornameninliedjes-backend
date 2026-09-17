@@ -1,0 +1,71 @@
+{
+  "realm": "voornameninliedjes",
+  "displayName": "Voornamen in Liedjes",
+  "displayNameHtml": "<strong>Voornamen in Liedjes</strong>",
+  "enabled": true,
+  "registrationAllowed": false,
+  "verifyEmail": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+
+  "roles": {
+    "realm": [
+      {
+        "name": "OWNER",
+        "description": "Full control over the Voornamen in Liedjes application"
+      },
+      {
+        "name": "ADMIN",
+        "description": "Administrator of the Voornamen in Liedjes application"
+      }
+    ]
+  },
+
+  "users": [
+    {
+      "username": "owner",
+      "enabled": true,
+      "email": "owner@example.local",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "owner",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "OWNER"
+      ]
+    },
+    {
+      "username": "admin",
+      "enabled": true,
+      "email": "admin@example.local",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "ADMIN"
+      ]
+    },
+    {
+      "username": "user",
+      "enabled": true,
+      "email": "user@example.local",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "user",
+          "temporary": false
+        }
+      ]
+    }
+  ]
+}
