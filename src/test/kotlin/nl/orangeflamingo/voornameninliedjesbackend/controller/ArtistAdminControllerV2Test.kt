@@ -3,12 +3,11 @@ package nl.orangeflamingo.voornameninliedjesbackend.controller
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
+import nl.orangeflamingo.voornameninliedjesbackend.command.ArtistPhotoCommand
 import nl.orangeflamingo.voornameninliedjesbackend.command.CreateArtistCommand
 import nl.orangeflamingo.voornameninliedjesbackend.config.CorsConfig
-import nl.orangeflamingo.voornameninliedjesbackend.config.MyBasicAuthPoint
 import nl.orangeflamingo.voornameninliedjesbackend.config.SecurityConfig
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
-import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,6 +17,7 @@ import org.springframework.cache.CacheManager
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
+import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
@@ -25,6 +25,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
+import java.net.URI
+import java.util.UUID
 
 @WebMvcTest(ArtistAdminControllerV2::class)
 @EnableConfigurationProperties(CorsConfig::class)
@@ -40,8 +42,7 @@ class ArtistAdminControllerV2Test {
     @Autowired private lateinit var mockMvc: MockMvc
     @MockkBean private lateinit var artistService: ArtistService
     @Suppress("unused") @MockkBean private lateinit var cacheManager: CacheManager
-    @Suppress("unused") @MockkBean private lateinit var userRepository: UserRepository
-    @Suppress("unused") @MockkBean private lateinit var authenticationEntryPoint: MyBasicAuthPoint
+    @Suppress("unused") @MockkBean private lateinit var jwtDecoder: JwtDecoder
     @Autowired
     private lateinit var handlerAdapter: RequestMappingHandlerAdapter
 
@@ -67,8 +68,14 @@ class ArtistAdminControllerV2Test {
                 {
                   "name": "The Police",
                   "background": "English rock band",
-                  "imageUrl": "https://example.com/police.jpg",
-                  "imageAttribution": "Photo by Example"
+                  "mbid": "2db3f6e2-0e5d-4f8e-9e9f-4e9e0e6e9e9e",
+                  "lastFmUrl": "https://www.last.fm/music/The+Police",
+                  "photos": [
+                    {
+                      "imageUrl": "https://example.com/police.jpg",
+                      "imageAttribution": "Photo by Example"
+                    }
+                  ]
                 }
                 """.trimIndent()
                 )
@@ -82,8 +89,14 @@ class ArtistAdminControllerV2Test {
                 CreateArtistCommand(
                     name = "The Police",
                     background = "English rock band",
-                    imageUrl = "https://example.com/police.jpg",
-                    imageAttribution = "Photo by Example"
+                    mbid = UUID.fromString("2db3f6e2-0e5d-4f8e-9e9f-4e9e0e6e9e9e"),
+                    lastFmUrl = URI("https://www.last.fm/music/The+Police"),
+                    photos = setOf(
+                        ArtistPhotoCommand(
+                            url = URI("https://example.com/police.jpg"),
+                            attribution = "Photo by Example"
+                        )
+                    )
                 )
             )
         }

@@ -1,17 +1,17 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
-import jakarta.servlet.http.HttpServletRequest
+import nl.orangeflamingo.voornameninliedjesbackend.command.ArtistPhotoCommand
 import nl.orangeflamingo.voornameninliedjesbackend.command.CreateArtistCommand
 import nl.orangeflamingo.voornameninliedjesbackend.command.UpdateArtistCommand
 import nl.orangeflamingo.voornameninliedjesbackend.config.ApiMediaTypes
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
-import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistInputDto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistLogEntryV2Dto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistPhotoV2Dto
+import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistV2Dto
 import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistService
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -33,7 +33,7 @@ class ArtistAdminControllerV2(
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    fun getArtists(): List<AdminArtistDto> {
+    fun getArtists(): List<AdminArtistV2Dto> {
         return artistService.findAllOrderedByName()
             .map { convertToDto(it) }
     }
@@ -42,7 +42,7 @@ class ArtistAdminControllerV2(
     @GetMapping("/{id}")
     fun getArtistById(
         @PathVariable id: Long
-    ): AdminArtistDto {
+    ): AdminArtistV2Dto {
         return convertToDto(artistService.findById(id))
     }
 
@@ -52,20 +52,14 @@ class ArtistAdminControllerV2(
     )
     @ResponseStatus(HttpStatus.CREATED)
     fun createArtist(
-        @RequestBody input: AdminArtistInputDto,
-        authentication: Authentication
-    ): AdminArtistDto {
-        val contextAuthentication =
-            SecurityContextHolder.getContext().authentication
-
-        println("SecurityContext authentication: $contextAuthentication")
-        println("Method authentication: $authentication")
-
+        @RequestBody input: AdminArtistInputDto
+    ): AdminArtistV2Dto {
         val command = CreateArtistCommand(
             name = input.name.trim(),
             background = input.background?.trim(),
-            imageUrl = input.imageUrl?.trim(),
-            imageAttribution = input.imageAttribution?.trim()
+            mbid = input.mbid,
+            lastFmUrl = input.lastFmUrl,
+            photos = input.photos.map { ArtistPhotoCommand(it.imageUrl, it.imageAttribution.trim()) }.toSet()
         )
         val artist = artistService.create(command)
 
@@ -79,15 +73,15 @@ class ArtistAdminControllerV2(
     )
     fun updateArtist(
         @PathVariable id: Long,
-        @RequestBody input: AdminArtistInputDto,
-        authentication: Authentication
-    ): AdminArtistDto {
+        @RequestBody input: AdminArtistInputDto
+    ): AdminArtistV2Dto {
         val command = UpdateArtistCommand(
             id = id,
             name = input.name.trim(),
             background = input.background?.trim(),
-            imageUrl = input.imageUrl?.trim(),
-            imageAttribution = input.imageAttribution?.trim()
+            mbid = input.mbid,
+            lastFmUrl = input.lastFmUrl,
+            photos = input.photos.map { ArtistPhotoCommand(it.imageUrl, it.imageAttribution.trim()) }.toSet()
         )
         val artist = artistService.update(command)
 
@@ -103,14 +97,17 @@ class ArtistAdminControllerV2(
         artistService.delete(id)
     }
 
-    private fun convertToDto(artist: Artist): AdminArtistDto {
-        return AdminArtistDto(
+    private fun convertToDto(artist: Artist): AdminArtistV2Dto {
+        return AdminArtistV2Dto(
             id = artist.id,
             name = artist.name,
             background = artist.background,
-            // wikimediaPhotos = artist.photos.map { convertToDto(it) }.toSet(),
-            flickrPhotos = emptySet(),
-            // logEntries = artist.logEntries.map { convertToDto(it) }
+            photos = artist.photos
+                .map { AdminArtistPhotoV2Dto(it.url, it.attribution) }
+                .toSet(),
+            logEntries = artist.logEntries
+                .map { AdminArtistLogEntryV2Dto(it.date, it.username, it.userId, it.httpMethod, it.request?.value) }
+                .toList()
         )
     }
 }
