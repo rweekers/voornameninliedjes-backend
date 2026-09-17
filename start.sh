@@ -16,10 +16,10 @@ echo 'starting keycloak container...'
 
 docker run -d \
   --name some-keycloak \
-  -p 8080:8080 \
+  -p 8180:8080 \
   -e KC_BOOTSTRAP_ADMIN_USERNAME=admin \
   -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin \
-  -v "$(pwd)/config:/opt/keycloak/data/import:ro" \
+  -v "$(pwd)/config:/opt/keycloak/data/import:ro,Z" \
   quay.io/keycloak/keycloak:26.7.4 \
   start-dev --import-realm
 

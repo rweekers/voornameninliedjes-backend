@@ -7,12 +7,17 @@
   "verifyEmail": true,
   "loginWithEmailAllowed": true,
   "duplicateEmailsAllowed": false,
-
   "roles": {
     "realm": [
       {
         "name": "OWNER",
-        "description": "Full control over the Voornamen in Liedjes application"
+        "description": "Full control over the Voornamen in Liedjes application",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "ADMIN"
+          ]
+        }
       },
       {
         "name": "ADMIN",
@@ -20,7 +25,6 @@
       }
     ]
   },
-
   "users": [
     {
       "username": "owner",
