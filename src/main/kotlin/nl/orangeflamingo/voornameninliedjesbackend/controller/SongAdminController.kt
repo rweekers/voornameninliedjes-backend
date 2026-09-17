@@ -56,7 +56,7 @@ class SongAdminController(
         log.warn("Gotten request with message {}", ex.message)
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = ["/songs", "/songs/"])
     fun getSongs(): List<AdminSongDto> {
         return songService.findAll()
@@ -64,7 +64,7 @@ class SongAdminController(
     }
 
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/songs", params = ["name"])
     fun getSongsByName(@RequestParam(name = "name") name: String): List<AdminSongDto> {
         return songService.findByName(name)
@@ -72,7 +72,7 @@ class SongAdminController(
     }
 
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/songs", params = ["first-character"])
     fun getSongsWithNameStartingWith(
         @RequestParam(name = "first-character") firstCharacter: String,
@@ -85,13 +85,13 @@ class SongAdminController(
             .map { convertToDto(it) }
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/songs/{id}")
     fun getSongById(@PathVariable("id") id: Long): AdminSongDto {
         return convertToDto(songService.findById(id))
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/songs/{id}/download")
     fun downloadImageForSongById(
         @PathVariable("id") id: Long,
@@ -101,7 +101,7 @@ class SongAdminController(
         imagesService.downloadImageForSong(song, updateAll)
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/songs/{id}/blur")
     fun blurImageForSongById(
         @PathVariable("id") id: Long,
@@ -111,7 +111,7 @@ class SongAdminController(
         imagesService.blurImageForSong(song, updateAll)
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/songs/blur-all")
     fun blurImagesForSongs(
         @RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean
@@ -119,13 +119,13 @@ class SongAdminController(
         imagesService.blurImages(updateAll)
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/songs/download-all")
     fun downloadImagesForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
         imagesService.downloadImages(updateAll)
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/songs/{user}")
     fun newSong(@RequestBody newSong: AdminSongDto, @PathVariable user: String): AdminSongDto {
         log.info("Saving song with title ${newSong.title} and artist ${newSong.artist}")
@@ -135,7 +135,7 @@ class SongAdminController(
     }
 
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/songs/{user}/{id}")
     fun replaceSong(@RequestBody song: AdminSongDto, @PathVariable user: String, @PathVariable id: Long): AdminSongDto {
         assert(song.id?.toLong() == id)
@@ -147,32 +147,32 @@ class SongAdminController(
         return convertToDto(songService.newSong(convertToDomain(song), user))
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/songs/{id}/enrich-images")
     fun enrichImageForSongById(@PathVariable("id") id: Long) {
         val song = songRepository.findById(id).orElseThrow { SongNotFoundException("Song with id $id not found") }
         imagesEnrichmentService.updateArtistImageForSong(song)
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/songs/enrich-images")
     fun enrichImagesForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
         imagesEnrichmentService.enrichImagesForSongs(updateAll)
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/songs/enrich-wikipedia")
     fun enrichWikipediaForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
         wikipediaEnrichmentService.enrichWikipediaForSongs(updateAll)
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/songs/enrich-lastfm")
     fun enrichLastFmInfoForSongs(@RequestParam(name = "update-all", defaultValue = "false") updateAll: Boolean) {
         lastFmEnrichmentService.enrichLastFmInfoForSongs(updateAll)
     }
 
-    @PreAuthorize("hasRole('ROLE_OWNER')")
+    @PreAuthorize("hasRole('OWNER')")
     @DeleteMapping("/songs")
     fun deleteSongs() {
         val count = songRepository.count()
@@ -180,7 +180,7 @@ class SongAdminController(
         log.info("$count songs marked as to be deleted")
     }
 
-    @PreAuthorize("hasRole('ROLE_OWNER')")
+    @PreAuthorize("hasRole('OWNER')")
     @DeleteMapping("/songs/{id}")
     fun deleteSongById(@PathVariable id: Long) {
         songRepository.deleteById(id)

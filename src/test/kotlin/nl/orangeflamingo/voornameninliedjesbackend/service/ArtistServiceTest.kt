@@ -3,20 +3,23 @@ package nl.orangeflamingo.voornameninliedjesbackend.service
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.Optional
-import java.util.UUID
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import tools.jackson.databind.ObjectMapper
+import java.util.Optional
+import java.util.UUID
 
 class ArtistServiceTest {
 
     private val repository = mockk<ArtistRepository>()
     private val currentUserService = mockk<CurrentUserService>()
+    private val httpRequestContext = mockk<HttpRequestContext>()
+    private val objectMapper = mockk<ObjectMapper>()
 
-    private val artistService = ArtistService(repository, currentUserService)
+    private val artistService = ArtistService(repository, currentUserService, httpRequestContext, objectMapper)
 
     @Test
     fun `get artist by id`() {

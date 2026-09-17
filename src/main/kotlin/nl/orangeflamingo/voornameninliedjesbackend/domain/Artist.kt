@@ -3,6 +3,7 @@ package nl.orangeflamingo.voornameninliedjesbackend.domain
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.MappedCollection
 import org.springframework.data.relational.core.mapping.Table
+import tools.jackson.databind.JsonNode
 import java.net.URI
 import java.time.Instant
 import java.util.UUID
@@ -15,7 +16,7 @@ data class Artist(
     var name: String,
     var mbid: UUID? = null,
     var lastFmUrl: URI? = null,
-    val background: String? = null,
+    var background: String? = null,
     @MappedCollection(idColumn = "artist_id")
     var photos: MutableSet<ArtistPhoto> = mutableSetOf(),
     @MappedCollection(idColumn = "artist_id")
@@ -35,5 +36,8 @@ data class ArtistLogEntry(
     @Id
     var id: Long? = null,
     val date: Instant,
-    val username: String
+    val username: String,
+    val userId: String? = null,
+    val httpMethod: String? = null,
+    val request: Jsonb? = null
 )
