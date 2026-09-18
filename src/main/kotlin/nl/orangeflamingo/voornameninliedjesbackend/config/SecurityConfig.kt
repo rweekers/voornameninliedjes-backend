@@ -21,6 +21,8 @@ class SecurityConfig {
     fun jwtAuthenticationConverter(): JwtAuthenticationConverter {
         val converter = JwtAuthenticationConverter()
 
+        converter.setPrincipalClaimName("preferred_username")
+
         converter.setJwtGrantedAuthoritiesConverter { jwt ->
             val realmAccess = jwt.getClaimAsMap("realm_access")
             val roles = realmAccess?.get("roles") as? Collection<*>

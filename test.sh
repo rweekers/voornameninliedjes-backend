@@ -2,7 +2,7 @@
 
 KEYCLOAK_URL="http://localhost:8180"
 REALM="voornameninliedjes"
-CLIENT_ID="voornameninliedjes-admin"
+CLIENT_ID="voornameninliedjes-beheer"
 
 USERNAME="admin"
 PASSWORD="admin"
