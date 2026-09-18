@@ -1,24 +1,20 @@
 package nl.orangeflamingo.voornameninliedjesbackend.controller
 
-import java.net.URI
-import java.time.Instant
 import nl.orangeflamingo.voornameninliedjesbackend.AbstractIntegrationTest
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistLogEntry
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
-import nl.orangeflamingo.voornameninliedjesbackend.domain.User
-import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
-import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
+import java.net.URI
+import java.time.Instant
 
 class ArtistAdminControllerIT : AbstractIntegrationTest() {
 
@@ -26,44 +22,22 @@ class ArtistAdminControllerIT : AbstractIntegrationTest() {
     private lateinit var client: WebTestClient
 
     @Autowired
-    private lateinit var userRepository: UserRepository
-
-    @Autowired
     private lateinit var songRepository: SongRepository
 
     @Autowired
     private lateinit var artistRepository: ArtistRepository
 
-    @Autowired
-    private lateinit var encoder: PasswordEncoder
-
-    private val adminUser: String = "admin"
-    private val adminPassword: String = "secret"
-    private val adminRole: String = "ADMIN"
     private val ownerUser: String = "owner"
     private val ownerPassword: String = "verysecret"
     private val ownerRole: String = "OWNER"
     private lateinit var artistMap: Map<String, Long>
+    private lateinit var adminToken: String
+    private lateinit var ownerToken: String
 
     @BeforeEach
     fun createUser() {
         songRepository.deleteAll()
         artistRepository.deleteAll()
-        userRepository.deleteAll()
-        userRepository.saveAll(
-            listOf(
-                User(
-                    username = adminUser,
-                    password = encoder.encode(adminPassword) ?: throw IllegalStateException(),
-                    roles = mutableSetOf(UserRole(1, adminRole))
-                ),
-                User(
-                    username = ownerUser,
-                    password = encoder.encode(ownerPassword) ?: throw IllegalStateException(),
-                    roles = mutableSetOf(UserRole(2, ownerRole))
-                )
-            )
-        )
         val artist = artistRepository.save(
             Artist(
                 name = "The Beatles",
@@ -86,6 +60,9 @@ class ArtistAdminControllerIT : AbstractIntegrationTest() {
                 artist
             )
         ).associate { it.name to it.id!! }
+
+        adminToken = getAdminToken()
+        ownerToken = getOwnerToken()
     }
 
     @Test
@@ -97,7 +74,7 @@ class ArtistAdminControllerIT : AbstractIntegrationTest() {
                     .queryParam("name", "The Beatles")
                     .build()
             }
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(adminUser, adminPassword) }
+            .headers { it.setBearerAuth(adminToken) }
             .exchange()
             .expectStatus().isOk
             .expectBodyList<AdminArtistDto>().hasSize(1)
@@ -107,7 +84,7 @@ class ArtistAdminControllerIT : AbstractIntegrationTest() {
     fun deleteArtistByIdTest() {
         client.delete()
             .uri("/admin/artists/${artistMap["The Beatles"]}")
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(ownerUser, ownerPassword) }
+            .headers { it.setBearerAuth(ownerToken) }
             .exchange()
             .expectStatus().isOk
         assertThat(artistRepository.findById(artistMap["The Beatles"]!!).isPresent).isFalse
@@ -122,7 +99,7 @@ class ArtistAdminControllerIT : AbstractIntegrationTest() {
                     .queryParam("name", "The Beat")
                     .build()
             }
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(adminUser, adminPassword) }
+            .headers { it.setBearerAuth(adminToken) }
             .exchange()
             .expectStatus().isOk
         assertThat(artistRepository.findFirstByName("The Beat")).isNotNull

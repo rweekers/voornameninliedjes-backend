@@ -5,17 +5,13 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.SongStatus
 import nl.orangeflamingo.voornameninliedjesbackend.domain.TestSong
-import nl.orangeflamingo.voornameninliedjesbackend.domain.User
-import nl.orangeflamingo.voornameninliedjesbackend.domain.UserRole
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminSongDto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminWikimediaPhotoDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
-import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import org.springframework.web.reactive.function.BodyInserters
@@ -25,34 +21,20 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
     @Autowired
     private lateinit var client: WebTestClient
     @Autowired
-    private lateinit var userRepository: UserRepository
-    @Autowired
     private lateinit var songRepository: SongRepository
     @Autowired
     private lateinit var artistRepository: ArtistRepository
-    @Autowired
-    private lateinit var encoder: PasswordEncoder
 
-    private val user: String = "test"
-    private val password: String = "secret"
-    private val adminRole: String = "ADMIN"
     private val artistName: String = "The Beatles"
     private val songTitle: String = "Michelle"
     private val artistMap: MutableMap<String, Long> = mutableMapOf()
     private lateinit var songMap: Map<String, Long>
+    private lateinit var adminToken: String
 
     @BeforeEach
-    fun createUser() {
+    fun setup() {
         songRepository.deleteAll()
         artistRepository.deleteAll()
-        userRepository.deleteAll()
-        userRepository.save(
-            User(
-                username = user,
-                password = encoder.encode(password) ?: throw IllegalStateException(),
-                roles = mutableSetOf(UserRole(1, adminRole))
-            )
-        )
         val artist = artistRepository.save(
             Artist(
                 name = artistName
@@ -89,13 +71,15 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
                 songMichelle, songMadonna, songLucy
             )
         ).associate { it.title to it.id!! }
+
+        adminToken = getAdminToken()
     }
 
     @Test
     fun getAllSongsTest() {
         client.get()
             .uri("/admin/songs")
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .headers { it.setBearerAuth(adminToken) }
             .exchange()
             .expectStatus().isOk
             .expectBodyList<AdminSongDto>().hasSize(3)
@@ -110,7 +94,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
                     .queryParam("name", "Lucy")
                     .build()
             }
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .headers { it.setBearerAuth(adminToken) }
             .exchange()
             .expectStatus().isOk
             .expectBodyList<AdminSongDto>().hasSize(1)
@@ -126,7 +110,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
                     .queryParam("status", "SHOW,IN_PROGRESS,INCOMPLETE, TO_BE_DELETED")
                     .build()
             }
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .headers { it.setBearerAuth(adminToken) }
             .exchange()
             .expectStatus().isOk
             .expectBodyList<AdminSongDto>().hasSize(2)
@@ -142,7 +126,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
                     .queryParam("status", "INCOMPLETE")
                     .build()
             }
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .headers { it.setBearerAuth(adminToken) }
             .exchange()
             .expectStatus().isOk
             .expectBodyList<AdminSongDto>().hasSize(1)
@@ -152,7 +136,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
     fun getSongByIdTest() {
         client.get()
             .uri("/admin/songs/${songMap[songTitle]}")
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .headers { it.setBearerAuth(adminToken) }
             .exchange()
             .expectStatus().isOk
             .expectBody()
@@ -164,7 +148,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
     fun getSongNofFoundByIdTest() {
         client.get()
             .uri("/admin/songs/${songMap.values.maxOf { it } + 1}")
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .headers { it.setBearerAuth(adminToken) }
             .exchange()
             .expectStatus().isNotFound
     }
@@ -173,7 +157,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
     fun newSongTest() {
         client.post()
             .uri("/admin/songs/temp")
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .headers { it.setBearerAuth(adminToken) }
             .body(
                 BodyInserters.fromValue(
                     AdminSongDto(
@@ -211,7 +195,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
 
         client.put()
             .uri("/admin/songs/temp/$id")
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .headers { it.setBearerAuth(adminToken) }
             .body(
                 BodyInserters.fromValue(
                     AdminSongDto(
@@ -258,7 +242,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
                     .queryParam("update-all", "true")
                     .build()
             }
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .headers { it.setBearerAuth(adminToken) }
             .exchange()
             .expectStatus().isOk
     }
@@ -267,7 +251,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
     fun enrichImagesForSong() {
         client.post()
             .uri("/admin/songs/${songMap[songTitle]}/enrich-images")
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .headers { it.setBearerAuth(adminToken) }
             .exchange()
             .expectStatus().isOk
     }
@@ -276,7 +260,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
     fun blurImageForSong() {
         client.post()
             .uri("/admin/songs/${songMap[songTitle]}/blur")
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .headers { it.setBearerAuth(adminToken) }
             .exchange()
             .expectStatus().isOk
     }
@@ -285,7 +269,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
     fun blurImagesForSong() {
         client.post()
             .uri("/admin/songs/blur-all")
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .headers { it.setBearerAuth(adminToken) }
             .exchange()
             .expectStatus().isOk
     }
@@ -299,7 +283,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
                     .queryParam("update-all", "true")
                     .build()
             }
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .headers { it.setBearerAuth(adminToken) }
             .exchange()
             .expectStatus().isOk
     }
@@ -313,7 +297,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
                     .queryParam("update-all", "true")
                     .build()
             }
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .headers { it.setBearerAuth(adminToken) }
             .exchange()
             .expectStatus().isOk
     }
@@ -327,7 +311,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
                     .queryParam("update-all", "true")
                     .build()
             }
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .headers { it.setBearerAuth(adminToken) }
             .exchange()
             .expectStatus().isOk
     }
@@ -341,7 +325,7 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
                     .queryParam("update-all", "true")
                     .build()
             }
-            .headers { httpHeadersConsumer -> httpHeadersConsumer.setBasicAuth(user, password) }
+            .headers { it.setBearerAuth(adminToken) }
             .exchange()
             .expectStatus().isOk
     }
@@ -353,6 +337,5 @@ class SongAdminControllerIT : AbstractIntegrationTest() {
             .exchange()
             .expectStatus().isUnauthorized
     }
-
 }
 

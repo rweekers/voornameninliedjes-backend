@@ -1,5 +1,6 @@
 package nl.orangeflamingo.voornameninliedjesbackend.cucumber.steps;
 
+import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.cucumber.java.Before;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.spring.CucumberContextConfiguration;
@@ -39,9 +40,15 @@ public class CucumberHooksSteps {
             .withPassword("secret")
             .withDatabaseName("voornameninliedjes");
 
+    static KeycloakContainer keycloakContainer = new KeycloakContainer("quay.io/keycloak/keycloak:26.7.4")
+            .withRealmImportFile("/realm.json")
+            .withAdminUsername("admin")
+            .withAdminPassword("admin");
+
     @BeforeAll
     public static void beforeAll() {
         postgresContainer.start();
+        keycloakContainer.start();
     }
 
     @DynamicPropertySource
@@ -64,6 +71,9 @@ public class CucumberHooksSteps {
 
         registry.add("voornameninliedjes.datasource.migration.username", postgresContainer::getUsername);
         registry.add("voornameninliedjes.datasource.migration.password", postgresContainer::getPassword);
+
+        registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri",
+                () -> String.format("http://%s:%d/realms/voornameninliedjes", keycloakContainer.getHost(), keycloakContainer.getMappedPort(8080)));
     }
 
     @Before

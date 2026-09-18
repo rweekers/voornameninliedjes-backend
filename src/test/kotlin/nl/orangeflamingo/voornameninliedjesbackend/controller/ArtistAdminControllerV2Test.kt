@@ -5,10 +5,8 @@ import io.mockk.every
 import io.mockk.verify
 import nl.orangeflamingo.voornameninliedjesbackend.command.CreateArtistCommand
 import nl.orangeflamingo.voornameninliedjesbackend.config.CorsConfig
-import nl.orangeflamingo.voornameninliedjesbackend.config.MyBasicAuthPoint
 import nl.orangeflamingo.voornameninliedjesbackend.config.SecurityConfig
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
-import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
 import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,6 +16,7 @@ import org.springframework.cache.CacheManager
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
+import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
@@ -40,8 +39,7 @@ class ArtistAdminControllerV2Test {
     @Autowired private lateinit var mockMvc: MockMvc
     @MockkBean private lateinit var artistService: ArtistService
     @Suppress("unused") @MockkBean private lateinit var cacheManager: CacheManager
-    @Suppress("unused") @MockkBean private lateinit var userRepository: UserRepository
-    @Suppress("unused") @MockkBean private lateinit var authenticationEntryPoint: MyBasicAuthPoint
+    @Suppress("unused") @MockkBean private lateinit var jwtDecoder: JwtDecoder
     @Autowired
     private lateinit var handlerAdapter: RequestMappingHandlerAdapter
 
