@@ -55,12 +55,6 @@ class ArtistAdminControllerV2(
         @RequestBody input: AdminArtistInputDto,
         authentication: Authentication
     ): AdminArtistDto {
-        val contextAuthentication =
-            SecurityContextHolder.getContext().authentication
-
-        println("SecurityContext authentication: $contextAuthentication")
-        println("Method authentication: $authentication")
-
         val command = CreateArtistCommand(
             name = input.name.trim(),
             background = input.background?.trim(),
