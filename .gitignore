@@ -37,6 +37,8 @@ target
 *.pk8
 .env
 
+.keycloak-token
+
 /src/main/resources/static/*.yaml
 
 /backup/database_voornameninliedjes_backup_*.backup
