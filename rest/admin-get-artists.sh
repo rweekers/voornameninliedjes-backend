@@ -1,7 +1,10 @@
 #!/bin/sh
 
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+TOKEN_FILE="$PROJECT_ROOT/.keycloak-token"
+
 API_URL="http://localhost:8080/admin/artists"
-TOKEN_FILE=".keycloak-token"
 
 if [ ! -s "$TOKEN_FILE" ]; then
     echo "No access token found. Run ./auth.sh first."
