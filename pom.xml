@@ -7,12 +7,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.0</version>
+        <version>4.1.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>nl.orangeflamingo</groupId>
     <artifactId>voornameninliedjes-backend</artifactId>
-    <version>3.4.6</version>
+    <version>3.4.7</version>
     <name>Voornameninliedjes Backend</name>
     <description>Backend service voor voornamen in liedjes</description>
     <url>https://voornameninliedjes.nl</url>
@@ -39,8 +39,10 @@
         <copy_down.version>1.1</copy_down.version>
         <openapitools.jackson-databind-nullable.version>0.2.7</openapitools.jackson-databind-nullable.version>
         <uap-java.version>1.6.1</uap-java.version>
+        <testcontainers-keycloak.version>4.3.1</testcontainers-keycloak.version>
         <cucumber.version>7.30.0</cucumber.version>
         <mockk.version>1.14.6</mockk.version>
+        <springmockk.version>5.0.1</springmockk.version>
         <mockwebserver.version>4.12.0</mockwebserver.version>
 
         <argLine>-XX:+EnableDynamicAgentLoading</argLine>
@@ -77,6 +79,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -130,7 +136,7 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.module</groupId>
+            <groupId>tools.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>
         </dependency>
         <dependency>
@@ -164,6 +170,15 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-webtestclient</artifactId>
             <scope>test</scope>
         </dependency>
@@ -189,6 +204,12 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers-postgresql</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.dasniko</groupId>
+            <artifactId>testcontainers-keycloak</artifactId>
+            <scope>test</scope>
+            <version>${testcontainers-keycloak.version}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.platform</groupId>
@@ -219,6 +240,12 @@
             <groupId>io.mockk</groupId>
             <artifactId>mockk-jvm</artifactId>
             <version>${mockk.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ninja-squad</groupId>
+            <artifactId>springmockk</artifactId>
+            <version>${springmockk.version}</version>
             <scope>test</scope>
         </dependency>
 
