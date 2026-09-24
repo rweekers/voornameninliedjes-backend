@@ -11,16 +11,15 @@ class CurrentUserServiceImpl : CurrentUserService {
         val authentication = SecurityContextHolder.getContext().authentication
             ?: throw IllegalStateException("No authenticated user")
 
-        if (!authentication.isAuthenticated) {
-            throw IllegalStateException("No authenticated user")
-        }
+        check(authentication.isAuthenticated) { "No authenticated user" }
 
         val jwt = authentication.principal as? Jwt
             ?: throw IllegalStateException("No JWT principal available")
 
         return CurrentUser(
             id = jwt.subject ?: throw IllegalStateException("JWT has no subject"),
-            username = authentication.name
+            username = jwt.getClaimAsString("preferred_username")
+                ?: throw IllegalStateException("JWT has no preferred_username")
         )
     }
 }

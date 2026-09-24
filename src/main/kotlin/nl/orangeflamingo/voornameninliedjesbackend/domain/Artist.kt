@@ -3,7 +3,6 @@ package nl.orangeflamingo.voornameninliedjesbackend.domain
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.MappedCollection
 import org.springframework.data.relational.core.mapping.Table
-import tools.jackson.databind.JsonNode
 import java.net.URI
 import java.time.Instant
 import java.util.UUID
@@ -38,6 +37,6 @@ data class ArtistLogEntry(
     val date: Instant,
     val username: String,
     val userId: String? = null,
-    val httpMethod: String? = null,
+    val httpMethod: OperationType? = null,
     val request: Jsonb? = null
 )

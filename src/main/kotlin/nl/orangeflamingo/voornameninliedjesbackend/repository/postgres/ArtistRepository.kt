@@ -15,6 +15,8 @@ interface ArtistRepository : CrudRepository<Artist, Long> {
     @Query("select * from artists order by name ASC")
     fun findAllOrderedByName(): List<Artist>
 
+    fun findByNameContainingIgnoreCase(search: String): List<Artist>
+
     fun findFirstByName(name: String): Artist?
 
     fun existsByNameAndIdNot(name: String, id: Long): Boolean
