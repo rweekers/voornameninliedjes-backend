@@ -6,6 +6,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistLogEntry
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Jsonb
+import nl.orangeflamingo.voornameninliedjesbackend.domain.OperationType
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import org.springframework.stereotype.Service
 import tools.jackson.databind.ObjectMapper
@@ -15,7 +16,6 @@ import java.time.Instant
 class ArtistService(
     private val repository: ArtistRepository,
     private val currentUserService: CurrentUserService,
-    private val httpRequestContext: HttpRequestContext,
     private val objectMapper: ObjectMapper
 ) {
 
@@ -27,6 +27,15 @@ class ArtistService(
         return repository.findAllOrderedByName()
     }
 
+    fun search(search: String): List<Artist> {
+        val query = search.trim()
+
+        if (query.isEmpty()) {
+            return emptyList()
+        }
+
+        return repository.findByNameContainingIgnoreCase(query)
+    }
 
     fun create(artist: Artist): Artist {
         if (existsByName(artist.name)) {
@@ -98,7 +107,7 @@ class ArtistService(
                 date = Instant.now(),
                 username = currentUser.username,
                 userId = currentUser.id,
-                httpMethod = httpRequestContext.method(),
+                httpMethod = OperationType.UPDATE,
                 request = Jsonb(objectMapper.writeValueAsString(updateArtistCommand))
             )
         )
@@ -133,7 +142,7 @@ class ArtistService(
                     date = Instant.now(),
                     username = currentUser.username,
                     userId = currentUser.id,
-                    httpMethod = httpRequestContext.method(),
+                    httpMethod = OperationType.CREATE,
                     request = Jsonb(objectMapper.writeValueAsString(createArtistCommand))
                 )
             )

@@ -11,6 +11,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistPhotoV2Dto
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistV2Dto
 import nl.orangeflamingo.voornameninliedjesbackend.service.ArtistService
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
@@ -31,11 +33,19 @@ class ArtistAdminControllerV2(
     private val artistService: ArtistService
 ) {
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    fun getArtists(): List<AdminArtistV2Dto> {
-        return artistService.findAllOrderedByName()
-            .map { convertToDto(it) }
+    fun getArtists(
+        @RequestParam(required = false) search: String?
+    ): ResponseEntity<List<AdminArtistV2Dto>> {
+        val artists = if (search.isNullOrBlank()) {
+            artistService.findAllOrderedByName()
+        } else {
+            artistService.search(search)
+        }
+
+        return ResponseEntity.ok(
+            artists.map(::convertToDto)
+        )
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -106,7 +116,15 @@ class ArtistAdminControllerV2(
                 .map { AdminArtistPhotoV2Dto(it.url, it.attribution) }
                 .toSet(),
             logEntries = artist.logEntries
-                .map { AdminArtistLogEntryV2Dto(it.date, it.username, it.userId, it.httpMethod, it.request?.value) }
+                .map {
+                    AdminArtistLogEntryV2Dto(
+                        it.date,
+                        it.username,
+                        it.userId,
+                        it.httpMethod?.name,
+                        it.request?.value
+                    )
+                }
                 .toList()
         )
     }

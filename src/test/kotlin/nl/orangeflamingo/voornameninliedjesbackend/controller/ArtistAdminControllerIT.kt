@@ -5,6 +5,7 @@ import nl.orangeflamingo.voornameninliedjesbackend.domain.Artist
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistLogEntry
 import nl.orangeflamingo.voornameninliedjesbackend.domain.ArtistPhoto
 import nl.orangeflamingo.voornameninliedjesbackend.domain.Jsonb
+import nl.orangeflamingo.voornameninliedjesbackend.domain.OperationType
 import nl.orangeflamingo.voornameninliedjesbackend.dto.AdminArtistDto
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.ArtistRepository
 import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.SongRepository
@@ -12,7 +13,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpMethod
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import java.net.URI
@@ -29,9 +29,6 @@ class ArtistAdminControllerIT : AbstractIntegrationTest() {
     @Autowired
     private lateinit var artistRepository: ArtistRepository
 
-    private val ownerUser: String = "owner"
-    private val ownerPassword: String = "verysecret"
-    private val ownerRole: String = "OWNER"
     private lateinit var artistMap: Map<String, Long>
     private lateinit var adminToken: String
     private lateinit var ownerToken: String
@@ -54,7 +51,7 @@ class ArtistAdminControllerIT : AbstractIntegrationTest() {
                         date = Instant.now(),
                         username = "Temp",
                         userId = "user-id",
-                        httpMethod = HttpMethod.POST.name(),
+                        httpMethod = OperationType.CREATE,
                         request = Jsonb("""{"name":"The Police","background":"English rock band"}""")
                     )
                 )
