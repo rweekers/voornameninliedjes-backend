@@ -1,34 +1,45 @@
 package nl.orangeflamingo.voornameninliedjesbackend.config
 
-import nl.orangeflamingo.voornameninliedjesbackend.repository.postgres.UserRepository
-import nl.orangeflamingo.voornameninliedjesbackend.service.MyUserPrincipal
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.Customizer.withDefaults
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
-import org.springframework.security.config.annotation.web.HttpSecurityBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer
-import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.core.userdetails.UsernameNotFoundException
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.security.web.SecurityFilterChain
 
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
-class SecurityConfig(
-    private val userRepository: UserRepository,
-    private val authenticationEntryPoint: MyBasicAuthPoint
-) {
+@EnableMethodSecurity
+class SecurityConfig {
+
     @Bean
-    fun filterChain(
-        http: HttpSecurity
-    ): SecurityFilterChain {
+    fun jwtAuthenticationConverter(): JwtAuthenticationConverter {
+        val converter = JwtAuthenticationConverter()
+
+        converter.setPrincipalClaimName("preferred_username")
+
+        converter.setJwtGrantedAuthoritiesConverter { jwt ->
+            val realmAccess = jwt.getClaimAsMap("realm_access")
+            val roles = realmAccess?.get("roles") as? Collection<*>
+
+            val authorities = roles
+                ?.filterIsInstance<String>()
+                ?.map { SimpleGrantedAuthority("ROLE_$it") }
+                ?: emptyList()
+
+            authorities
+        }
+
+        return converter
+    }
+
+    @Bean
+    fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .cors(withDefaults())
             .csrf { it.disable() }
@@ -42,27 +53,12 @@ class SecurityConfig(
                     .requestMatchers("/admin/**").authenticated()
                     .anyRequest().permitAll()
             }
-            .httpBasic(withDefaults())
+            .oauth2ResourceServer { oauth2 ->
+                oauth2.jwt { jwt ->
+                    jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
+                }
+            }
+
         return http.build()
     }
-
-    @Bean
-    fun httpBasicConfigurer(): HttpBasicConfigurer<out HttpSecurityBuilder<*>> {
-        return HttpBasicConfigurer()
-            .authenticationEntryPoint(authenticationEntryPoint)
-    }
-
-    @Bean
-    fun userDetailsService(): UserDetailsService {
-        return UserDetailsService { username ->
-            val user = userRepository.findByUsername(username) ?: throw UsernameNotFoundException(username)
-            MyUserPrincipal(user)
-        }
-    }
-
-    @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
-
 }
