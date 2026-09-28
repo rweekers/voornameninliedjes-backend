@@ -3,6 +3,7 @@ package nl.orangeflamingo.voornameninliedjesbackend.dto
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.net.URI
 import java.time.Instant
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
@@ -10,6 +11,7 @@ data class AdminArtistDto @JsonCreator constructor(
     @param:JsonProperty("id") val id: Long?,
     @param:JsonProperty("name") val name: String,
     @param:JsonProperty("background") val background: String?,
+    @param:JsonProperty("photos") var photos: Set<AdminArtistPhotoDto> = setOf(),
     @param:JsonProperty("wikimediaPhotos") var wikimediaPhotos: Set<AdminArtistWikimediaPhotoDto> = setOf(),
     @param:JsonProperty("flickrPhotos") var flickrPhotos: Set<AdminArtistFlickrPhotoDto> = setOf(),
     @param:JsonProperty("logEntries") val logEntries: List<AdminArtistLogEntryDto> = listOf()
@@ -17,6 +19,11 @@ data class AdminArtistDto @JsonCreator constructor(
 
 data class AdminArtistWikimediaPhotoDto @JsonCreator constructor(
     @param:JsonProperty("url") val url: String,
+    @param:JsonProperty("attribution") val attribution: String
+)
+
+data class AdminArtistPhotoDto @JsonCreator constructor(
+    @param:JsonProperty("url") val url: URI,
     @param:JsonProperty("attribution") val attribution: String
 )
 
