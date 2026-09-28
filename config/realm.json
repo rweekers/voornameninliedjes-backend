@@ -75,7 +75,22 @@
   "clients": [
     {
       "clientId": "voornameninliedjes-beheer",
-      "name": "VoornamenInLiedjes beheer",
+      "name": "VoornamenInLiedjes Beheer",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": [
+        "http://localhost:4200/*"
+      ],
+      "webOrigins": [
+        "http://localhost:4200"
+      ]
+    },
+    {
+      "clientId": "voornameninliedjes-cli",
+      "name": "VoornamenInLiedjes CLI",
       "enabled": true,
       "protocol": "openid-connect",
       "publicClient": true,
